@@ -37,9 +37,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return app(AdminDashboardController::class)->index();
-    } elseif (auth()->user()->isGuru()) {
+    } elseif (auth()->user()->isSekdes()) {
         return app(GuruDashboardController::class)->index();
-    } elseif (auth()->user()->isSiswa()) {
+    } elseif (auth()->user()->isKades()) {
         return app(SiswaDashboardController::class)->index();
     }
     return abort(403);

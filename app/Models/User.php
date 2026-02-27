@@ -93,14 +93,14 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isGuru()
+    public function isSekdes()
     {
-        return $this->role === 'guru';
+        return $this->role === 'sekdes';
     }
 
-    public function isSiswa()
+    public function isKades()
     {
-        return $this->role === 'siswa';
+        return $this->role === 'kades';
     }
 
     public function guruProfile()
