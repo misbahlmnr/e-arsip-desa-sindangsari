@@ -22,7 +22,7 @@ export const getNavbarItems = (role) => {
         admin: [
             {
                 name: "Surat Masuk",
-                href: "#",
+                href: route("admin.surat-masuk.index"),
                 icon: Inbox,
                 current: route().current("surat-masuk.*"),
             },
