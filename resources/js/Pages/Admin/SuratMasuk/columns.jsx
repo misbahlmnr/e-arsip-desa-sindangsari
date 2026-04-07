@@ -8,6 +8,7 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal } from "lucide-react";
+import { SortableColumnHeader } from "./SortableColumnHeader";
 
 const STATUS_CONFIG = {
     belum_diproses: {
@@ -24,93 +25,112 @@ const STATUS_CONFIG = {
     },
 };
 
-export const columns = [
-    {
-        accessorKey: "no",
-        header: "No.",
-        cell: ({ row }) => {
-            return <span>{row.index + 1}</span>;
+/**
+ * @param {{ startIndex?: number }} opts
+ */
+export function getColumns({ startIndex = 0 } = {}) {
+    return [
+        {
+            id: "row_number",
+            accessorKey: "no",
+            enableSorting: false,
+            header: "No.",
+            cell: ({ row }) => (
+                <span>{startIndex + row.index + 1}</span>
+            ),
         },
-    },
-    {
-        accessorKey: "nomor_registrasi",
-        header: "No. Reg",
-        cell: ({ row }) => {
-            return (
-                <span className="text-xs">{row.original.nomor_registrasi}</span>
-            );
-        },
-    },
-    {
-        accessorKey: "no_surat",
-        header: "No. Surat",
-        cell: ({ row }) => {
-            return <span className="text-xs">{row.original.no_surat}</span>;
-        },
-    },
-    {
-        accessorKey: "tanggal_terima",
-        header: "Tgl Terima",
-    },
-    {
-        accessorKey: "pengirim",
-        header: "Pengirim",
-        cell: ({ row }) => {
-            const pengirim = row.original.pengirim;
-            return (
-                <span
-                    title={pengirim}
-                    className="max-w-20 truncate inline-block"
-                >
-                    {pengirim}
+        {
+            accessorKey: "nomor_registrasi",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="No. Reg" />
+            ),
+            cell: ({ row }) => (
+                <span className="text-xs">
+                    {row.original.nomor_registrasi}
                 </span>
-            );
+            ),
         },
-    },
-    {
-        accessorKey: "perihal",
-        header: "Perihal",
-        cell: ({ row }) => {
-            const perihal = row.original.perihal;
-            return (
-                <span
-                    title={perihal}
-                    className="max-w-20 truncate inline-block"
-                >
-                    {perihal}
-                </span>
-            );
+        {
+            accessorKey: "no_surat",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="No. Surat" />
+            ),
+            cell: ({ row }) => (
+                <span className="text-xs">{row.original.no_surat}</span>
+            ),
         },
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const status = row.original.status;
-            const statusConfig = STATUS_CONFIG[status];
-            return (
-                <span
-                    className={cn(
-                        "px-2 py-1 rounded-full text-xs font-medium",
-                        statusConfig.className,
-                    )}
-                >
-                    {statusConfig.label}
-                </span>
-            );
+        {
+            accessorKey: "tanggal_terima",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="Tgl Terima" />
+            ),
         },
-    },
-    {
-        accessorKey: "tujuan",
-        header: "Tujuan",
-    },
-    {
-        id: "actions",
-        header: "Aksi",
-        cell: ({ row }) => {
-            const surat = row.original;
-
-            return (
+        {
+            accessorKey: "pengirim",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="Pengirim" />
+            ),
+            cell: ({ row }) => {
+                const pengirim = row.original.pengirim;
+                return (
+                    <span
+                        title={pengirim}
+                        className="max-w-20 truncate inline-block"
+                    >
+                        {pengirim}
+                    </span>
+                );
+            },
+        },
+        {
+            accessorKey: "perihal",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="Perihal" />
+            ),
+            cell: ({ row }) => {
+                const perihal = row.original.perihal;
+                return (
+                    <span
+                        title={perihal}
+                        className="max-w-20 truncate inline-block"
+                    >
+                        {perihal}
+                    </span>
+                );
+            },
+        },
+        {
+            accessorKey: "status",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="Status" />
+            ),
+            cell: ({ row }) => {
+                const status = row.original.status;
+                const statusConfig = STATUS_CONFIG[status];
+                return (
+                    <span
+                        className={cn(
+                            "px-2 py-1 rounded-full text-xs font-medium",
+                            statusConfig?.className ||
+                                "bg-gray-100 text-gray-800",
+                        )}
+                    >
+                        {statusConfig?.label ?? status}
+                    </span>
+                );
+            },
+        },
+        {
+            accessorKey: "tujuan",
+            header: ({ column }) => (
+                <SortableColumnHeader column={column} title="Tujuan" />
+            ),
+        },
+        {
+            id: "actions",
+            enableSorting: false,
+            header: "Aksi",
+            cell: () => (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -127,7 +147,7 @@ export const columns = [
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            );
+            ),
         },
-    },
-];
+    ];
+}
