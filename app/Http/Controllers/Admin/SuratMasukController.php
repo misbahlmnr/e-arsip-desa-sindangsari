@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Models\Letter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class SuratMasukController extends Controller
@@ -82,5 +83,16 @@ class SuratMasukController extends Controller
         Letter::create($data);
 
         return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil ditambahkan.');
+    }
+
+    public function destroy(Letter $surat_masuk)
+    {
+        if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
+            Storage::disk('public')->delete($surat_masuk->file);
+        }
+
+        $surat_masuk->delete();
+
+        return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil dihapus.');
     }
 }

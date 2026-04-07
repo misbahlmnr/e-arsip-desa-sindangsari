@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import FormModalSuratMasuk from "./FormModalSuratMasuk";
+import { DataTable } from "@/Components/DataTable/Index";
 import { getColumns } from "./columns";
-import { SuratMasukTable } from "./SuratMasukTable";
 import { useServerTable } from "@/hooks/useServerTable";
 
 export default function SuratMasuk({ letters, filters }) {
@@ -56,14 +56,15 @@ export default function SuratMasuk({ letters, filters }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
                 >
-                    <SuratMasukTable
-                        letters={letters}
-                        filters={filters}
+                    <DataTable
+                        mode="server"
                         columns={columns}
-                        searchInput={searchInput}
-                        setSearchInput={setSearchInput}
-                        loading={loading}
+                        pagination={letters}
+                        filters={filters}
                         visit={visit}
+                        searchInput={searchInput}
+                        onSearchInputChange={setSearchInput}
+                        loading={loading}
                     />
                 </motion.div>
             </div>

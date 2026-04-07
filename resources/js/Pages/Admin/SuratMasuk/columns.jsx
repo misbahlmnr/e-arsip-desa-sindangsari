@@ -8,7 +8,8 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal } from "lucide-react";
-import { SortableColumnHeader } from "./SortableColumnHeader";
+import { SortableColumnHeader } from "@/Components/DataTable/SortableColumnHeader";
+import { router } from "@inertiajs/react";
 
 const STATUS_CONFIG = {
     belum_diproses: {
@@ -35,9 +36,7 @@ export function getColumns({ startIndex = 0 } = {}) {
             accessorKey: "no",
             enableSorting: false,
             header: "No.",
-            cell: ({ row }) => (
-                <span>{startIndex + row.index + 1}</span>
-            ),
+            cell: ({ row }) => <span>{startIndex + row.index + 1}</span>,
         },
         {
             accessorKey: "nomor_registrasi",
@@ -45,9 +44,7 @@ export function getColumns({ startIndex = 0 } = {}) {
                 <SortableColumnHeader column={column} title="No. Reg" />
             ),
             cell: ({ row }) => (
-                <span className="text-xs">
-                    {row.original.nomor_registrasi}
-                </span>
+                <span className="text-xs">{row.original.nomor_registrasi}</span>
             ),
         },
         {
@@ -130,24 +127,40 @@ export function getColumns({ startIndex = 0 } = {}) {
             id: "actions",
             enableSorting: false,
             header: "Aksi",
-            cell: () => (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
+            cell: ({ row }) => {
+                const handleDelete = (letter) => {
+                    if (!letter?.id) {
+                        return;
+                    }
+                    router.delete(
+                        route("admin.surat-masuk.destroy", {
+                            surat_masuk: letter.id,
+                        }),
+                    );
+                };
 
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                        <DropdownMenuItem>Lihat Detail</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500">
-                            Hapus
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            ),
+                return (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+                            <DropdownMenuItem>Lihat Detail</DropdownMenuItem>
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem
+                                className="text-red-500"
+                                onClick={() => handleDelete(row.original)}
+                            >
+                                Hapus
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                );
+            },
         },
     ];
 }
