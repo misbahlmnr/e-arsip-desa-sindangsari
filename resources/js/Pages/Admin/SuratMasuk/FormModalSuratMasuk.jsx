@@ -52,6 +52,7 @@ const FormModalSuratMasuk = (props) => {
         setProcessing(true);
 
         router.post(route("admin.surat-masuk.store"), values, {
+            forceFormData: true,
             onSuccess: () => {
                 onClose();
                 reset();
@@ -273,6 +274,7 @@ const FormModalSuratMasuk = (props) => {
                         <Controller
                             name="file"
                             control={control}
+                            rules={{ required: "File wajib diunggah." }}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel
@@ -282,10 +284,18 @@ const FormModalSuratMasuk = (props) => {
                                         File
                                     </FieldLabel>
                                     <Input
-                                        {...field}
                                         id={field.name}
+                                        name={field.name}
                                         type="file"
+                                        accept=".pdf,.doc,.docx"
                                         aria-invalid={fieldState.invalid}
+                                        onBlur={field.onBlur}
+                                        ref={field.ref}
+                                        onChange={(e) =>
+                                            field.onChange(
+                                                e.target.files?.[0] ?? null,
+                                            )
+                                        }
                                     />
                                     <FieldError errors={[fieldState.error]} />
                                 </Field>

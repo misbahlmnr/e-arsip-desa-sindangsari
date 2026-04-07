@@ -1,16 +1,13 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { DataTable } from "@/Components/DataTable/Index";
 import { columns } from "./columns";
 import { useState } from "react";
 import { Button } from "@/Components/ui/button";
-import FormModalSuratMasuk from "./FormAddSuratMasuk";
+import FormModalSuratMasuk from "./FormModalSuratMasuk";
 
 export default function SuratMasuk() {
-    const { props } = usePage();
-    const data = props;
-
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const mockDataSuratMasuk = [

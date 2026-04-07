@@ -1,6 +1,5 @@
 import { Link, usePage } from "@inertiajs/react";
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {

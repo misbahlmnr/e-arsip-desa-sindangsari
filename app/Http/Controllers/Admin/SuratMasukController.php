@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\SuratMasuk\StoreRequest;
+use App\Models\Letter;
 use Inertia\Inertia;
 
 class SuratMasukController extends Controller
@@ -15,21 +16,17 @@ class SuratMasukController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $request->validate([
-            'nomor_registrasi' => 'required|string|max:255',
-            'no_surat' => 'required|string|max:255',
-            'tanggal_terima' => 'required|date',
-            'pengirim' => 'required|string|max:255',
-            'perihal' => 'required|string|max:255',
-            'status' => 'required|in:belum_diproses,sedang_diproses,selesai',
-            'tujuan' => 'nullable|string|max:255',
-        ]);
+        $data = $request->validated();
 
-        // TODO: Simpan data ke database, contoh:
-        // SuratMasuk::create($request->all());
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('surat-masuk', 'public');
+            $data['file'] = $filePath;
+        }
+        
+        Letter::create($data);
 
-        return redirect()->back()->with('success', 'Surat Masuk berhasil ditambahkan.');
+        return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil ditambahkan.');
     }
 }
