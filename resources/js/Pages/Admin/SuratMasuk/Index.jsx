@@ -1,125 +1,219 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
+import { motion } from "framer-motion";
+import { DataTable } from "@/Components/DataTable/Index";
+import { columns } from "./columns";
+import { useState } from "react";
+import { Button } from "@/Components/ui/button";
+import FormModalSuratMasuk from "./FormAddSuratMasuk";
 
-const SuratMasukIndex = ({ suratMasuk = [] }) => {
+export default function SuratMasuk() {
+    const { props } = usePage();
+    const data = props;
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const mockDataSuratMasuk = [
+        {
+            id: 1,
+            nomor_registrasi: "001/DS-SDG/SM/I/2026",
+            no_surat: "005/DISDUKCAPIL/2026",
+            tanggal_terima: "2026-01-05",
+            pengirim: "Dinas Dukcapil Kab. Pangandaran",
+            perihal: "Permohonan Data Penduduk",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 2,
+            nomor_registrasi: "002/DS-SDG/SM/I/2026",
+            no_surat: "010/DINKES/2026",
+            tanggal_terima: "2026-01-08",
+            pengirim: "Dinas Kesehatan",
+            perihal: "Undangan Sosialisasi Kesehatan",
+            status: "sedang_diproses",
+            tujuan: "Kasi Pelayanan",
+        },
+        {
+            id: 3,
+            nomor_registrasi: "003/DS-SDG/SM/I/2026",
+            no_surat: "015/BPS/2026",
+            tanggal_terima: "2026-01-10",
+            pengirim: "Badan Pusat Statistik",
+            perihal: "Permintaan Data Statistik Desa",
+            status: "selesai",
+            tujuan: "Sekretaris Desa",
+        },
+        {
+            id: 4,
+            nomor_registrasi: "004/DS-SDG/SM/I/2026",
+            no_surat: "020/DISPERKIM/2026",
+            tanggal_terima: "2026-01-12",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "sedang_diproses",
+            tujuan: "Kasi Pembangunan",
+        },
+        {
+            id: 5,
+            nomor_registrasi: "005/DS-SDG/SM/I/2026",
+            no_surat: "022/KEC-CMR/2026",
+            tanggal_terima: "2026-01-15",
+            pengirim: "Kecamatan Cimerak",
+            perihal: "Laporan Kegiatan Bulanan",
+            status: "selesai",
+            tujuan: "Kepala Desa",
+        },
+        {
+            id: 6,
+            nomor_registrasi: "006/DS-SDG/SM/I/2026",
+            no_surat: "030/DINSOS/2026",
+            tanggal_terima: "2026-01-18",
+            pengirim: "Dinas Sosial",
+            perihal: "Verifikasi Data Penerima Bantuan",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 7,
+            nomor_registrasi: "007/DS-SDG/SM/I/2026",
+            no_surat: "035/POLSEK/2026",
+            tanggal_terima: "2026-01-20",
+            pengirim: "Polsek Cimerak",
+            perihal: "Himbauan Keamanan Lingkungan",
+            status: "sedang_diproses",
+            tujuan: "Kasi Pemerintahan",
+        },
+        {
+            id: 8,
+            nomor_registrasi: "008/DS-SDG/SM/I/2026",
+            no_surat: "040/DISDIK/2026",
+            tanggal_terima: "2026-01-22",
+            pengirim: "Dinas Pendidikan",
+            perihal: "Pendataan Siswa Tidak Mampu",
+            status: "selesai",
+            tujuan: "Kasi Pelayanan",
+        },
+        {
+            id: 9,
+            nomor_registrasi: "009/DS-SDG/SM/I/2026",
+            no_surat: "045/BANK-BJB/2026",
+            tanggal_terima: "2026-01-25",
+            pengirim: "Bank BJB",
+            perihal: "Penawaran Kerjasama Layanan Keuangan",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 10,
+            nomor_registrasi: "010/DS-SDG/SM/I/2026",
+            no_surat: "050/PLN/2026",
+            tanggal_terima: "2026-01-28",
+            pengirim: "PLN Area Pangandaran",
+            perihal: "Pemberitahuan Pemadaman Listrik",
+            status: "sedang_diproses",
+            tujuan: "Kasi Pelayanan",
+        },
+        {
+            id: 11,
+            nomor_registrasi: "011/DS-SDG/SM/I/2026",
+            no_surat: "055/DISPERKIM/2026",
+            tanggal_terima: "2026-01-30",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 12,
+            nomor_registrasi: "012/DS-SDG/SM/I/2026",
+            no_surat: "060/DISPERKIM/2026",
+            tanggal_terima: "2026-02-02",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 13,
+            nomor_registrasi: "013/DS-SDG/SM/I/2026",
+            no_surat: "065/DISPERKIM/2026",
+            tanggal_terima: "2026-02-05",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 14,
+            nomor_registrasi: "014/DS-SDG/SM/I/2026",
+            no_surat: "070/DISPERKIM/2026",
+            tanggal_terima: "2026-02-08",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 15,
+            nomor_registrasi: "015/DS-SDG/SM/I/2026",
+            no_surat: "075/DISPERKIM/2026",
+            tanggal_terima: "2026-02-10",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+        {
+            id: 16,
+            nomor_registrasi: "016/DS-SDG/SM/I/2026",
+            no_surat: "080/DISPERKIM/2026",
+            tanggal_terima: "2026-02-12",
+            pengirim: "Dinas Perumahan dan Permukiman",
+            perihal: "Program Bantuan Rumah Layak Huni",
+            status: "belum_diproses",
+            tujuan: "-",
+        },
+    ];
+
     return (
-        <AppLayout
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Surat Masuk
-                </h2>
-            }
-        >
+        <AppLayout>
             <Head title="Surat Masuk" />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-medium text-gray-900">
-                                    Daftar Surat Masuk
-                                </h3>
-                                <Link
-                                    href="#"
-                                    className="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                                >
-                                    Tambah Surat
-                                </Link>
-                            </div>
 
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                No
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Nomor Surat
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Asal Surat
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Perihal
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Tanggal
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                            >
-                                                Aksi
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {suratMasuk.length > 0 ? (
-                                            suratMasuk.map((item, index) => (
-                                                <tr key={index}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                        {item.no_surat}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {item.asal_surat}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {item.perihal}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {item.tanggal_surat}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <Link
-                                                            href="#"
-                                                            className="text-indigo-600 hover:text-indigo-900 mr-4"
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                        <button className="text-red-600 hover:text-red-900">
-                                                            Hapus
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td
-                                                    colSpan="6"
-                                                    className="px-6 py-4 text-center text-sm text-gray-500"
-                                                >
-                                                    Tidak ada data surat masuk.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+            <div className="space-y-8">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-between"
+                >
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            Surat Masuk
+                        </h1>
+                        <p className="text-gray-600 mt-1">
+                            Kelola dan pantau semua surat masuk dengan mudah
+                        </p>
                     </div>
-                </div>
+
+                    <Button onClick={() => setIsModalOpen(true)}>
+                        Tambah Surat
+                    </Button>
+                </motion.div>
+
+                {/* Surat Terbaru */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <DataTable columns={columns} data={mockDataSuratMasuk} />
+                </motion.div>
             </div>
+            <FormModalSuratMasuk
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </AppLayout>
     );
-};
-
-export default SuratMasukIndex;
+}

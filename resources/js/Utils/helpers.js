@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
+ 
 
 // Type checkers
 export const isArray = function (value) {
