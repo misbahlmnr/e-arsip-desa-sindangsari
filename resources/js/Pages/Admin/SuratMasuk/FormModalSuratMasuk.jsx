@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import { Field, FieldError, FieldLabel } from "@/Components/ui/field";
+import FileAttachmentPreview from "./FileAttachmentPreview";
 
 const STATUS_OPTIONS = [
     { value: "belum_diproses", label: "Belum Diproses" },
@@ -158,7 +159,7 @@ const FormModalSuratMasuk = (props) => {
                 }
             }}
         >
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {isEdit ? "Edit Surat Masuk" : "Tambah Surat Masuk"}
@@ -368,17 +369,14 @@ const FormModalSuratMasuk = (props) => {
                                         ) : null}
                                     </FieldLabel>
                                     {isEdit && letter?.file_url ? (
-                                        <p className="text-xs text-muted-foreground mb-1">
-                                            Lampiran saat ini:{" "}
-                                            <a
-                                                href={letter.file_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-primary underline underline-offset-2"
-                                            >
-                                                lihat file
-                                            </a>
-                                        </p>
+                                        <div className="mb-2 space-y-1">
+                                            <p className="text-xs text-muted-foreground">
+                                                Lampiran saat ini:
+                                            </p>
+                                            <FileAttachmentPreview
+                                                url={letter.file_url}
+                                            />
+                                        </div>
                                     ) : null}
                                     <Input
                                         id={field.name}

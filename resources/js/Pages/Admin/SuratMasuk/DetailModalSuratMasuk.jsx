@@ -8,6 +8,7 @@ import {
     DialogTitle,
 } from "@/Components/ui/dialog";
 import { cn, formatTanggalKalenderWib } from "@/lib/utils";
+import FileAttachmentPreview from "./FileAttachmentPreview";
 
 const STATUS_CONFIG = {
     belum_diproses: {
@@ -48,7 +49,7 @@ const DetailModalSuratMasuk = (props) => {
                 }
             }}
         >
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Detail Surat Masuk</DialogTitle>
                     <DialogDescription>
@@ -81,14 +82,9 @@ const DetailModalSuratMasuk = (props) => {
                         <Row label="Tujuan">{letter.tujuan || "—"}</Row>
                         <Row label="Lampiran">
                             {letter.file_url ? (
-                                <a
-                                    href={letter.file_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-primary font-medium underline underline-offset-2 hover:no-underline"
-                                >
-                                    Buka / unduh file
-                                </a>
+                                <div className="space-y-2">
+                                    <FileAttachmentPreview url={letter.file_url} />
+                                </div>
                             ) : (
                                 "—"
                             )}

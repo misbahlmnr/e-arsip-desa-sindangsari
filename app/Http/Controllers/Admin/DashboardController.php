@@ -5,21 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Kelas;
-use App\Models\Tugas;
-use App\Models\Absensi;
-use App\Models\MateriRekomendasi;
-use App\Services\AdaptiveLearningService;
 
 class DashboardController extends Controller
 {
-    protected $adaptiveService;
-
-    public function __construct(AdaptiveLearningService $adaptiveService)
-    {
-        $this->adaptiveService = $adaptiveService;
-    }
-
     public function index()
     {
         $data = [

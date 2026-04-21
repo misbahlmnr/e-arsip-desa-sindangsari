@@ -8,9 +8,10 @@ use App\Models\Materi;
 use App\Models\MateriRekomendasi;
 use App\Models\AdaptiveRule;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\SuratMasuk\StoreRequest;
+use App\Http\Requests\SuratMasuk\{StoreRequest, UpdateRequest};
 use Illuminate\Http\Request;
 use App\Models\Letter;
+use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
 {
