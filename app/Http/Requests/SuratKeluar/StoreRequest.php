@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "no_surat" => "required|string|unique:letters,no_surat",
+            "no_surat" => "required|string|unique:surat_keluar,no_surat",
             "tanggal_kirim" => "required|date",
             "tujuan" => "required|string",
             "perihal" => "required|string",

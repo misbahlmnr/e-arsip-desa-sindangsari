@@ -159,7 +159,7 @@ const FormModalSuratMasuk = (props) => {
                 }
             }}
         >
-            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
                         {isEdit ? "Edit Surat Masuk" : "Tambah Surat Masuk"}

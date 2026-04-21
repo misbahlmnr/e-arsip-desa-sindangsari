@@ -28,12 +28,12 @@ class UpdateRequest extends FormRequest
             'nomor_registrasi' => [
                 'required',
                 'string',
-                Rule::unique('letters', 'nomor_registrasi')->ignore($letter),
+                Rule::unique('surat_masuk', 'nomor_registrasi')->ignore($letter),
             ],
             'no_surat' => [
                 'required',
                 'string',
-                Rule::unique('letters', 'no_surat')->ignore($letter),
+                Rule::unique('surat_masuk', 'no_surat')->ignore($letter),
             ],
             'tanggal_terima' => ['required', 'date'],
             'pengirim' => ['required', 'string'],

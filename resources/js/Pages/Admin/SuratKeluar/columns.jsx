@@ -7,7 +7,7 @@ import {
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 import { formatTanggalKalenderWib } from "@/lib/utils";
-import { MoreHorizontal, FileText } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { SortableColumnHeader } from "@/Components/DataTable/SortableColumnHeader";
 import { router } from "@inertiajs/react";
 
@@ -78,28 +78,6 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
                     >
                         {perihal}
                     </span>
-                );
-            },
-        },
-        {
-            accessorKey: "file",
-            enableSorting: false,
-            header: "File",
-            cell: ({ row }) => {
-                const file = row.original.file;
-                if (!file) {
-                    return <span className="text-xs text-gray-400">-</span>;
-                }
-                return (
-                    <a
-                        href={file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline"
-                    >
-                        <FileText className="h-3.5 w-3.5" />
-                        Lihat File
-                    </a>
                 );
             },
         },

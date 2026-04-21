@@ -27,16 +27,16 @@ export const getNavbarItems = (role) => {
                 current: route().current("admin.surat-masuk.index"),
             },
             {
-                name: "Surat Keluar",
-                href: route("admin.surat-keluar.index"),
-                icon: Send,
-                current: route().current("admin.surat-keluar.index"),
-            },
-            {
                 name: "Disposisi",
                 href: "#",
                 icon: ClipboardList,
                 current: route().current("disposisi.*"),
+            },
+            {
+                name: "Surat Keluar",
+                href: route("admin.surat-keluar.index"),
+                icon: Send,
+                current: route().current("admin.surat-keluar.index"),
             },
             {
                 name: "Arsip Surat",
@@ -66,16 +66,16 @@ export const getNavbarItems = (role) => {
                 current: route().current("surat-masuk.*"),
             },
             {
-                name: "Surat Keluar",
-                href: "#",
-                icon: Send,
-                current: route().current("surat-keluar.*"),
-            },
-            {
                 name: "Disposisi",
                 href: "#",
                 icon: ClipboardList,
                 current: route().current("disposisi.*"),
+            },
+            {
+                name: "Surat Keluar",
+                href: "#",
+                icon: Send,
+                current: route().current("surat-keluar.*"),
             },
             {
                 name: "Arsip Surat",

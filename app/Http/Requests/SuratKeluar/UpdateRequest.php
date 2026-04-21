@@ -26,7 +26,7 @@ class UpdateRequest extends FormRequest
             "no_surat" => [
                 "required",
                 "string",
-                Rule::unique("letters", "no_surat")->ignore($this->route("surat_keluar")),
+                Rule::unique("surat_keluar", "no_surat")->ignore($this->route("surat_keluar")),
             ],
             "tanggal_kirim" => ["required", "date"],
             "tujuan" => ["required", "string"],

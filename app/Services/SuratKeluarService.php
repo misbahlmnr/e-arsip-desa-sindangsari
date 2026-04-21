@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\SuratKeluar\{StoreRequest, UpdateRequest};
 use Illuminate\Http\Request;
-use App\Models\Letter;
+use App\Models\SuratKeluar;
 use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarService
@@ -43,7 +42,7 @@ class SuratKeluarService
             $sortBy = 'tanggal_kirim';
         }
 
-        $query = Letter::query()
+        $query = SuratKeluar::query()
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
@@ -83,14 +82,14 @@ class SuratKeluarService
                 $data['file'] = $filePath;
             }
     
-            return Letter::create($data);
+            return SuratKeluar::create($data);
         } catch (\Exception $e) {
             Log::error('Error storing surat keluar: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    public function update(UpdateRequest $req, Letter $surat_keluar) {
+    public function update(UpdateRequest $req, SuratKeluar $surat_keluar) {
         try {
             $data = $req->validated();
             $filePath = $this->handleFile($req);
@@ -111,7 +110,7 @@ class SuratKeluarService
         }
     }
 
-    public function destroy(Letter $surat_keluar) {
+    public function destroy(SuratKeluar $surat_keluar) {
         try {
             if ($surat_keluar->file && Storage::disk('public')->exists($surat_keluar->file)) {
                 Storage::disk('public')->delete($surat_keluar->file);

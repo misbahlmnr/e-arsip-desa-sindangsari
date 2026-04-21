@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\SuratKeluarService;
 use App\Http\Requests\SuratKeluar\StoreRequest;
 use App\Http\Requests\SuratKeluar\UpdateRequest;
-use App\Models\Letter;
+use App\Models\SuratKeluar;
 
 class SuratKeluarController extends Controller
 {
@@ -32,14 +32,14 @@ class SuratKeluarController extends Controller
         return redirect()->route('admin.surat-keluar.index')->with('success', 'Surat Keluar berhasil ditambahkan.');
     }
 
-    public function update(UpdateRequest $req, Letter $surat_keluar)
+    public function update(UpdateRequest $req, SuratKeluar $surat_keluar)
     {
         $this->services->update($req, $surat_keluar);
 
         return redirect()->route('admin.surat-keluar.index')->with('success', 'Surat Keluar berhasil diperbarui.');
     }
 
-    public function destroy(Letter $surat_keluar)
+    public function destroy(SuratKeluar $surat_keluar)
     {
         $this->services->destroy($surat_keluar);
 

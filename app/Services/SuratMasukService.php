@@ -5,7 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\SuratMasuk\{StoreRequest, UpdateRequest};
 use Illuminate\Http\Request;
-use App\Models\Letter;
+use App\Models\SuratMasuk;
 use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
@@ -45,7 +45,7 @@ class SuratMasukService
             $sortBy = 'tanggal_terima';
         }
 
-        $query = Letter::query()
+        $query = SuratMasuk::query()
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
@@ -85,14 +85,14 @@ class SuratMasukService
                 $data['file'] = $filePath;
             }
     
-            return Letter::create($data);
+            return SuratMasuk::create($data);
         } catch (\Exception $e) {
             Log::error('Error storing surat masuk: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    public function update(UpdateRequest $req, Letter $surat_masuk) {
+    public function update(UpdateRequest $req, SuratMasuk $surat_masuk) {
         try {
             $data = $req->validated();
             $filePath = $this->handleFile($req);
@@ -113,7 +113,7 @@ class SuratMasukService
         }
     }
 
-    public function destroy(Letter $surat_masuk) {
+    public function destroy(SuratMasuk $surat_masuk) {
         try {
             if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
                 Storage::disk('public')->delete($surat_masuk->file);

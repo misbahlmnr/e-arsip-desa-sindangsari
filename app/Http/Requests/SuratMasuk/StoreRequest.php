@@ -22,8 +22,8 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nomor_registrasi" => "required|string|unique:letters,nomor_registrasi",
-            "no_surat" => "required|string|unique:letters,no_surat",
+            "nomor_registrasi" => "required|string|unique:surat_masuk,nomor_registrasi",
+            "no_surat" => "required|string|unique:surat_masuk,no_surat",
             "tanggal_terima" => "required|date",
             "pengirim" => "required|string",
             "perihal" => "required|string",
