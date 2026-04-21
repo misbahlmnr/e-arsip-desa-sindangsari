@@ -1,10 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\SuratMasukController;
-use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Admin\{SuratMasukController, SuratKeluarController, UserController};
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,19 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Admin routes
-    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('surat-masuk', SuratMasukController::class)->except([
-            'create',
-            'edit',
-            'show',
-        ]);
+    Route::middleware('role:admin')->name('admin.')->group(function () {
+        Route::resource('surat-masuk', SuratMasukController::class);
+        Route::resource('surat-keluar', SuratKeluarController::class);
     });
-
-    // Guru routes
-    Route::middleware('role:guru')->prefix('guru')->name('guru.')->group(function () {});
-
-    // Siswa routes
-    Route::middleware('role:siswa')->prefix('siswa')->name('siswa.')->group(function () {});
 });
 
 require __DIR__.'/auth.php';

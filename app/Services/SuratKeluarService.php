@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\SuratMasuk\{StoreRequest, UpdateRequest};
+use App\Http\Requests\SuratKeluar\{StoreRequest, UpdateRequest};
 use Illuminate\Http\Request;
 use App\Models\Letter;
 use Illuminate\Support\Facades\Storage;
 
-class SuratMasukService
+class SuratKeluarService
 {
     /**
      * Sortable columns (whitelist) — prevents arbitrary ORDER BY injection.
@@ -17,13 +18,10 @@ class SuratMasukService
      */
     private const SORTABLE = [
         'id',
-        'nomor_registrasi',
         'no_surat',
-        'tanggal_terima',
-        'pengirim',
-        'perihal',
-        'status',
+        'tanggal_kirim',
         'tujuan',
+        'perihal',
         'created_at',
     ];
 
@@ -38,11 +36,11 @@ class SuratMasukService
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
         $perPage = (int) ($validated['per_page'] ?? 10);
-        $sortBy = $validated['sort_by'] ?? 'tanggal_terima';
+        $sortBy = $validated['sort_by'] ?? 'tanggal_kirim';
         $sortDir = $validated['sort_dir'] ?? 'desc';
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
-            $sortBy = 'tanggal_terima';
+            $sortBy = 'tanggal_kirim';
         }
 
         $query = Letter::query()
@@ -50,7 +48,7 @@ class SuratMasukService
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
                     $q->where('no_surat', 'like', $like)
-                    ->orWhere('pengirim', 'like', $like)
+                    ->orWhere('tujuan', 'like', $like)
                     ->orWhere('perihal', 'like', $like);
                 });
             })
@@ -71,7 +69,7 @@ class SuratMasukService
 
     private function handleFile(Request $req) {
         if ($req->hasFile('file')) {
-            return $req->file('file')->store('surat-masuk', 'public');
+            return $req->file('file')->store('surat-keluar', 'public');
         }
         return null;
     }
@@ -87,40 +85,40 @@ class SuratMasukService
     
             return Letter::create($data);
         } catch (\Exception $e) {
-            Log::error('Error storing surat masuk: ' . $e->getMessage());
+            Log::error('Error storing surat keluar: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    public function update(UpdateRequest $req, Letter $surat_masuk) {
+    public function update(UpdateRequest $req, Letter $surat_keluar) {
         try {
             $data = $req->validated();
             $filePath = $this->handleFile($req);
 
             if ($filePath) {
-                if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
-                    Storage::disk('public')->delete($surat_masuk->file);
+                if ($surat_keluar->file && Storage::disk('public')->exists($surat_keluar->file)) {
+                    Storage::disk('public')->delete($surat_keluar->file);
                 }
                 $data['file'] = $filePath;
             } else {
                 unset($data['file']);
             }
 
-            return $surat_masuk->update($data);
+            return $surat_keluar->update($data);
         } catch (\Exception $e) {
-            Log::error('Error updating surat masuk: ' . $e->getMessage());
+            Log::error('Error updating surat keluar: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    public function destroy(Letter $surat_masuk) {
+    public function destroy(Letter $surat_keluar) {
         try {
-            if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
-                Storage::disk('public')->delete($surat_masuk->file);
+            if ($surat_keluar->file && Storage::disk('public')->exists($surat_keluar->file)) {
+                Storage::disk('public')->delete($surat_keluar->file);
             }
-            return $surat_masuk->delete();
+            return $surat_keluar->delete();
         } catch (\Exception $e) {
-            Log::error('Error deleting surat masuk: ' . $e->getMessage());
+            Log::error('Error deleting surat keluar: ' . $e->getMessage());
             throw $e;
         }
     }

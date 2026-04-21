@@ -24,13 +24,13 @@ export const getNavbarItems = (role) => {
                 name: "Surat Masuk",
                 href: route("admin.surat-masuk.index"),
                 icon: Inbox,
-                current: route().current("surat-masuk.*"),
+                current: route().current("admin.surat-masuk.index"),
             },
             {
                 name: "Surat Keluar",
-                href: "#",
+                href: route("admin.surat-keluar.index"),
                 icon: Send,
-                current: route().current("surat-keluar.*"),
+                current: route().current("admin.surat-keluar.index"),
             },
             {
                 name: "Disposisi",
