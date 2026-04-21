@@ -1,5 +1,5 @@
 import { router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
 import { Button } from "@/Components/ui/button";
@@ -27,35 +27,71 @@ const STATUS_OPTIONS = [
     { value: "selesai", label: "Selesai" },
 ];
 
+const DEFAULT_VALUES = {
+    nomor_registrasi: "",
+    no_surat: "",
+    tanggal_terima: "",
+    pengirim: "",
+    perihal: "",
+    status: "belum_diproses",
+    tujuan: "-",
+    file: null,
+};
+
+function letterToFormValues(letter) {
+    const tanggal =
+        typeof letter.tanggal_terima === "string"
+            ? letter.tanggal_terima.slice(0, 10)
+            : letter.tanggal_terima
+              ? String(letter.tanggal_terima).slice(0, 10)
+              : "";
+
+    return {
+        nomor_registrasi: letter.nomor_registrasi ?? "",
+        no_surat: letter.no_surat ?? "",
+        tanggal_terima: tanggal,
+        pengirim: letter.pengirim ?? "",
+        perihal: letter.perihal ?? "",
+        status: letter.status ?? "belum_diproses",
+        tujuan: letter.tujuan ?? "-",
+        file: null,
+    };
+}
+
 const FormModalSuratMasuk = (props) => {
-    const { isOpen, onClose } = props;
+    const { isOpen, onClose, letter } = props;
     const [processing, setProcessing] = useState(false);
 
+    const isEdit = Boolean(letter?.id);
+
     const { control, handleSubmit, setError, reset } = useForm({
-        defaultValues: {
-            nomor_registrasi: "",
-            no_surat: "",
-            tanggal_terima: "",
-            pengirim: "",
-            perihal: "",
-            status: "belum_diproses",
-            tujuan: "-",
-            file: null,
-        },
+        defaultValues: DEFAULT_VALUES,
     });
 
     useEffect(() => {
-        if (!isOpen) reset();
-    }, [isOpen, reset]);
+        if (!isOpen) {
+            reset(DEFAULT_VALUES);
+            return;
+        }
+        if (letter?.id) {
+            reset(letterToFormValues(letter));
+        } else {
+            reset(DEFAULT_VALUES);
+        }
+    }, [isOpen, letter, reset]);
+
+    const fileRules = useMemo(
+        () => (isEdit ? {} : { required: "File wajib diunggah." }),
+        [isEdit],
+    );
 
     const onSubmit = (values) => {
         setProcessing(true);
 
-        router.post(route("admin.surat-masuk.store"), values, {
-            forceFormData: true,
+        const finish = {
             onSuccess: () => {
                 onClose();
-                reset();
+                reset(DEFAULT_VALUES);
             },
             onError: (serverErrors) => {
                 if (serverErrors) {
@@ -78,17 +114,59 @@ const FormModalSuratMasuk = (props) => {
             onFinish: () => {
                 setProcessing(false);
             },
+        };
+
+        if (isEdit) {
+            const { file, ...fields } = values;
+            const updateUrl = route("admin.surat-masuk.update", {
+                surat_masuk: letter.id,
+            });
+
+            if (file instanceof File) {
+                router.post(
+                    updateUrl,
+                    { ...fields, _method: "put", file },
+                    {
+                        forceFormData: true,
+                        preserveScroll: true,
+                        ...finish,
+                    },
+                );
+            } else {
+                router.put(updateUrl, fields, {
+                    preserveScroll: true,
+                    ...finish,
+                });
+            }
+
+            return;
+        }
+
+        router.post(route("admin.surat-masuk.store"), values, {
+            forceFormData: true,
+            preserveScroll: true,
+            ...finish,
         });
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
+        <Dialog
+            open={isOpen}
+            onOpenChange={(next) => {
+                if (!next) {
+                    onClose();
+                }
+            }}
+        >
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Tambah Surat Masuk</DialogTitle>
+                    <DialogTitle>
+                        {isEdit ? "Edit Surat Masuk" : "Tambah Surat Masuk"}
+                    </DialogTitle>
                     <DialogDescription>
-                        Masukkan detail informasi surat masuk baru. Klik simpan
-                        ketika selesai.
+                        {isEdit
+                            ? "Perbarui informasi surat masuk. Kosongkan unggahan file jika tidak ingin mengganti lampiran."
+                            : "Masukkan detail informasi surat masuk baru. Klik simpan ketika selesai."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -274,7 +352,7 @@ const FormModalSuratMasuk = (props) => {
                         <Controller
                             name="file"
                             control={control}
-                            rules={{ required: "File wajib diunggah." }}
+                            rules={fileRules}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel
@@ -282,7 +360,26 @@ const FormModalSuratMasuk = (props) => {
                                         className="text-right text-sm"
                                     >
                                         File
+                                        {isEdit ? (
+                                            <span className="text-left block font-normal text-muted-foreground text-xs mt-0.5">
+                                                Opsional — biarkan kosong untuk
+                                                mempertahankan file saat ini.
+                                            </span>
+                                        ) : null}
                                     </FieldLabel>
+                                    {isEdit && letter?.file_url ? (
+                                        <p className="text-xs text-muted-foreground mb-1">
+                                            Lampiran saat ini:{" "}
+                                            <a
+                                                href={letter.file_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-primary underline underline-offset-2"
+                                            >
+                                                lihat file
+                                            </a>
+                                        </p>
+                                    ) : null}
                                     <Input
                                         id={field.name}
                                         name={field.name}

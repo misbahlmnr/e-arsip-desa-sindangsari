@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratMasuk\StoreRequest;
+use App\Http\Requests\SuratMasuk\UpdateRequest;
 use App\Models\Letter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -83,6 +84,24 @@ class SuratMasukController extends Controller
         Letter::create($data);
 
         return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil ditambahkan.');
+    }
+
+    public function update(UpdateRequest $request, Letter $surat_masuk)
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('file')) {
+            if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
+                Storage::disk('public')->delete($surat_masuk->file);
+            }
+            $data['file'] = $request->file('file')->store('surat-masuk', 'public');
+        } else {
+            unset($data['file']);
+        }
+
+        $surat_masuk->update($data);
+
+        return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil diperbarui.');
     }
 
     public function destroy(Letter $surat_masuk)

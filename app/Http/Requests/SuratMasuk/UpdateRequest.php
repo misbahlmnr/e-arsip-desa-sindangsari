@@ -3,6 +3,7 @@
 namespace App\Http\Requests\SuratMasuk;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,25 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $letter = $this->route('surat_masuk');
+
         return [
-            //
+            'nomor_registrasi' => [
+                'required',
+                'string',
+                Rule::unique('letters', 'nomor_registrasi')->ignore($letter),
+            ],
+            'no_surat' => [
+                'required',
+                'string',
+                Rule::unique('letters', 'no_surat')->ignore($letter),
+            ],
+            'tanggal_terima' => ['required', 'date'],
+            'pengirim' => ['required', 'string'],
+            'perihal' => ['required', 'string'],
+            'status' => ['required', 'in:belum_diproses,sedang_diproses,selesai'],
+            'tujuan' => ['nullable', 'string'],
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
         ];
     }
 }

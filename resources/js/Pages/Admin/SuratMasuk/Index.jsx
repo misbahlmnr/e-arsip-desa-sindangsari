@@ -4,12 +4,20 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import FormModalSuratMasuk from "./FormModalSuratMasuk";
+import DetailModalSuratMasuk from "./DetailModalSuratMasuk";
 import { DataTable } from "@/Components/DataTable/Index";
 import { getColumns } from "./columns";
 import { useServerTable } from "@/hooks/useServerTable";
 
 export default function SuratMasuk({ letters, filters }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingLetter, setEditingLetter] = useState(null);
+    const [detailLetter, setDetailLetter] = useState(null);
+
+    const closeFormModal = () => {
+        setIsModalOpen(false);
+        setEditingLetter(null);
+    };
 
     const { loading, searchInput, setSearchInput, visit } = useServerTable({
         routeName: "admin.surat-masuk.index",
@@ -23,6 +31,11 @@ export default function SuratMasuk({ letters, filters }) {
                 startIndex:
                     ((letters?.current_page ?? 1) - 1) *
                     (letters?.per_page ?? 10),
+                onDetail: (row) => setDetailLetter(row),
+                onEdit: (row) => {
+                    setEditingLetter(row);
+                    setIsModalOpen(true);
+                },
             }),
         [letters?.current_page, letters?.per_page],
     );
@@ -46,7 +59,12 @@ export default function SuratMasuk({ letters, filters }) {
                         </p>
                     </div>
 
-                    <Button onClick={() => setIsModalOpen(true)}>
+                    <Button
+                        onClick={() => {
+                            setEditingLetter(null);
+                            setIsModalOpen(true);
+                        }}
+                    >
                         Tambah Surat
                     </Button>
                 </motion.div>
@@ -71,7 +89,13 @@ export default function SuratMasuk({ letters, filters }) {
 
             <FormModalSuratMasuk
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={closeFormModal}
+                letter={editingLetter}
+            />
+
+            <DetailModalSuratMasuk
+                letter={detailLetter}
+                onClose={() => setDetailLetter(null)}
             />
         </AppLayout>
     );

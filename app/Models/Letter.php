@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Letter extends Model
 {
@@ -16,4 +17,30 @@ class Letter extends Model
         'tujuan',
         'file',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'tanggal_terima' => 'date:Y-m-d',
+        ];
+    }
+
+    /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'file_url',
+    ];
+
+    public function getFileUrlAttribute(): ?string
+    {
+        if (! $this->file) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->file);
+    }
 }

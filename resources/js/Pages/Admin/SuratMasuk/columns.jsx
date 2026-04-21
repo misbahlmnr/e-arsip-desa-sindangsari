@@ -6,7 +6,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, formatTanggalKalenderWib } from "@/lib/utils";
 import { MoreHorizontal } from "lucide-react";
 import { SortableColumnHeader } from "@/Components/DataTable/SortableColumnHeader";
 import { router } from "@inertiajs/react";
@@ -27,9 +27,13 @@ const STATUS_CONFIG = {
 };
 
 /**
- * @param {{ startIndex?: number }} opts
+ * @param {{
+ *   startIndex?: number;
+ *   onDetail?: (row: object) => void;
+ *   onEdit?: (row: object) => void;
+ * }} opts
  */
-export function getColumns({ startIndex = 0 } = {}) {
+export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
     return [
         {
             id: "row_number",
@@ -60,6 +64,11 @@ export function getColumns({ startIndex = 0 } = {}) {
             accessorKey: "tanggal_terima",
             header: ({ column }) => (
                 <SortableColumnHeader column={column} title="Tgl Terima" />
+            ),
+            cell: ({ row }) => (
+                <span className="text-xs whitespace-nowrap">
+                    {formatTanggalKalenderWib(row.original.tanggal_terima)}
+                </span>
             ),
         },
         {
@@ -149,11 +158,25 @@ export function getColumns({ startIndex = 0 } = {}) {
 
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                            <DropdownMenuItem>Lihat Detail</DropdownMenuItem>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => onDetail?.(row.original)}
+                            >
+                                Lihat Detail
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => onEdit?.(row.original)}
+                            >
+                                Edit
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-red-500"
-                                onClick={() => handleDelete(row.original)}
+                                onClick={() =>
+                                    confirm(
+                                        "Apakah Anda yakin ingin menghapus surat ini?",
+                                    )
+                                        ? handleDelete(row.original)
+                                        : null
+                                }
                             >
                                 Hapus
                             </DropdownMenuItem>
