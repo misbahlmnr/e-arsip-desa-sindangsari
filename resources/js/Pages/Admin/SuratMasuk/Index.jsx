@@ -3,11 +3,11 @@ import { Head } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
+import { DataTable } from "@/Components/DataTable/Index";
 import FormModalSuratMasuk from "./FormModalSuratMasuk";
 import DetailModalSuratMasuk from "./DetailModalSuratMasuk";
-import { DataTable } from "@/Components/DataTable/Index";
-import { getColumns } from "./columns";
 import { useServerTable } from "@/Hooks/useServerTable";
+import { getColumns } from "./columns";
 
 export default function SuratMasuk({ letters, filters }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,26 +24,26 @@ export default function SuratMasuk({ letters, filters }) {
         filters,
         searchDebounceMs: 400,
     });
+    const startIndex =
+        ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
 
     const columns = useMemo(
         () =>
             getColumns({
-                startIndex:
-                    ((letters?.current_page ?? 1) - 1) *
-                    (letters?.per_page ?? 10),
+                startIndex,
                 onDetail: (row) => setDetailLetter(row),
                 onEdit: (row) => {
                     setEditingLetter(row);
                     setIsModalOpen(true);
                 },
             }),
-        [letters?.current_page, letters?.per_page],
+        [startIndex],
     );
 
     return (
         <AppLayout
             title="Surat Masuk"
-            subtitle="Kelola dan pantau semua surat masuk dengan mudah"
+            subtitle="Daftar seluruh surat yang diterima oleh kantor desa."
         >
             <Head title="Surat Masuk" />
 
@@ -51,17 +51,8 @@ export default function SuratMasuk({ letters, filters }) {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-end"
                 >
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            Surat Masuk
-                        </h1>
-                        <p className="text-gray-600 mt-1">
-                            Kelola dan pantau semua surat masuk dengan mudah
-                        </p>
-                    </div>
-
                     <Button
                         onClick={() => {
                             setEditingLetter(null);
@@ -78,7 +69,6 @@ export default function SuratMasuk({ letters, filters }) {
                     transition={{ delay: 0.15 }}
                 >
                     <DataTable
-                        mode="server"
                         columns={columns}
                         pagination={letters}
                         filters={filters}
@@ -86,6 +76,8 @@ export default function SuratMasuk({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
+                        searchPlaceholder="Cari nomor, pengirim, atau perihal..."
+                        emptyMessage="Coba ubah kata kunci pencarian."
                     />
                 </motion.div>
             </div>

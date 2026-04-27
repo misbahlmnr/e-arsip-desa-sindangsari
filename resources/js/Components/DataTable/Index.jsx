@@ -9,28 +9,19 @@ import {
 import {
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Input } from "@/Components/ui/input";
 import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 import { Button } from "@/Components/ui/button";
-import { ChevronDownIcon } from "lucide-react";
+import { FileInput, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -49,12 +40,10 @@ const defaultServerSort = { sort_by: "tanggal_terima", sort_dir: "desc" };
  */
 
 /**
- * Data table — client (TanStack filter + local pages) or server (Inertia + Laravel paginator).
+ * Data table — server-side (Inertia + Laravel paginator).
  *
  * @param {object} props
- * @param {'client'|'server'} [props.mode='client']
  * @param {import('@tanstack/react-table').ColumnDef[]} props.columns
- * @param {unknown[]} [props.data] — client mode rows; server mode optional if `pagination` has `data`
  * @param {LaravelPaginator} [props.pagination] — server mode (Laravel LengthAwarePaginator JSON)
  * @param {object} [props.filters] — server: `{ search, sort_by, sort_dir, per_page }`
  * @param {(params: Record<string, unknown>) => void} [props.visit] — server: `router.get` wrapper from `useServerTable`
@@ -67,9 +56,7 @@ const defaultServerSort = { sort_by: "tanggal_terima", sort_dir: "desc" };
  */
 
 export function DataTable({
-    mode = "client",
     columns,
-    data: dataProp,
     pagination,
     filters,
     visit,
@@ -80,11 +67,7 @@ export function DataTable({
     emptyMessage,
     serverSortClearDefaults = defaultServerSort,
 }) {
-    const isServer = mode === "server";
-
-    const [globalFilter, setGlobalFilter] = useState("");
-
-    const tableData = isServer ? (pagination?.data ?? []) : (dataProp ?? []);
+    const tableData = pagination?.data ?? [];
 
     const pageIndex = Math.max(0, (pagination?.current_page ?? 1) - 1);
     const pageSize = pagination?.per_page ?? 10;
@@ -151,39 +134,23 @@ export function DataTable({
         ],
     );
 
-    // TanStack Table + React Compiler: manual server mode is intentional.
+    // TanStack Table + React Compiler: manual server-side mode is intentional.
     // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table API
     const table = useReactTable({
         data: tableData,
         columns,
-        ...(isServer
-            ? {
-                  pageCount,
-                  manualPagination: true,
-                  manualSorting: true,
-                  state: {
-                      pagination: {
-                          pageIndex,
-                          pageSize,
-                      },
-                      sorting: [{ id: sortBy, desc: sortDir === "desc" }],
-                  },
-                  onPaginationChange: handleServerPagination,
-                  onSortingChange: handleServerSorting,
-              }
-            : {
-                  state: {
-                      globalFilter,
-                  },
-                  onGlobalFilterChange: setGlobalFilter,
-                  getFilteredRowModel: getFilteredRowModel(),
-                  getPaginationRowModel: getPaginationRowModel(),
-                  initialState: {
-                      pagination: {
-                          pageSize: 10,
-                      },
-                  },
-              }),
+        pageCount,
+        manualPagination: true,
+        manualSorting: true,
+        state: {
+            pagination: {
+                pageIndex,
+                pageSize,
+            },
+            sorting: [{ id: sortBy, desc: sortDir === "desc" }],
+        },
+        onPaginationChange: handleServerPagination,
+        onSortingChange: handleServerSorting,
         getCoreRowModel: getCoreRowModel(),
     });
 
@@ -194,278 +161,202 @@ export function DataTable({
     const to = pagination?.to ?? 0;
     const total = pagination?.total ?? 0;
 
-    const clientRowCount = table.getRowModel().rows.length;
-    const clientDataLen = tableData.length;
-
     return (
-        <div className="space-y-4">
+        <div className="surface-card overflow-hidden">
             <div
                 className={cn(
-                    "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
-                    !isServer && "sm:justify-between",
+                    "flex flex-col md:flex-row md:items-center gap-3 px-6 md:px-8 py-5 border-b border-border",
                 )}
             >
-                {isServer ? (
+                <div className="relative flex-1 max-w-md">
+                    <Search className="size-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                        placeholder={searchPlaceholder ?? "Cari surat masuk…"}
+                        placeholder={searchPlaceholder ?? "Cari data..."}
                         value={searchInput ?? ""}
                         onChange={(e) => onSearchInputChange?.(e.target.value)}
-                        className="max-w-md"
+                        className="pl-10 h-11 rounded-xl"
                     />
-                ) : (
-                    <Input
-                        placeholder={searchPlaceholder ?? "Cari surat masuk…"}
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        className="max-w-sm"
-                    />
-                )}
-                <div className="flex items-center gap-2">
-                    <span
+                </div>
+                <Select
+                    value={String(pageSize)}
+                    onValueChange={(value) =>
+                        visit?.({
+                            page: 1,
+                            per_page: Number(value),
+                            search: filters?.search,
+                            sort_by: filters?.sort_by,
+                            sort_dir: filters?.sort_dir,
+                        })
+                    }
+                >
+                    <SelectTrigger className="w-full md:w-44 h-11 rounded-xl">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {PAGE_SIZE_OPTIONS.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                                {size} / halaman
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {loading ? (
+                <div className="px-8 py-10 text-sm text-muted-foreground">
+                    Memuat data...
+                </div>
+            ) : (
+                <>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <TableRow
+                                        key={headerGroup.id}
+                                        className="bg-muted/40 border-b border-border hover:bg-muted/40"
+                                    >
+                                        {headerGroup.headers.map(
+                                            (header, index) => (
+                                                <TableHead
+                                                    key={header.id}
+                                                    className={cn(
+                                                        "py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider",
+                                                        index === 0 &&
+                                                            "text-center",
+                                                    )}
+                                                >
+                                                    {header.isPlaceholder
+                                                        ? null
+                                                        : flexRender(
+                                                              header.column
+                                                                  .columnDef
+                                                                  .header,
+                                                              header.getContext(),
+                                                          )}
+                                                </TableHead>
+                                            ),
+                                        )}
+                                    </TableRow>
+                                ))}
+                            </TableHeader>
+                            <TableBody>
+                                {table.getRowModel().rows?.length ? (
+                                    table.getRowModel().rows.map((row) => (
+                                        <TableRow
+                                            key={row.id}
+                                            className="hover:bg-muted/30 transition-colors border-b border-border"
+                                        >
+                                            {row
+                                                .getVisibleCells()
+                                                .map((cell, index) => (
+                                                    <TableCell
+                                                        key={cell.id}
+                                                        className={cn(
+                                                            "text-sm py-4",
+                                                            index === 0 &&
+                                                                "text-center",
+                                                        )}
+                                                    >
+                                                        {flexRender(
+                                                            cell.column
+                                                                .columnDef.cell,
+                                                            cell.getContext(),
+                                                        )}
+                                                    </TableCell>
+                                                ))}
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={columns.length}
+                                            className={cn(
+                                                "px-8 py-20 text-center",
+                                                "text-muted-foreground",
+                                            )}
+                                        >
+                                            <div className="mx-auto size-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+                                                <FileInput className="size-7 text-muted-foreground" />
+                                            </div>
+                                            <p className="font-semibold text-lg text-foreground">
+                                                Tidak ada data ditemukan
+                                            </p>
+                                            <p className="text-sm text-muted-foreground mt-1.5 max-w-sm mx-auto">
+                                                {emptyMessage ??
+                                                    "Coba ubah kata kunci pencarian atau filter."}
+                                            </p>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    <div
                         className={cn(
-                            "text-sm",
-                            isServer
-                                ? "text-muted-foreground"
-                                : "text-gray-500",
+                            "flex flex-col sm:flex-row items-center justify-between gap-3 px-6 md:px-8 py-4 border-t border-border bg-muted/20",
                         )}
                     >
-                        Show per page:
-                    </span>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <p className="text-xs text-muted-foreground">
+                            <>
+                                Menampilkan{" "}
+                                <span className="font-semibold text-foreground">
+                                    {from}
+                                </span>
+                                -
+                                <span className="font-semibold text-foreground">
+                                    {to}
+                                </span>{" "}
+                                dari{" "}
+                                <span className="font-semibold text-foreground">
+                                    {total}
+                                </span>{" "}
+                                data
+                            </>
+                        </p>
+                        <div className="flex items-center gap-2">
                             <Button
                                 variant="outline"
-                                className={
-                                    isServer
-                                        ? "text-muted-foreground"
-                                        : "text-gray-500"
+                                size="lg"
+                                className="rounded-lg"
+                                disabled={currentPage <= 1}
+                                onClick={() =>
+                                    visit?.({
+                                        page: currentPage - 1,
+                                        per_page: filters?.per_page,
+                                        search: filters?.search,
+                                        sort_by: filters?.sort_by,
+                                        sort_dir: filters?.sort_dir,
+                                    })
                                 }
                             >
-                                {isServer
-                                    ? `${pageSize} entries`
-                                    : `${table.getState().pagination.pageSize} entries`}
-                                <ChevronDownIcon className="h-4 w-4" />
+                                Sebelumnya
                             </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {PAGE_SIZE_OPTIONS.map((n) => (
-                                <DropdownMenuItem
-                                    key={n}
-                                    onClick={() =>
-                                        isServer
-                                            ? visit?.({
-                                                  page: 1,
-                                                  per_page: n,
-                                                  search: filters?.search,
-                                                  sort_by: filters?.sort_by,
-                                                  sort_dir: filters?.sort_dir,
-                                              })
-                                            : table.setPageSize(n)
-                                    }
-                                >
-                                    {n}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-
-            <div className="overflow-hidden rounded-md border">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext(),
-                                              )}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={
-                                        row.getIsSelected() && "selected"
-                                    }
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className="text-sm"
-                                        >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className={cn(
-                                        "h-24 text-center",
-                                        isServer ? "text-muted-foreground" : "",
-                                    )}
-                                >
-                                    {emptyMessage ?? "No results."}
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-
-            <div
-                className={cn(
-                    "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between",
-                    !isServer && "sm:justify-between",
-                )}
-            >
-                <div
-                    className={cn(
-                        "text-sm",
-                        isServer ? "text-muted-foreground" : "text-gray-500",
-                    )}
-                >
-                    {isServer
-                        ? `Showing ${from}–${to} of ${total} entries`
-                        : `Showing ${clientRowCount} of ${clientDataLen} entries`}
-                </div>
-                <Pagination className="flex justify-end text-gray-500">
-                    <PaginationContent>
-                        <PaginationItem>
-                            {isServer ? (
-                                <PaginationPrevious
-                                    href="#"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (currentPage <= 1) return;
-                                        visit?.({
-                                            page: currentPage - 1,
-                                            per_page: filters?.per_page,
-                                            search: filters?.search,
-                                            sort_by: filters?.sort_by,
-                                            sort_dir: filters?.sort_dir,
-                                        });
-                                    }}
-                                    className={
-                                        currentPage <= 1
-                                            ? "pointer-events-none opacity-80 cursor-not-allowed"
-                                            : ""
-                                    }
-                                />
-                            ) : (
-                                <PaginationPrevious
-                                    onClick={() => table.previousPage()}
-                                    className={
-                                        !table.getCanPreviousPage()
-                                            ? "pointer-events-none opacity-80 cursor-not-allowed"
-                                            : ""
-                                    }
-                                />
-                            )}
-                        </PaginationItem>
-
-                        {Array.from({ length: totalPages }).map((_, index) => {
-                            const pageNumber = index + 1;
-                            return (
-                                <PaginationItem key={pageNumber}>
-                                    {isServer ? (
-                                        <PaginationLink
-                                            href="#"
-                                            isActive={
-                                                currentPage === pageNumber
-                                            }
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                visit?.({
-                                                    page: pageNumber,
-                                                    per_page: filters?.per_page,
-                                                    search: filters?.search,
-                                                    sort_by: filters?.sort_by,
-                                                    sort_dir: filters?.sort_dir,
-                                                });
-                                            }}
-                                            className={
-                                                currentPage === pageNumber
-                                                    ? "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
-                                                    : ""
-                                            }
-                                        >
-                                            {pageNumber}
-                                        </PaginationLink>
-                                    ) : (
-                                        <PaginationLink
-                                            isActive={
-                                                currentPage === pageNumber
-                                            }
-                                            onClick={() =>
-                                                table.setPageIndex(
-                                                    pageNumber - 1,
-                                                )
-                                            }
-                                            className={
-                                                currentPage === pageNumber
-                                                    ? "bg-primary text-white"
-                                                    : ""
-                                            }
-                                        >
-                                            {pageNumber}
-                                        </PaginationLink>
-                                    )}
-                                </PaginationItem>
-                            );
-                        })}
-
-                        <PaginationItem>
-                            {isServer ? (
-                                <PaginationNext
-                                    href="#"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (currentPage >= totalPages) return;
-                                        visit?.({
-                                            page: currentPage + 1,
-                                            per_page: filters?.per_page,
-                                            search: filters?.search,
-                                            sort_by: filters?.sort_by,
-                                            sort_dir: filters?.sort_dir,
-                                        });
-                                    }}
-                                    className={
-                                        currentPage >= totalPages
-                                            ? "pointer-events-none opacity-80 cursor-not-allowed"
-                                            : ""
-                                    }
-                                />
-                            ) : (
-                                <PaginationNext
-                                    onClick={() => table.nextPage()}
-                                    className={
-                                        !table.getCanNextPage()
-                                            ? "pointer-events-none opacity-80 cursor-not-allowed"
-                                            : ""
-                                    }
-                                />
-                            )}
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            </div>
+                            <span className="text-sm font-semibold tabular-nums px-2">
+                                {currentPage} / {totalPages}
+                            </span>
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                className="rounded-lg"
+                                disabled={currentPage >= totalPages}
+                                onClick={() =>
+                                    visit?.({
+                                        page: currentPage + 1,
+                                        per_page: filters?.per_page,
+                                        search: filters?.search,
+                                        sort_by: filters?.sort_by,
+                                        sort_dir: filters?.sort_dir,
+                                    })
+                                }
+                            >
+                                Berikutnya
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

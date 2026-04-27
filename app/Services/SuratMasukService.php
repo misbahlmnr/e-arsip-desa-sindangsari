@@ -34,12 +34,14 @@ class SuratMasukService
             'sort_by' => ['nullable', 'string', 'max:64'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
+            'status' => ['nullable', 'in:belum_diproses,sedang_diproses,selesai'],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
         $perPage = (int) ($validated['per_page'] ?? 10);
         $sortBy = $validated['sort_by'] ?? 'tanggal_terima';
         $sortDir = $validated['sort_dir'] ?? 'desc';
+        $status = $validated['status'] ?? null;
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal_terima';
@@ -54,6 +56,9 @@ class SuratMasukService
                     ->orWhere('perihal', 'like', $like);
                 });
             })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            })
             ->orderBy($sortBy, $sortDir);
 
         $letters = $query->paginate($perPage)->withQueryString();
@@ -65,6 +70,7 @@ class SuratMasukService
                 'sort_by' => $sortBy,
                 'sort_dir' => $sortDir,
                 'per_page' => $perPage,
+                'status' => $status,
             ],
         ];
     }
