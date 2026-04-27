@@ -62,8 +62,6 @@ Rancang sebuah **dashboard aplikasi web untuk manajemen arsip surat di kantor de
 
 ## 📊 4. Dashboard
 
-`
-
 ### Ringkasan:
 
 - Total Surat Masuk
@@ -149,7 +147,7 @@ Rancang sebuah **dashboard aplikasi web untuk manajemen arsip surat di kantor de
 - Nama file
 - Ukuran file
 
-> Tujuan: validasi visual sebelum simpan
+> Tujuan: validasi sebelum simpan
 
 ---
 
@@ -183,19 +181,19 @@ Rancang sebuah **dashboard aplikasi web untuk manajemen arsip surat di kantor de
 
 ### 🎯 Tujuan
 
-Mengelola dan mengarsipkan surat keluar dalam bentuk dokumen resmi yang telah dicetak, ditandatangani, dan di-scan.
+Mengelola arsip surat keluar dalam bentuk dokumen resmi hasil scan.
 
 ---
 
-## 📋 7.1 Tabel Surat Keluar
+### 7.1 Tabel Surat Keluar
 
 - Nomor Surat
 - Tanggal Surat
 - Tujuan
 - Perihal
 - Status:
-    - Draft (belum diupload)
-    - Selesai (sudah diupload)
+    - Draft
+    - Selesai
 - File:
     - Ada / Tidak ada
 - Aksi:
@@ -205,71 +203,60 @@ Mengelola dan mengarsipkan surat keluar dalam bentuk dokumen resmi yang telah di
 
 ---
 
-## ➕ 7.2 Form Surat Keluar
+### 7.2 Form Surat Keluar
 
-### Field:
+#### Field:
 
 - Nomor Surat
 - Tanggal Surat
 - Tujuan
 - Perihal
-- Upload File Surat:
-    - Format: PDF / gambar (hasil scan)
+- Upload File (PDF / gambar hasil scan)
 - Catatan (opsional)
 
 ---
 
-## 👁 7.3 Preview Surat
+### 7.3 Preview Surat
 
-Setelah upload file:
-
-- Preview dokumen:
-    - PDF viewer / image preview
+- Preview dokumen (PDF / gambar)
 - Nama file
 - Ukuran file
 
-### Tujuan:
+---
 
-- Memastikan file scan benar
-- Menghindari kesalahan upload
+### 7.4 Flow Surat Keluar
+
+1. Input data surat
+2. Upload file scan
+3. Status:
+    - Tanpa file → **Draft**
+    - Dengan file → **Selesai**
+4. Notifikasi sukses
 
 ---
 
-## 🔄 7.4 Flow Surat Keluar
+### 7.5 Detail Surat Keluar
 
-1. User mengisi data surat
-2. Upload hasil scan surat
-3. Status otomatis:
-    - Jika belum upload → **Draft**
-    - Jika sudah upload → **Selesai**
-4. Notifikasi:
-    - "Surat berhasil disimpan"
+#### Informasi:
 
----
-
-## 📄 7.5 Detail Surat Keluar
-
-### Tampilkan:
-
-- Informasi lengkap surat
+- Data lengkap surat
 - Preview file scan
 
-### Aksi:
+#### Aksi:
 
-- Edit data
+- Edit
 - Ganti file
-- Hapus data
+- Hapus
 
 ---
 
-#### 📌 Catatan UX Penting
+### 📌 Catatan UX:
 
-- Upload file adalah **bagian utama (wajib)**
-- Gunakan validasi:
-    - Maksimal ukuran file
-    - Format file
-- Tampilkan indikator:
-    - "Belum upload" vs "Sudah upload"
+- Upload file adalah **wajib**
+- Validasi ukuran & format file
+- Gunakan indikator status (Draft / Selesai)
+
+---
 
 ## 📌 8. Modul Disposisi
 
@@ -381,129 +368,283 @@ Mengelola instruksi antar jabatan
 
 ## ⚙️ 13. Output yang Diharapkan
 
-### 🎨 13.1 Desain UI (High Fidelity)
+### 13.1 Desain UI
 
-Buat desain lengkap untuk halaman:
-
-- Halaman Login
+- Login
 - Dashboard
-- Surat Masuk:
-    - Tabel
-    - Form Tambah
-    - Detail + Preview
-- Surat Keluar:
-    - Tabel
-    - Form Upload Scan
-    - Detail + Preview
-- Disposisi Surat:
-    - Tabel
-    - Form Disposisi
-- Arsip Surat
-- Laporan
+- Semua modul (List, Form, Detail, Preview)
 
 ---
 
-### 🧩 13.2 Struktur Komponen
+### 13.2 Komponen
 
-Definisikan komponen reusable berikut:
-
-- Sidebar Navigation
-- Header (Avatar + Dropdown)
-- Card Statistik
-- Table Data (dengan search, filter, pagination)
-- Form Input (text, date, upload, textarea)
-- Modal / Dialog (konfirmasi, detail)
-- File Preview (PDF / Image Viewer)
-- Status Badge (Draft, Selesai, Diproses)
+- Sidebar
+- Header
+- Card
+- Table
+- Form
+- Modal
+- Preview File
+- Status Badge
 
 ---
 
-### 🔄 13.3 Alur UX (User Flow)
+### 13.3 User Flow
 
-Jelaskan flow secara step-by-step:
-
-#### Surat Masuk:
-
-- Tambah data → Upload → Preview → Simpan → Disposisi / Arsip
-
-#### Surat Keluar:
-
-- Input data → Upload scan → Preview → Simpan
-
-#### Disposisi:
-
-- Pilih surat → Kirim ke user → Beri catatan → Update status
-
-#### Arsip:
-
-- Surat selesai → Masuk ke arsip → Bisa dilihat / diunduh
+- Surat Masuk
+- Surat Keluar
+- Disposisi
+- Arsip
 
 ---
 
-### 🔐 13.4 Role & Permission Behavior
+### 13.4 Role Behavior
 
-Tampilkan perbedaan behavior tiap role:
-
-- Admin:
-    - Full akses (CRUD + user management)
-- Sekdes:
-    - Input surat
-    - Membuat disposisi
-- Kades:
-    - Melihat surat
-    - Memberi persetujuan / arahan
+- Admin: full akses
+- Sekdes: input & disposisi
+- Kades: approval & arahan
 
 ---
 
-### 📱 13.5 Responsiveness
+### 13.5 State UI
 
-- Desktop (utama)
-- Tablet (opsional)
-- Mobile (minimal tetap usable)
-
----
-
-### 📌 13.6 Detail Interaksi UI
-
-- Loading state (skeleton / spinner)
-- Empty state (tidak ada data)
-- Error state (gagal load / upload)
-- Success notification (toast)
+- Loading
+- Empty
+- Error
+- Success
 
 ---
-
-### 📂 13.7 Struktur Halaman (Information Architecture)
-
-Jelaskan struktur halaman per menu:
-
-Contoh:
-
-- Surat Masuk:
-    - List
-    - Detail
-    - Tambah
-- Surat Keluar:
-    - List
-    - Detail
-    - Tambah
-
----
-
-### 🎯 13.8 Output Akhir
-
-Hasil akhir harus berupa:
-
-- Desain UI lengkap (bukan hanya dashboard)
-- Struktur komponen yang jelas
-- Alur user yang bisa langsung diimplementasikan
-- Konsistensi antar halaman
 
 ## 🚀 14. Insight Sistem
 
-Sistem ini berbasis **workflow**, bukan sekadar CRUD.
+Sistem berbasis **workflow**.
 
 ### Fokus:
 
 - Alur jelas
 - Mudah digunakan
 - Minim kebingungan user
+
+---
+
+## 🧱 15. Teknologi & Design System
+
+### ⚙️ Tech Stack
+
+Gunakan teknologi berikut dalam implementasi:
+
+- Framework: **Next.js (React)**
+- State & Data Fetching: **React Query (TanStack Query)**
+- Table: **React Table (TanStack Table)**
+- Styling: **Tailwind CSS**
+- Component Library: **shadcn/ui**
+
+---
+
+### 🧩 Implementasi Teknis
+
+#### Data Fetching (React Query)
+
+- Gunakan query untuk:
+    - List data (surat masuk, keluar, disposisi, arsip)
+- Gunakan mutation untuk:
+    - Tambah data
+    - Edit data
+    - Hapus data
+- Gunakan loading & error state dari React Query
+
+---
+
+#### Table (React Table)
+
+Tabel harus mendukung:
+
+- Sorting
+- Filtering
+- Pagination
+- Column visibility (opsional)
+- Custom cell (status badge, action button)
+
+---
+
+#### Form Handling
+
+- Gunakan validasi form (client-side)
+- Tampilkan error message per field
+- Gunakan komponen input dari shadcn/ui
+
+---
+
+### 🎨 Design System (shadcn/ui Style)
+
+Gunakan gaya desain seperti **shadcn/ui**:
+
+#### Karakteristik:
+
+- Clean & modern
+- Minimalis
+- Spacing lega
+- Tidak terlalu banyak warna mencolok
+
+---
+
+### 🎯 Prinsip UI untuk Target User
+
+Karena target adalah pegawai desa:
+
+- Gunakan ukuran font yang cukup besar
+- Hindari terlalu banyak warna
+- Gunakan kontras yang jelas
+- Gunakan tombol yang mudah dikenali
+- Hindari interaksi yang kompleks
+
+---
+
+### 🧩 Komponen UI Utama
+
+Gunakan komponen dari shadcn/ui seperti:
+
+- Button
+- Input
+- Select
+- Table
+- Dialog
+- Dropdown Menu
+- Badge (untuk status)
+- Toast (notifikasi)
+
+---
+
+### 🎨 Warna & Nuansa
+
+- Dominan: Biru (profesional & pemerintahan)
+- Netral: Putih & abu-abu
+- Status:
+    - Draft → Abu-abu
+    - Diproses → Kuning
+    - Selesai → Hijau
+
+---
+
+### 📱 Responsiveness
+
+- Fokus utama: Desktop
+- Tetap usable di:
+    - Tablet
+    - Mobile (stack layout, bukan kompleks)
+
+---
+
+---
+
+## ✅ 16. Functional Requirement (Wajib Berfungsi)
+
+Semua fitur yang dirancang **harus fully functional**, bukan hanya tampilan UI.
+
+---
+
+### 🎯 Kriteria Utama
+
+- Tidak boleh menggunakan data dummy statis
+- Semua data harus:
+    - Bisa diambil (fetch)
+    - Bisa ditambahkan
+    - Bisa diubah
+    - Bisa dihapus
+- Semua interaksi harus memiliki efek nyata pada data
+
+---
+
+### 🔄 Integrasi Data
+
+Gunakan pendekatan berikut:
+
+- Data diambil dari API (mock API / real API)
+- Gunakan React Query untuk:
+    - Fetch data (query)
+    - Mutasi data (create, update, delete)
+- Setiap aksi harus langsung merefresh data (invalidate query)
+
+---
+
+### 📥 Surat Masuk
+
+- Tambah surat → masuk ke tabel
+- Edit → data berubah
+- Hapus → data hilang
+- Upload file → bisa dipreview & tersimpan
+- Disposisi → mengubah status
+
+---
+
+### 📤 Surat Keluar
+
+- Tambah data → muncul di tabel
+- Upload file scan → tersimpan & bisa dipreview
+- Status otomatis berubah sesuai kondisi file
+- Edit & hapus berfungsi
+
+---
+
+### 📌 Disposisi
+
+- Bisa membuat disposisi
+- Data muncul di tabel
+- Status berubah sesuai aksi
+- Relasi dengan surat harus valid
+
+---
+
+### 📦 Arsip
+
+- Surat yang selesai diproses masuk ke arsip
+- Data bisa dilihat & diunduh
+
+---
+
+### 📊 Laporan
+
+- Filter data berdasarkan tanggal
+- Data sesuai dengan kondisi real
+- Export menghasilkan file (mock / real)
+
+---
+
+### 🔐 Autentikasi
+
+- Login benar → masuk ke dashboard
+- Login salah → tampil error
+- Role menentukan akses menu & aksi
+
+---
+
+### ⚠️ Validasi & Error Handling
+
+- Semua form wajib validasi:
+    - Field wajib diisi
+    - Format file sesuai
+- Tampilkan error jika gagal:
+    - Upload gagal
+    - Fetch gagal
+- Gunakan toast / alert untuk feedback user
+
+---
+
+### 🔄 State UI
+
+Semua halaman harus memiliki:
+
+- Loading state
+- Empty state
+- Error state
+- Success state
+
+---
+
+### 🧪 Catatan Tambahan
+
+- Jika backend belum tersedia:
+    - Gunakan mock API (JSON Server / local API)
+- Struktur harus siap dihubungkan ke backend real
+
+---

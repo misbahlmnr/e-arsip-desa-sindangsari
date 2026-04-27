@@ -1,9 +1,10 @@
+import Checkbox from "@/Components/Checkbox";
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { motion } from "framer-motion";
+import { AlertCircle, Eye, EyeOff, FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -12,9 +13,10 @@ export default function Login({ status, canResetPassword }) {
         remember: false,
     });
 
+    const [showPw, setShowPw] = useState(false);
+
     const submit = (e) => {
         e.preventDefault();
-
         post(route("login"), {
             onFinish: () => reset("password"),
         });
@@ -24,115 +26,160 @@ export default function Login({ status, canResetPassword }) {
         <>
             <Head title="Login" />
 
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-                <div className="max-w-lg w-full space-y-8 p-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-center"
-                    >
-                        <img
-                            src="assets/img/logo.png"
-                            alt="Logo"
-                            className="mx-auto h-20 w-16 mb-4"
-                        />
-                        <h2 className="text-2xl font-bold">
-                            Sistem Informasi Pengarsipan Surat
-                        </h2>
-                        <p className="text-sm text-gray-600">
-                            Kantor Desa Sindangsari <br />
-                            Kecamatan Cimerak – Kabupaten Pangandaran
-                        </p>
-                    </motion.div>
+            <div className="min-h-screen w-full grid lg:grid-cols-2 bg-white">
+                {/* Left: brand panel */}
+                <aside className="hidden lg:flex flex-col justify-between bg-gradient-primary text-white p-12 relative overflow-hidden">
+                    <div
+                        className="absolute -top-32 -right-32 size-96 rounded-full bg-white/5"
+                        aria-hidden
+                    />
+                    <div
+                        className="absolute -bottom-40 -left-20 size-[500px] rounded-full bg-white/5"
+                        aria-hidden
+                    />
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                        className="bg-white rounded-xl shadow-lg p-8"
-                    >
-                        <div className="text-center mb-6">
-                            <h3 className="text-xl font-semibold text-gray-900">
-                                Login
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Masukkan kredensial untuk melanjutkan
+                    <div className="relative flex items-center gap-3">
+                        <div className="size-12 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center">
+                            <FileText className="size-6" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold tracking-tight leading-none">
+                                Desa Sindangsari
+                            </h1>
+                            <p className="text-xs uppercase tracking-widest opacity-75 mt-1.5">
+                                Sistem Arsip Surat
                             </p>
                         </div>
+                    </div>
 
+                    <div className="relative max-w-md">
+                        <h2 className="text-3xl font-bold leading-tight tracking-tight">
+                            Kelola surat desa dengan rapi, tanpa ribet.
+                        </h2>
+                        <p className="mt-4 text-base opacity-85 leading-relaxed">
+                            Pencatatan surat masuk, surat keluar, disposisi, dan
+                            arsip dalam satu tempat. Dibuat sederhana untuk
+                            pegawai kantor desa.
+                        </p>
+                    </div>
+
+                    <div className="relative text-xs opacity-70">
+                        © {new Date().getFullYear()} Kantor Desa Sindangsari —
+                        Kec. Cimerak, Kab. Pangandaran
+                    </div>
+                </aside>
+
+                {/* Right: form */}
+                <main className="flex items-center justify-center p-6 md:p-10">
+                    <div className="w-full max-w-md">
+                        {/* Mobile logo */}
+                        <div className="mb-8 lg:hidden flex items-center gap-3">
+                            <div className="size-11 rounded-xl bg-primary text-white flex items-center justify-center">
+                                <FileText className="size-5" />
+                            </div>
+                            <div>
+                                <h1 className="text-lg font-bold tracking-tight leading-none">
+                                    Desa Sindangsari
+                                </h1>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Sistem Arsip Surat
+                                </p>
+                            </div>
+                        </div>
+
+                        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                            Selamat datang kembali
+                        </h2>
+                        <p className="text-gray-500 mt-1.5 text-sm">
+                            Masuk untuk mengakses sistem arsip surat desa.
+                        </p>
+
+                        {/* Status message (e.g. after password reset) */}
                         {status && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"
-                            >
+                            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                                 <p className="text-sm font-medium text-green-800">
                                     {status}
                                 </p>
-                            </motion.div>
+                            </div>
                         )}
 
-                        <form onSubmit={submit} className="space-y-6">
-                            <div>
-                                <InputLabel
+                        <form onSubmit={submit} className="mt-8 space-y-5">
+                            {/* Username */}
+                            <div className="space-y-2">
+                                <label
                                     htmlFor="username"
-                                    value="Username"
-                                    className="text-sm font-medium text-gray-700"
-                                />
-
-                                <TextInput
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Username
+                                </label>
+                                <Input
                                     id="username"
                                     type="text"
                                     name="username"
-                                    value={data.username}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     autoComplete="username"
                                     placeholder="Masukkan username Anda"
-                                    isFocused={true}
+                                    value={data.username}
                                     onChange={(e) =>
                                         setData("username", e.target.value)
                                     }
+                                    disabled={processing}
                                 />
-
                                 <InputError
                                     message={errors.username}
-                                    className="mt-2"
+                                    className="mt-1"
                                 />
                             </div>
 
-                            <div>
-                                <InputLabel
+                            {/* Password */}
+                            <div className="space-y-2">
+                                <label
                                     htmlFor="password"
-                                    value="Password"
-                                    className="text-sm font-medium text-gray-700"
-                                />
-
-                                <TextInput
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    value={data.password}
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    placeholder="Masukkan password Anda"
-                                    autoComplete="current-password"
-                                    onChange={(e) =>
-                                        setData("password", e.target.value)
-                                    }
-                                />
-
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPw ? "text" : "password"}
+                                        name="password"
+                                        autoComplete="current-password"
+                                        placeholder="Masukkan password Anda"
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                        disabled={processing}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPw((s) => !s)}
+                                        aria-label={
+                                            showPw
+                                                ? "Sembunyikan password"
+                                                : "Tampilkan password"
+                                        }
+                                        className="absolute inset-y-0 right-0 px-4 text-gray-400 hover:text-gray-600 transition-colors"
+                                    >
+                                        {showPw ? (
+                                            <EyeOff className="size-5" />
+                                        ) : (
+                                            <Eye className="size-5" />
+                                        )}
+                                    </button>
+                                </div>
                                 <InputError
                                     message={errors.password}
-                                    className="mt-2"
+                                    className="mt-1"
                                 />
                             </div>
 
+                            {/* Remember + Forgot */}
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <input
+                                <div className="flex items-center gap-2">
+                                    <Checkbox
                                         id="remember"
                                         name="remember"
-                                        type="checkbox"
                                         checked={data.remember}
                                         onChange={(e) =>
                                             setData(
@@ -140,65 +187,62 @@ export default function Login({ status, canResetPassword }) {
                                                 e.target.checked,
                                             )
                                         }
-                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label
                                         htmlFor="remember"
-                                        className="ml-2 block text-sm text-gray-700"
+                                        className="text-sm font-medium text-gray-700 cursor-pointer select-none"
                                     >
-                                        Ingat saya
+                                        Ingat saya di perangkat ini
                                     </label>
                                 </div>
 
                                 {canResetPassword && (
                                     <Link
                                         href={route("password.request")}
-                                        className="text-sm text-blue-600 hover:text-blue-500 transition-colors"
+                                        className="text-sm text-primary hover:text-primary-hover transition-colors"
                                     >
                                         Lupa password?
                                     </Link>
                                 )}
                             </div>
 
-                            <PrimaryButton
-                                className="w-full justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                            {/* General error alert */}
+                            {(errors.username || errors.password) && (
+                                <div
+                                    role="alert"
+                                    className="flex items-start gap-2.5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+                                >
+                                    <AlertCircle className="size-4 mt-0.5 shrink-0" />
+                                    <span>
+                                        Username atau password salah. Silakan
+                                        coba lagi.
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* Submit */}
+                            <Button
+                                type="submit"
                                 disabled={processing}
+                                className="w-full h-12 flex items-center justify-center gap-2 text-base font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
                                 {processing ? (
-                                    <div className="flex items-center">
-                                        <svg
-                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                strokeWidth="4"
-                                            ></circle>
-                                            <path
-                                                className="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
-                                        Masuk...
-                                    </div>
+                                    <>
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Memproses…
+                                    </>
                                 ) : (
-                                    "Masuk"
+                                    "Masuk ke Sistem"
                                 )}
-                            </PrimaryButton>
+                            </Button>
                         </form>
-                        <p className="text-xs text-gray-500 text-center mt-4 underline">
+
+                        <p className="text-xs text-gray-400 text-center mt-6">
                             Sistem ini dilindungi dan hanya dapat diakses oleh
                             petugas berwenang.
                         </p>
-                    </motion.div>
-                </div>
+                    </div>
+                </main>
             </div>
         </>
     );
