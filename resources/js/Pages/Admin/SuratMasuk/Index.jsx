@@ -7,7 +7,7 @@ import FormModalSuratMasuk from "./FormModalSuratMasuk";
 import DetailModalSuratMasuk from "./DetailModalSuratMasuk";
 import { DataTable } from "@/Components/DataTable/Index";
 import { getColumns } from "./columns";
-import { useServerTable } from "@/hooks/useServerTable";
+import { useServerTable } from "@/Hooks/useServerTable";
 
 export default function SuratMasuk({ letters, filters }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +41,10 @@ export default function SuratMasuk({ letters, filters }) {
     );
 
     return (
-        <AppLayout>
+        <AppLayout
+            title="Surat Masuk"
+            subtitle="Kelola dan pantau semua surat masuk dengan mudah"
+        >
             <Head title="Surat Masuk" />
 
             <div className="space-y-8">

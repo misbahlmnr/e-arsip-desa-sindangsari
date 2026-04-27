@@ -7,7 +7,7 @@ import FormModalSuratKeluar from "./FormModalSuratKeluar";
 import DetailModalSuratKeluar from "./DetailModalSuratKeluar";
 import { DataTable } from "@/Components/DataTable/Index";
 import { getColumns } from "./columns";
-import { useServerTable } from "@/hooks/useServerTable";
+import { useServerTable } from "@/Hooks/useServerTable";
 
 export default function SuratKeluar({ letters, filters }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
