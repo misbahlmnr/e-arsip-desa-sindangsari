@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs) {
-  return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 }
 
 /**
@@ -38,3 +38,11 @@ export function formatTanggalKalenderWib(value) {
         year: "numeric",
     }).format(t);
 }
+
+export const formatDate = (iso) => {
+    return new Date(iso).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+};

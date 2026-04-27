@@ -1,21 +1,22 @@
-import { Link } from '@inertiajs/react';
+import { cn } from "@/lib/utils";
+import { Link } from "@inertiajs/react";
 
 export default function NavLink({
     active = false,
-    className = '',
+    className = "",
     children,
     ...props
 }) {
     return (
         <Link
             {...props}
-            className={
-                'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ' +
-                (active
-                    ? 'border-indigo-400 text-gray-900 focus:border-indigo-700'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700') +
-                className
-            }
+            className={cn(
+                "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
+                active
+                    ? "!bg-primary-soft !text-primary font-semibold shadow-soft"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700",
+                className,
+            )}
         >
             {children}
         </Link>
