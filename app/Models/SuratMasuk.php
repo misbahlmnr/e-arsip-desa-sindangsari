@@ -13,8 +13,10 @@ class SuratMasuk extends Model
         'nomor_registrasi',
         'no_surat',
         'tanggal_terima',
+        'tanggal_surat',
         'pengirim',
         'perihal',
+        'catatan',
         'status',
         'tujuan',
         'file',
@@ -27,6 +29,7 @@ class SuratMasuk extends Model
     {
         return [
             'tanggal_terima' => 'date:Y-m-d',
+            'tanggal_surat' => 'date:Y-m-d',
         ];
     }
 

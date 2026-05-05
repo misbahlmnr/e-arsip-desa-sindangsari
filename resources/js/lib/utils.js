@@ -46,3 +46,20 @@ export const formatDate = (iso) => {
         year: "numeric",
     });
 };
+
+/** Read a File into a base64 data URL for localStorage storage. */
+export function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error);
+        reader.onload = () => {
+            resolve({
+                dataUrl: reader.result,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+}

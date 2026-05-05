@@ -38,23 +38,26 @@ const Sidebar = ({ collapsed = false }) => {
             </div>
 
             <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-                {menuItems.map((item) => (
-                    <NavLink
-                        key={item.href}
-                        href={item.href}
-                        end={item.href === "/"}
-                        className={collapsed ? "!justify-center" : ""}
-                        active={item.current === route().current}
-                    >
-                        <item.icon
-                            className="size-[18px] shrink-0"
-                            strokeWidth={2}
-                        />
-                        {!collapsed && (
-                            <span className="truncate">{item.label}</span>
-                        )}
-                    </NavLink>
-                ))}
+                {menuItems.map((item) => {
+                    const isActive = route().current(item.routeName);
+                    return (
+                        <NavLink
+                            key={item.href}
+                            href={item.href}
+                            end={item.href === "/"}
+                            className={collapsed ? "!justify-center" : ""}
+                            active={isActive}
+                        >
+                            <item.icon
+                                className="size-[18px] shrink-0"
+                                strokeWidth={2}
+                            />
+                            {!collapsed && (
+                                <span className="truncate">{item.label}</span>
+                            )}
+                        </NavLink>
+                    );
+                })}
             </nav>
 
             {!collapsed && (

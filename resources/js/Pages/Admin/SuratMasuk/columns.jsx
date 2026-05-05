@@ -93,11 +93,14 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
         {
             accessorKey: "disposisi",
             header: "Disposisi",
-            cell: ({ row }) => (
-                <DisposisiBadge
-                    status={DISPOSISI_LABEL_MAP[row.original.disposisi]}
-                />
-            ),
+            cell: ({ row }) => {
+                const key = row.original.disposisi ?? "belum";
+                return (
+                    <DisposisiBadge
+                        status={DISPOSISI_LABEL_MAP[key] ?? key}
+                    />
+                );
+            },
         },
         {
             id: "actions",

@@ -1,24 +1,13 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Button } from "@/Components/ui/button";
 import { DataTable } from "@/Components/DataTable/Index";
-import FormModalSuratMasuk from "./FormModalSuratMasuk";
-import DetailModalSuratMasuk from "./DetailModalSuratMasuk";
 import { useServerTable } from "@/Hooks/useServerTable";
 import { getColumns } from "./columns";
 
 export default function SuratMasuk({ letters, filters }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingLetter, setEditingLetter] = useState(null);
-    const [detailLetter, setDetailLetter] = useState(null);
-
-    const closeFormModal = () => {
-        setIsModalOpen(false);
-        setEditingLetter(null);
-    };
-
     const { loading, searchInput, setSearchInput, visit } = useServerTable({
         routeName: "admin.surat-masuk.index",
         filters,
@@ -31,11 +20,18 @@ export default function SuratMasuk({ letters, filters }) {
         () =>
             getColumns({
                 startIndex,
-                onDetail: (row) => setDetailLetter(row),
-                onEdit: (row) => {
-                    setEditingLetter(row);
-                    setIsModalOpen(true);
-                },
+                onDetail: (row) =>
+                    router.visit(
+                        route("admin.surat-masuk.show", {
+                            surat_masuk: row.id,
+                        }),
+                    ),
+                onEdit: (row) =>
+                    router.visit(
+                        route("admin.surat-masuk.edit", {
+                            surat_masuk: row.id,
+                        }),
+                    ),
             }),
         [startIndex],
     );
@@ -54,10 +50,9 @@ export default function SuratMasuk({ letters, filters }) {
                     className="flex items-center justify-end"
                 >
                     <Button
-                        onClick={() => {
-                            setEditingLetter(null);
-                            setIsModalOpen(true);
-                        }}
+                        onClick={() =>
+                            router.visit(route("admin.surat-masuk.create"))
+                        }
                     >
                         Tambah Surat
                     </Button>
@@ -81,17 +76,6 @@ export default function SuratMasuk({ letters, filters }) {
                     />
                 </motion.div>
             </div>
-
-            <FormModalSuratMasuk
-                isOpen={isModalOpen}
-                onClose={closeFormModal}
-                letter={editingLetter}
-            />
-
-            <DetailModalSuratMasuk
-                letter={detailLetter}
-                onClose={() => setDetailLetter(null)}
-            />
         </AppLayout>
     );
 }

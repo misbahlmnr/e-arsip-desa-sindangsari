@@ -31,8 +31,6 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
         router.post(route("logout"));
     };
 
-    console.log({ title, subtitle });
-
     return (
         <header className="h-20 bg-card border-b border-border flex items-center justify-between gap-4 px-6 md:px-10 sticky top-0 z-20">
             <div className="flex items-center gap-3 min-w-0">

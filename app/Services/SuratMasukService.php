@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\SuratMasuk\{StoreRequest, UpdateRequest};
-use Illuminate\Http\Request;
+use App\Http\Requests\SuratMasuk\StoreRequest;
+use App\Http\Requests\SuratMasuk\UpdateRequest;
 use App\Models\SuratMasuk;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
@@ -20,6 +21,7 @@ class SuratMasukService
         'nomor_registrasi',
         'no_surat',
         'tanggal_terima',
+        'tanggal_surat',
         'pengirim',
         'perihal',
         'status',
@@ -27,7 +29,8 @@ class SuratMasukService
         'created_at',
     ];
 
-    public function index(Request $req) {
+    public function index(Request $req)
+    {
         $validated = $req->validate([
             'page' => ['nullable', 'integer', 'min:1'],
             'search' => ['nullable', 'string', 'max:255'],
@@ -52,8 +55,8 @@ class SuratMasukService
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
                     $q->where('no_surat', 'like', $like)
-                    ->orWhere('pengirim', 'like', $like)
-                    ->orWhere('perihal', 'like', $like);
+                        ->orWhere('pengirim', 'like', $like)
+                        ->orWhere('perihal', 'like', $like);
                 });
             })
             ->when($status, function ($q) use ($status) {
@@ -75,32 +78,40 @@ class SuratMasukService
         ];
     }
 
-    private function handleFile(Request $req) {
+    private function handleFile(Request $req)
+    {
         if ($req->hasFile('file')) {
             return $req->file('file')->store('surat-masuk', 'public');
         }
+
         return null;
     }
-    
-    public function store(StoreRequest $req) {
+
+    public function store(StoreRequest $req)
+    {
         try {
             $data = $req->validated();
+            $data['tujuan'] = $data['tujuan'] ?? '-';
             $filePath = $this->handleFile($req);
-    
+
             if ($filePath) {
                 $data['file'] = $filePath;
+            } else {
+                $data['file'] = null;
             }
-    
+
             return SuratMasuk::create($data);
         } catch (\Exception $e) {
-            Log::error('Error storing surat masuk: ' . $e->getMessage());
+            Log::error('Error storing surat masuk: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function update(UpdateRequest $req, SuratMasuk $surat_masuk) {
+    public function update(UpdateRequest $req, SuratMasuk $surat_masuk)
+    {
         try {
             $data = $req->validated();
+            $data['tujuan'] = $data['tujuan'] ?? '-';
             $filePath = $this->handleFile($req);
 
             if ($filePath) {
@@ -114,19 +125,21 @@ class SuratMasukService
 
             return $surat_masuk->update($data);
         } catch (\Exception $e) {
-            Log::error('Error updating surat masuk: ' . $e->getMessage());
+            Log::error('Error updating surat masuk: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function destroy(SuratMasuk $surat_masuk) {
+    public function destroy(SuratMasuk $surat_masuk)
+    {
         try {
             if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
                 Storage::disk('public')->delete($surat_masuk->file);
             }
+
             return $surat_masuk->delete();
         } catch (\Exception $e) {
-            Log::error('Error deleting surat masuk: ' . $e->getMessage());
+            Log::error('Error deleting surat masuk: '.$e->getMessage());
             throw $e;
         }
     }
