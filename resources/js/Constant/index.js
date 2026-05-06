@@ -26,6 +26,7 @@ export const NAVBAR_ITEMS = [
         href: "#",
         icon: Send,
         routeName: "#",
+        roles: ["sekdes", "kades"],
     },
     {
         label: "Surat Keluar",

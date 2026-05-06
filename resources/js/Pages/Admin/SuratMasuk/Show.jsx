@@ -1,33 +1,4 @@
-// resources/js/Pages/Admin/SuratMasuk/Show.jsx
-
 import { Button } from "@/Components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/Components/ui/dialog";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
 import AppLayout from "@/Layouts/AppLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import {
@@ -41,8 +12,9 @@ import {
 import { useState } from "react";
 import { cn, formatTanggalKalenderWib } from "@/lib/utils";
 import { FilePreview } from "@/Components/FilePreview";
+import CreateDisposisiModal from "./CreateDisposisiModal";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
-// ─── Status config ────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
     belum_diproses: {
         label: "Belum Diproses",
@@ -64,7 +36,6 @@ const DISPOSISI_STATUS_CONFIG = {
     Selesai: { label: "Selesai", className: "bg-green-100 text-green-700" },
 };
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 function Field({ label, value, className }) {
     return (
         <div className={className}>
@@ -107,13 +78,9 @@ function DisposisiBadge({ status }) {
     );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
 export default function ShowSuratMasuk({ letter }) {
     const [openDispo, setOpenDispo] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
-    const [dispoTo, setDispoTo] = useState("Kepala Desa");
-    const [dispoNote, setDispoNote] = useState("");
-    const [dispoLoading, setDispoLoading] = useState(false);
 
     // Pastikan disposisi selalu array meskipun null dari backend
     const disposisi = letter.disposisi ?? [];
@@ -125,31 +92,6 @@ export default function ShowSuratMasuk({ letter }) {
             }),
             { status: "selesai" },
             { preserveScroll: true },
-        );
-    };
-
-    const handleDelete = () => {
-        router.delete(
-            route("admin.surat-masuk.destroy", { surat_masuk: letter.id }),
-        );
-    };
-
-    const submitDispo = () => {
-        if (!dispoNote.trim()) return;
-        setDispoLoading(true);
-        router.post(
-            route("admin.surat-masuk.disposisi.store", {
-                surat_masuk: letter.id,
-            }),
-            { kepada: dispoTo, catatan: dispoNote.trim() },
-            {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setOpenDispo(false);
-                    setDispoNote("");
-                },
-                onFinish: () => setDispoLoading(false),
-            },
         );
     };
 
@@ -180,7 +122,7 @@ export default function ShowSuratMasuk({ letter }) {
             <Head title={`Surat — ${letter.no_surat}`} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* ── Kolom utama ─────────────────────────────────────── */}
+                {/*  Kolom utama  */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Info card */}
                     <div className="surface-card p-6 md:p-8">
@@ -201,10 +143,6 @@ export default function ShowSuratMasuk({ letter }) {
 
                         {/* Fields */}
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
-                            <Field
-                                label="No. Registrasi"
-                                value={letter.nomor_registrasi}
-                            />
                             <Field
                                 label="Tanggal Surat"
                                 value={
@@ -362,105 +300,17 @@ export default function ShowSuratMasuk({ letter }) {
                 </aside>
             </div>
 
-            {/* ── Dialog: Buat Disposisi ──────────────────────────────── */}
-            <Dialog open={openDispo} onOpenChange={setOpenDispo}>
-                <DialogContent className="rounded-2xl">
-                    <DialogHeader>
-                        <DialogTitle>Buat Disposisi</DialogTitle>
-                        <DialogDescription>
-                            Teruskan surat ini kepada pejabat yang berwenang
-                            beserta arahan.
-                        </DialogDescription>
-                    </DialogHeader>
+            <CreateDisposisiModal
+                letter={letter}
+                openDispo={openDispo}
+                setOpenDispo={setOpenDispo}
+            />
 
-                    <div className="space-y-4 py-2">
-                        <div className="space-y-1.5">
-                            <Label>Tujuan</Label>
-                            <Select value={dispoTo} onValueChange={setDispoTo}>
-                                <SelectTrigger className="h-11 rounded-xl">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Kepala Desa">
-                                        Kepala Desa
-                                    </SelectItem>
-                                    <SelectItem value="Sekretaris Desa">
-                                        Sekretaris Desa
-                                    </SelectItem>
-                                    <SelectItem value="Kaur Pemerintahan">
-                                        Kaur Pemerintahan
-                                    </SelectItem>
-                                    <SelectItem value="Kaur Keuangan">
-                                        Kaur Keuangan
-                                    </SelectItem>
-                                    <SelectItem value="Kaur Umum">
-                                        Kaur Umum
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <Label>Catatan / Arahan</Label>
-                            <Textarea
-                                value={dispoNote}
-                                onChange={(e) => setDispoNote(e.target.value)}
-                                placeholder="Tuliskan arahan atau instruksi…"
-                                className="min-h-[100px] rounded-xl resize-none"
-                                maxLength={500}
-                            />
-                            {!dispoNote.trim() && dispoLoading === false && (
-                                <p className="text-xs text-muted-foreground">
-                                    Catatan wajib diisi.
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button
-                            variant="ghost"
-                            onClick={() => setOpenDispo(false)}
-                            className="rounded-xl"
-                        >
-                            Batal
-                        </Button>
-                        <Button
-                            onClick={submitDispo}
-                            disabled={!dispoNote.trim() || dispoLoading}
-                            className="rounded-xl font-semibold"
-                        >
-                            <Send className="size-4 mr-1.5" />
-                            {dispoLoading ? "Mengirim…" : "Kirim Disposisi"}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* ── AlertDialog: Konfirmasi hapus ───────────────────────── */}
-            <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus surat ini?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Surat{" "}
-                            <span className="font-mono font-semibold text-foreground">
-                                {letter.no_surat}
-                            </span>{" "}
-                            beserta riwayat disposisinya akan dihapus permanen.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleDelete}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                            Hapus Surat
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <DeleteConfirmModal
+                letter={letter}
+                confirmDelete={confirmDelete}
+                setConfirmDelete={setConfirmDelete}
+            />
         </AppLayout>
     );
 }

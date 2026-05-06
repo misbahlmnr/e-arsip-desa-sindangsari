@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\{SuratMasukController, SuratKeluarController, UserController};
+use App\Http\Controllers\Sekdes\DashboardController as SekdesDashboardController;
+use App\Http\Controllers\Kades\DashboardController as KadesDashboardController;
+use App\Http\Controllers\Admin\{SuratMasukController, SuratKeluarController};
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,9 +15,9 @@ Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
         return app(AdminDashboardController::class)->index();
     } elseif (auth()->user()->isSekdes()) {
-        return app(GuruDashboardController::class)->index();
+        return app(SekdesDashboardController::class)->index();
     } elseif (auth()->user()->isKades()) {
-        return app(SiswaDashboardController::class)->index();
+        return app(KadesDashboardController::class)->index();
     }
 
     return abort(403);

@@ -30,12 +30,6 @@ class UpdateRequest extends FormRequest
         $letter = $this->route('surat_masuk');
 
         return [
-            'nomor_registrasi' => [
-                'required',
-                'string',
-                'max:64',
-                Rule::unique('surat_masuk', 'nomor_registrasi')->ignore($letter),
-            ],
             'no_surat' => [
                 'required',
                 'string',

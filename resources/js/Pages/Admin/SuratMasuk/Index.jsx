@@ -50,6 +50,7 @@ export default function SuratMasuk({ letters, filters }) {
                     className="flex items-center justify-end"
                 >
                     <Button
+                        size="lg"
                         onClick={() =>
                             router.visit(route("admin.surat-masuk.create"))
                         }

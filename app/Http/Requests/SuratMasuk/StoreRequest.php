@@ -22,12 +22,6 @@ class StoreRequest extends FormRequest
     {
         $this->normalizeSuratMasukAliases();
 
-        if (! $this->filled('nomor_registrasi')) {
-            $this->merge([
-                'nomor_registrasi' => 'REG-'.now()->format('Ymd').'-'.Str::upper(Str::random(8)),
-            ]);
-        }
-
         if (! $this->filled('status')) {
             $this->merge(['status' => 'belum_diproses']);
         }
@@ -39,7 +33,6 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nomor_registrasi' => ['required', 'string', 'max:64', Rule::unique('surat_masuk', 'nomor_registrasi')],
             'no_surat' => ['required', 'string', 'max:120', Rule::unique('surat_masuk', 'no_surat')],
             'tanggal_terima' => ['required', 'date'],
             'tanggal_surat' => ['required', 'date'],

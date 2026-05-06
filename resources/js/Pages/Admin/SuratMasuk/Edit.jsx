@@ -15,6 +15,7 @@ import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FileUpload } from "@/Components/FileUpload";
 import { FilePreview } from "@/Components/FilePreview";
+import { cn } from "@/lib/utils";
 
 const STATUS_OPTIONS = [
     { value: "belum_diproses", label: "Belum Diproses" },
@@ -38,7 +39,6 @@ export default function EditSuratMasuk({ letter }) {
 
     const defaults = useMemo(
         () => ({
-            nomor_registrasi: letter.nomor_registrasi ?? "",
             no_surat: letter.no_surat ?? "",
             tanggal_terima: tanggalToInput(letter.tanggal_terima),
             tanggal_surat: tanggalToInput(letter.tanggal_surat),
@@ -60,7 +60,6 @@ export default function EditSuratMasuk({ letter }) {
             surat_masuk: letter.id,
         });
         const fields = {
-            nomor_registrasi: data.nomor_registrasi,
             no_surat: data.no_surat,
             tanggal_terima: data.tanggal_terima,
             tanggal_surat: data.tanggal_surat || null,
@@ -98,8 +97,7 @@ export default function EditSuratMasuk({ letter }) {
     const hasNewFile = data.file instanceof File;
     const showExistingPreview =
         hasExistingFile && !replaceAttachment && !hasNewFile;
-    const showUploader =
-        !hasExistingFile || replaceAttachment || hasNewFile;
+    const showUploader = !hasExistingFile || replaceAttachment || hasNewFile;
 
     return (
         <AppLayout
@@ -115,19 +113,6 @@ export default function EditSuratMasuk({ letter }) {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <FormField
-                            label="No. Registrasi"
-                            required
-                            error={pageErrors.nomor_registrasi}
-                        >
-                            <Input
-                                value={data.nomor_registrasi}
-                                onChange={(e) =>
-                                    setData("nomor_registrasi", e.target.value)
-                                }
-                                className="h-11 rounded-xl"
-                            />
-                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -182,20 +167,59 @@ export default function EditSuratMasuk({ letter }) {
                                 maxLength={120}
                             />
                         </FormField>
-                    </div>
+                        <FormField
+                            label="Perihal"
+                            required
+                            error={pageErrors.perihal}
+                        >
+                            <Input
+                                value={data.perihal}
+                                onChange={(e) =>
+                                    setData("perihal", e.target.value)
+                                }
+                                className="h-11 rounded-xl"
+                                maxLength={250}
+                            />
+                        </FormField>
+                        <FormField
+                            label="Status"
+                            required
+                            error={pageErrors.status}
+                        >
+                            <Select
+                                value={data.status}
+                                onValueChange={(v) => setData("status", v)}
+                            >
+                                <SelectTrigger className="h-11 rounded-xl">
+                                    <SelectValue placeholder="Pilih status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {STATUS_OPTIONS.map((opt) => (
+                                        <SelectItem
+                                            key={opt.value}
+                                            value={opt.value}
+                                        >
+                                            {opt.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </FormField>
 
-                    <FormField
-                        label="Perihal"
-                        required
-                        error={pageErrors.perihal}
-                    >
-                        <Input
-                            value={data.perihal}
-                            onChange={(e) => setData("perihal", e.target.value)}
-                            className="h-11 rounded-xl"
-                            maxLength={250}
-                        />
-                    </FormField>
+                        <FormField
+                            label="Tujuan"
+                            error={pageErrors.tujuan}
+                            className="col-span-2"
+                        >
+                            <Input
+                                value={data.tujuan}
+                                onChange={(e) =>
+                                    setData("tujuan", e.target.value)
+                                }
+                                className="h-11 rounded-xl"
+                            />
+                        </FormField>
+                    </div>
 
                     <FormField
                         label="Catatan"
@@ -208,39 +232,6 @@ export default function EditSuratMasuk({ letter }) {
                             placeholder="Catatan tambahan untuk arsip…"
                             className="min-h-[100px] rounded-xl resize-none"
                             maxLength={5000}
-                        />
-                    </FormField>
-
-                    <FormField
-                        label="Status"
-                        required
-                        error={pageErrors.status}
-                    >
-                        <Select
-                            value={data.status}
-                            onValueChange={(v) => setData("status", v)}
-                        >
-                            <SelectTrigger className="h-11 rounded-xl">
-                                <SelectValue placeholder="Pilih status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {STATUS_OPTIONS.map((opt) => (
-                                    <SelectItem
-                                        key={opt.value}
-                                        value={opt.value}
-                                    >
-                                        {opt.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </FormField>
-
-                    <FormField label="Tujuan" error={pageErrors.tujuan}>
-                        <Input
-                            value={data.tujuan}
-                            onChange={(e) => setData("tujuan", e.target.value)}
-                            className="h-11 rounded-xl"
                         />
                     </FormField>
 
@@ -289,7 +280,9 @@ export default function EditSuratMasuk({ letter }) {
 
                     {showUploader ? (
                         <div className="space-y-2">
-                            {hasExistingFile && replaceAttachment && !hasNewFile ? (
+                            {hasExistingFile &&
+                            replaceAttachment &&
+                            !hasNewFile ? (
                                 <div className="flex flex-wrap items-center gap-2">
                                     <Button
                                         type="button"
@@ -306,9 +299,7 @@ export default function EditSuratMasuk({ letter }) {
                                 </div>
                             ) : null}
                             <FileUpload
-                                value={
-                                    hasNewFile ? data.file : null
-                                }
+                                value={hasNewFile ? data.file : null}
                                 onChange={(f) => setData("file", f ?? null)}
                             />
                             {pageErrors.file ? (
@@ -324,9 +315,9 @@ export default function EditSuratMasuk({ letter }) {
     );
 }
 
-function FormField({ label, required, hint, error, children }) {
+function FormField({ label, required, hint, error, children, className }) {
     return (
-        <div className="space-y-1.5">
+        <div className={cn("space-y-1.5", className)}>
             <Label className="flex items-center gap-1.5">
                 {label}
                 {required && <span className="text-destructive">*</span>}
