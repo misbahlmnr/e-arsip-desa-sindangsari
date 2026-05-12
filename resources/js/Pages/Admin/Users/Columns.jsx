@@ -1,23 +1,23 @@
-import { StatusBadge } from "@/Components/StatusBadge";
+import { RoleBadge } from "@/Components/StatusBadge";
 import { Button } from "@/Components/ui/button";
-
 import { formatTanggalKalenderWib } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-
-const STATUS_LABEL_MAP = {
-    draft: "Draft",
-    terkirim: "Terkirim",
-};
 
 /**
  * @param {{
  *   startIndex?: number;
  *   onDetail?: (row: object) => void;
  *   onEdit?: (row: object) => void;
+ *   authUserId?: number;
  * }} opts
  */
-export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
+export function getColumns({
+    startIndex = 0,
+    onDetail,
+    onEdit,
+    authUserId,
+} = {}) {
     return [
         {
             id: "row_number",
@@ -31,61 +31,53 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
             ),
         },
         {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
+            accessorKey: "name",
+            header: "Nama",
             cell: ({ row }) => (
                 <button
                     type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                    className="text-sm font-semibold text-primary hover:underline text-left"
                     onClick={() => onDetail?.(row.original)}
                 >
-                    {row.original.no_surat}
+                    {row.original.name}
                 </button>
             ),
         },
         {
-            accessorKey: "tanggal_kirim",
-            header: "Tgl Surat",
+            accessorKey: "username",
+            header: "Username",
+            cell: ({ row }) => (
+                <span className="font-mono text-sm text-muted-foreground">
+                    {row.original.username}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "email",
+            header: "Email",
+            cell: ({ row }) => (
+                <span
+                    title={row.original.email}
+                    className="truncate text-sm font-medium inline-block max-w-[220px]"
+                >
+                    {row.original.email}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "role",
+            header: "Peran",
+            cell: ({ row }) => <RoleBadge role={row.original.role} />,
+        },
+        {
+            accessorKey: "created_at",
+            header: "Terdaftar",
             cell: ({ row }) => (
                 <span className="text-sm text-muted-foreground tabular-nums whitespace-nowrap">
-                    {formatTanggalKalenderWib(row.original.tanggal_kirim)}
+                    {row.original.created_at
+                        ? formatTanggalKalenderWib(row.original.created_at)
+                        : "—"}
                 </span>
-            ),
-        },
-        {
-            accessorKey: "tujuan",
-            header: "Tujuan",
-            cell: ({ row }) => (
-                <span
-                    title={row.original.tujuan}
-                    className="truncate text-sm font-medium inline-block"
-                >
-                    {row.original.tujuan}
-                </span>
-            ),
-        },
-        {
-            accessorKey: "perihal",
-            header: "Perihal",
-            cell: ({ row }) => (
-                <span
-                    title={row.original.perihal}
-                    className="truncate text-sm font-medium inline-block"
-                >
-                    {row.original.perihal}
-                </span>
-            ),
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => (
-                <StatusBadge
-                    status={
-                        STATUS_LABEL_MAP[row.original.status] ??
-                        row.original.status
-                    }
-                />
             ),
         },
         {
@@ -93,14 +85,16 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
             enableSorting: false,
             header: <div className="text-center">Aksi</div>,
             cell: ({ row }) => {
+                const isSelf = authUserId === row.original.id;
+
                 const handleDelete = () => {
                     const ok = confirm(
-                        "Apakah Anda yakin ingin menghapus surat ini?",
+                        "Apakah Anda yakin ingin menghapus pengguna ini?",
                     );
                     if (!ok) return;
                     router.delete(
-                        route("admin.surat-keluar.destroy", {
-                            surat_keluar: row.original.id,
+                        route("admin.users.destroy", {
+                            user: row.original.id,
                         }),
                     );
                 };
@@ -128,8 +122,14 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="size-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                            className="size-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40"
                             aria-label="Hapus"
+                            disabled={isSelf}
+                            title={
+                                isSelf
+                                    ? "Tidak dapat menghapus akun sendiri"
+                                    : undefined
+                            }
                             onClick={handleDelete}
                         >
                             <Trash2 className="size-4" />

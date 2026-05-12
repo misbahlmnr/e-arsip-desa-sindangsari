@@ -32,13 +32,13 @@ export const NAVBAR_ITEMS = [
         label: "Surat Keluar",
         href: route("admin.surat-keluar.index"),
         icon: FileOutput,
-        routeName: "#",
+        routeName: "admin.surat-keluar.index",
     },
     {
         label: "Arsip Surat",
-        href: "#",
+        href: route("admin.arsip-surat.index"),
         icon: Archive,
-        routeName: "#",
+        routeName: "admin.arsip-surat.index",
     },
     {
         label: "Laporan",
@@ -48,9 +48,9 @@ export const NAVBAR_ITEMS = [
     },
     {
         label: "Manajemen User",
-        href: "#",
+        href: route("admin.users.index"),
         icon: Users,
-        routeName: "#",
+        routeName: "admin.users.index",
         roles: ["admin"],
     },
 ];

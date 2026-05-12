@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\SuratKeluar\{StoreRequest, UpdateRequest};
-use Illuminate\Http\Request;
+use App\Http\Requests\SuratKeluar\StoreRequest;
+use App\Http\Requests\SuratKeluar\UpdateRequest;
 use App\Models\SuratKeluar;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarService
@@ -22,9 +23,11 @@ class SuratKeluarService
         'tujuan',
         'perihal',
         'created_at',
+        'diarsipkan_at',
     ];
 
-    public function index(Request $req) {
+    public function index(Request $req)
+    {
         $validated = $req->validate([
             'page' => ['nullable', 'integer', 'min:1'],
             'search' => ['nullable', 'string', 'max:255'],
@@ -43,12 +46,13 @@ class SuratKeluarService
         }
 
         $query = SuratKeluar::query()
+            ->whereNull('diarsipkan_at')
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
                     $q->where('no_surat', 'like', $like)
-                    ->orWhere('tujuan', 'like', $like)
-                    ->orWhere('perihal', 'like', $like);
+                        ->orWhere('tujuan', 'like', $like)
+                        ->orWhere('perihal', 'like', $like);
                 });
             })
             ->orderBy($sortBy, $sortDir);
@@ -66,30 +70,34 @@ class SuratKeluarService
         ];
     }
 
-    private function handleFile(Request $req) {
+    private function handleFile(Request $req)
+    {
         if ($req->hasFile('file')) {
             return $req->file('file')->store('surat-keluar', 'public');
         }
+
         return null;
     }
-    
-    public function store(StoreRequest $req) {
+
+    public function store(StoreRequest $req)
+    {
         try {
             $data = $req->validated();
             $filePath = $this->handleFile($req);
-    
+
             if ($filePath) {
                 $data['file'] = $filePath;
             }
-    
+
             return SuratKeluar::create($data);
         } catch (\Exception $e) {
-            Log::error('Error storing surat keluar: ' . $e->getMessage());
+            Log::error('Error storing surat keluar: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function update(UpdateRequest $req, SuratKeluar $surat_keluar) {
+    public function update(UpdateRequest $req, SuratKeluar $surat_keluar)
+    {
         try {
             $data = $req->validated();
             $filePath = $this->handleFile($req);
@@ -105,20 +113,32 @@ class SuratKeluarService
 
             return $surat_keluar->update($data);
         } catch (\Exception $e) {
-            Log::error('Error updating surat keluar: ' . $e->getMessage());
+            Log::error('Error updating surat keluar: '.$e->getMessage());
             throw $e;
         }
     }
 
-    public function destroy(SuratKeluar $surat_keluar) {
+    public function destroy(SuratKeluar $surat_keluar)
+    {
         try {
             if ($surat_keluar->file && Storage::disk('public')->exists($surat_keluar->file)) {
                 Storage::disk('public')->delete($surat_keluar->file);
             }
+
             return $surat_keluar->delete();
         } catch (\Exception $e) {
-            Log::error('Error deleting surat keluar: ' . $e->getMessage());
+            Log::error('Error deleting surat keluar: '.$e->getMessage());
             throw $e;
         }
+    }
+
+    public function archive(SuratKeluar $surat_keluar): void
+    {
+        $surat_keluar->update(['diarsipkan_at' => now()]);
+    }
+
+    public function unarchive(SuratKeluar $surat_keluar): void
+    {
+        $surat_keluar->update(['diarsipkan_at' => null]);
     }
 }

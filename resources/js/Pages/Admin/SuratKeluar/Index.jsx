@@ -1,69 +1,59 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Button } from "@/Components/ui/button";
-import FormModalSuratKeluar from "./FormModalSuratKeluar";
-import DetailModalSuratKeluar from "./DetailModalSuratKeluar";
 import { DataTable } from "@/Components/DataTable/Index";
-import { getColumns } from "./columns";
 import { useServerTable } from "@/Hooks/useServerTable";
+import { getColumns } from "./Columns";
 
 export default function SuratKeluar({ letters, filters }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingLetter, setEditingLetter] = useState(null);
-    const [detailLetter, setDetailLetter] = useState(null);
-
-    const closeFormModal = () => {
-        setIsModalOpen(false);
-        setEditingLetter(null);
-    };
-
     const { loading, searchInput, setSearchInput, visit } = useServerTable({
         routeName: "admin.surat-keluar.index",
         filters,
         searchDebounceMs: 400,
     });
+    const startIndex =
+        ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
 
     const columns = useMemo(
         () =>
             getColumns({
-                startIndex:
-                    ((letters?.current_page ?? 1) - 1) *
-                    (letters?.per_page ?? 10),
-                onDetail: (row) => setDetailLetter(row),
-                onEdit: (row) => {
-                    setEditingLetter(row);
-                    setIsModalOpen(true);
-                },
+                startIndex,
+                onDetail: (row) =>
+                    router.visit(
+                        route("admin.surat-keluar.show", {
+                            surat_keluar: row.id,
+                        }),
+                    ),
+                onEdit: (row) =>
+                    router.visit(
+                        route("admin.surat-keluar.edit", {
+                            surat_keluar: row.id,
+                        }),
+                    ),
             }),
-        [letters?.current_page, letters?.per_page],
+        [startIndex],
     );
 
     return (
-        <AppLayout>
+        <AppLayout
+            title="Surat Keluar"
+            subtitle="Daftar seluruh surat yang dikirim oleh kantor desa."
+        >
             <Head title="Surat Keluar" />
 
             <div className="space-y-8">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-end"
                 >
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            Surat Keluar
-                        </h1>
-                        <p className="text-gray-600 mt-1">
-                            Kelola dan pantau semua surat keluar dengan mudah
-                        </p>
-                    </div>
-
                     <Button
-                        onClick={() => {
-                            setEditingLetter(null);
-                            setIsModalOpen(true);
-                        }}
+                        size="lg"
+                        onClick={() =>
+                            router.visit(route("admin.surat-keluar.create"))
+                        }
                     >
                         Tambah Surat
                     </Button>
@@ -75,7 +65,6 @@ export default function SuratKeluar({ letters, filters }) {
                     transition={{ delay: 0.15 }}
                 >
                     <DataTable
-                        mode="server"
                         columns={columns}
                         pagination={letters}
                         filters={filters}
@@ -83,20 +72,11 @@ export default function SuratKeluar({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
+                        searchPlaceholder="Cari nomor, tujuan, atau perihal..."
+                        emptyMessage="Coba ubah kata kunci pencarian."
                     />
                 </motion.div>
             </div>
-
-            <FormModalSuratKeluar
-                isOpen={isModalOpen}
-                onClose={closeFormModal}
-                letter={editingLetter}
-            />
-
-            <DetailModalSuratKeluar
-                letter={detailLetter}
-                onClose={() => setDetailLetter(null)}
-            />
         </AppLayout>
     );
 }

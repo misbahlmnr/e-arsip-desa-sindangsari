@@ -19,6 +19,7 @@ class SuratMasuk extends Model
         'status',
         'tujuan',
         'file',
+        'diarsipkan_at',
     ];
 
     /**
@@ -29,6 +30,7 @@ class SuratMasuk extends Model
         return [
             'tanggal_terima' => 'date:Y-m-d',
             'tanggal_surat' => 'date:Y-m-d',
+            'diarsipkan_at' => 'datetime',
         ];
     }
 

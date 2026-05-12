@@ -65,4 +65,26 @@ class SuratMasukController extends Controller
 
         return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil dihapus.');
     }
+
+    public function archive(SuratMasuk $surat_masuk)
+    {
+        if ($surat_masuk->diarsipkan_at) {
+            return back()->with('info', 'Surat ini sudah berada di arsip.');
+        }
+
+        $this->services->archive($surat_masuk);
+
+        return back()->with('success', 'Surat masuk berhasil diarsipkan.');
+    }
+
+    public function unarchive(SuratMasuk $surat_masuk)
+    {
+        if (! $surat_masuk->diarsipkan_at) {
+            return back()->with('info', 'Surat ini tidak dalam arsip.');
+        }
+
+        $this->services->unarchive($surat_masuk);
+
+        return back()->with('success', 'Surat masuk dikembalikan ke daftar aktif.');
+    }
 }

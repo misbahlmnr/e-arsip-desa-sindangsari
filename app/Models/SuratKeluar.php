@@ -14,7 +14,10 @@ class SuratKeluar extends Model
         'tanggal_kirim',
         'tujuan',
         'perihal',
+        'catatan',
+        'status',
         'file',
+        'diarsipkan_at',
     ];
 
     /**
@@ -24,6 +27,7 @@ class SuratKeluar extends Model
     {
         return [
             'tanggal_kirim' => 'date:Y-m-d',
+            'diarsipkan_at' => 'datetime',
         ];
     }
 

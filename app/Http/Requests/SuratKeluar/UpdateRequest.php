@@ -7,12 +7,19 @@ use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
+    use NormalizesSuratKeluarInput;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->normalizeSuratKeluarAliases();
     }
 
     /**
@@ -23,15 +30,17 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "no_surat" => [
-                "required",
-                "string",
-                Rule::unique("surat_keluar", "no_surat")->ignore($this->route("surat_keluar")),
+            'no_surat' => [
+                'required',
+                'string',
+                Rule::unique('surat_keluar', 'no_surat')->ignore($this->route('surat_keluar')),
             ],
-            "tanggal_kirim" => ["required", "date"],
-            "tujuan" => ["required", "string"],
-            "perihal" => ["required", "string"],
-            "file" => ["nullable", "file", "mimes:pdf,doc,docx"],
+            'tanggal_kirim' => ['required', 'date'],
+            'tujuan' => ['required', 'string'],
+            'perihal' => ['required', 'string'],
+            'catatan' => ['nullable', 'string'],
+            'status' => ['required', 'in:draft,terkirim'],
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
         ];
     }
 }

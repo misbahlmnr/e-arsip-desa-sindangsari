@@ -232,7 +232,7 @@ export default function Login({ status, canResetPassword }) {
                                         Memproses…
                                     </>
                                 ) : (
-                                    "Masuk ke Sistem"
+                                    "Masuk"
                                 )}
                             </Button>
                         </form>

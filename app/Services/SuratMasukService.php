@@ -27,6 +27,7 @@ class SuratMasukService
         'status',
         'tujuan',
         'created_at',
+        'diarsipkan_at',
     ];
 
     public function index(Request $req)
@@ -51,6 +52,7 @@ class SuratMasukService
         }
 
         $query = SuratMasuk::query()
+            ->whereNull('diarsipkan_at')
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($q) use ($search) {
                     $like = '%'.$search.'%';
@@ -142,5 +144,15 @@ class SuratMasukService
             Log::error('Error deleting surat masuk: '.$e->getMessage());
             throw $e;
         }
+    }
+
+    public function archive(SuratMasuk $surat_masuk): void
+    {
+        $surat_masuk->update(['diarsipkan_at' => now()]);
+    }
+
+    public function unarchive(SuratMasuk $surat_masuk): void
+    {
+        $surat_masuk->update(['diarsipkan_at' => null]);
     }
 }
