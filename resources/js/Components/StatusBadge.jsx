@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+﻿import { Badge } from "@/components/ui/badge";
+import { cn } from "@/shared/lib/utils";
 
 const STATUS_STYLES = {
     Baru: "bg-info-soft text-info border-info/20",

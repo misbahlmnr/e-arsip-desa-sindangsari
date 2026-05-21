@@ -22,7 +22,7 @@ class SuratMasukController extends Controller
     {
         $data = $this->services->index($request);
 
-        return inertia('Admin/SuratMasuk/Index', [
+        return inertia('surat-masuk/Index', [
             'letters' => $data['letters'],
             'filters' => $data['filters'],
         ]);
@@ -32,12 +32,12 @@ class SuratMasukController extends Controller
     {
         $this->authorizeSuratManagement();
 
-        return inertia('Admin/SuratMasuk/Create');
+        return inertia('surat-masuk/Create');
     }
 
     public function show(SuratMasuk $surat_masuk)
     {
-        return inertia('Admin/SuratMasuk/Show', [
+        return inertia('surat-masuk/Show', [
             'letter' => $surat_masuk,
         ]);
     }
@@ -46,7 +46,7 @@ class SuratMasukController extends Controller
     {
         $this->authorizeSuratManagement();
 
-        return inertia('Admin/SuratMasuk/Edit', [
+        return inertia('surat-masuk/Edit', [
             'letter' => $surat_masuk,
         ]);
     }

@@ -29,6 +29,6 @@ class DashboardController extends Controller
             ],
         ];
 
-        return inertia('Admin/Dashboard', $data);
+        return inertia('dashboard/Admin', $data);
     }
 }

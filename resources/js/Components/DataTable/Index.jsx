@@ -1,28 +1,28 @@
-import {
+﻿import {
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import {
     flexRender,
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
 import { useCallback } from "react";
-import { Input } from "@/Components/ui/input";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Components/ui/select";
-import { Button } from "@/Components/ui/button";
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { FileInput, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 

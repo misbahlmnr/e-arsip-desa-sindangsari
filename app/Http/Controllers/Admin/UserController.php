@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         $data = $this->services->index($request);
 
-        return inertia('Admin/Users/Index', [
+        return inertia('users/Index', [
             'users' => $data['users'],
             'filters' => $data['filters'],
         ]);
@@ -25,19 +25,19 @@ class UserController extends Controller
 
     public function create()
     {
-        return inertia('Admin/Users/Create');
+        return inertia('users/Create');
     }
 
     public function show(User $user)
     {
-        return inertia('Admin/Users/Show', [
+        return inertia('users/Show', [
             'user' => $user,
         ]);
     }
 
     public function edit(User $user)
     {
-        return inertia('Admin/Users/Edit', [
+        return inertia('users/Edit', [
             'user' => $user,
         ]);
     }

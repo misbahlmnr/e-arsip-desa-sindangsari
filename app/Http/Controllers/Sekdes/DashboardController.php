@@ -8,6 +8,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return inertia('Sekdes/Dashboard');
+        return inertia('dashboard/Sekdes');
     }
 }

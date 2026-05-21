@@ -1,4 +1,4 @@
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Download, FileText, Image as ImageIcon, X } from "lucide-react";
 
 function formatBytes(bytes) {

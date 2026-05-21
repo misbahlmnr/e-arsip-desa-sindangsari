@@ -1,4 +1,4 @@
-// resources/js/Components/FileUpload.jsx
+// resources/js/components/FileUpload.jsx
 
 import { Download, FileText, ImageIcon, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";

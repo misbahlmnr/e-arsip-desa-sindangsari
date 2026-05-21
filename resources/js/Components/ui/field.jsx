@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { Label } from "@/Components/ui/label";
+﻿import { cn } from "@/shared/lib/utils";
+import { Label } from "@/components/ui/label";
 
 const Field = ({ className, "data-invalid": dataInvalid, ...props }) => {
     return (

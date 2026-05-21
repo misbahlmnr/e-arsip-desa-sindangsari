@@ -65,7 +65,7 @@ class ArsipSuratController extends Controller
 
         $letters = $query->paginate($perPage)->withQueryString();
 
-        return inertia('Admin/ArsipSurat/Index', [
+        return inertia('arsip-surat/Index', [
             'letters' => $letters,
             'filters' => [
                 'search' => $search !== '' ? $search : null,
@@ -94,7 +94,7 @@ class ArsipSuratController extends Controller
                 ->findOrFail($id);
         }
 
-        return inertia('Admin/ArsipSurat/Show', [
+        return inertia('arsip-surat/Show', [
             'jenis' => $jenis,
             'letter' => $letter,
         ]);
