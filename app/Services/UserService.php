@@ -80,6 +80,7 @@ class UserService
     {
         $data = $req->validated();
         $data['password'] = Hash::make($data['password']);
+        $data['email_verified_at'] = now();
 
         return User::create($data);
     }

@@ -13,7 +13,7 @@ import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import AppLayout from "@/Layouts/AppLayout";
 import { cn, formatTanggalKalenderWib } from "@/lib/utils";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { ArrowLeft, Download, FileText, RotateCcw } from "lucide-react";
 import { useState } from "react";
 
@@ -51,6 +51,7 @@ function InfoRow({ label, value }) {
 }
 
 export default function ArsipSuratShow({ jenis, letter }) {
+    const canManageSurat = usePage().props.auth.canManageSurat;
     const [confirmRestore, setConfirmRestore] = useState(false);
     const isMasuk = jenis === "masuk";
 
@@ -163,14 +164,16 @@ export default function ArsipSuratShow({ jenis, letter }) {
                         </dl>
 
                         <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={() => setConfirmRestore(true)}
-                                className="rounded-xl"
-                            >
-                                <RotateCcw className="size-4 mr-1.5" />
-                                Pulihkan Arsip
-                            </Button>
+                            {canManageSurat && (
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setConfirmRestore(true)}
+                                    className="rounded-xl"
+                                >
+                                    <RotateCcw className="size-4 mr-1.5" />
+                                    Pulihkan Arsip
+                                </Button>
+                            )}
                             {letter.file_url ? (
                                 <Button asChild variant="outline" className="rounded-xl">
                                     <a
@@ -238,6 +241,7 @@ export default function ArsipSuratShow({ jenis, letter }) {
                 </aside>
             </div>
 
+            {canManageSurat && (
             <AlertDialog open={confirmRestore} onOpenChange={setConfirmRestore}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -260,6 +264,7 @@ export default function ArsipSuratShow({ jenis, letter }) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            )}
         </AppLayout>
     );
 }

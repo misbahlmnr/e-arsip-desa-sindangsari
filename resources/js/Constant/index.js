@@ -20,6 +20,7 @@ export const NAVBAR_ITEMS = [
         href: route("admin.surat-masuk.index"),
         icon: FileInput,
         routeName: "admin.surat-masuk.index",
+        roles: ["admin", "sekdes"],
     },
     {
         label: "Disposisi",
@@ -33,12 +34,14 @@ export const NAVBAR_ITEMS = [
         href: route("admin.surat-keluar.index"),
         icon: FileOutput,
         routeName: "admin.surat-keluar.index",
+        roles: ["admin", "sekdes"],
     },
     {
         label: "Arsip Surat",
         href: route("admin.arsip-surat.index"),
         icon: Archive,
         routeName: "admin.arsip-surat.index",
+        roles: ["admin", "sekdes"],
     },
     {
         label: "Laporan",

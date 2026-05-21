@@ -15,9 +15,15 @@ const STATUS_LABEL_MAP = {
  *   startIndex?: number;
  *   onDetail?: (row: object) => void;
  *   onEdit?: (row: object) => void;
+ *   canManage?: boolean;
  * }} opts
  */
-export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
+export function getColumns({
+    startIndex = 0,
+    onDetail,
+    onEdit,
+    canManage = true,
+} = {}) {
     return [
         {
             id: "row_number",
@@ -116,24 +122,28 @@ export function getColumns({ startIndex = 0, onDetail, onEdit } = {}) {
                         >
                             <Eye className="size-4" />
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-9 rounded-lg"
-                            aria-label="Edit"
-                            onClick={() => onEdit?.(row.original)}
-                        >
-                            <Pencil className="size-4" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
-                            aria-label="Hapus"
-                            onClick={handleDelete}
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
+                        {canManage && (
+                            <>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-9 rounded-lg"
+                                    aria-label="Edit"
+                                    onClick={() => onEdit?.(row.original)}
+                                >
+                                    <Pencil className="size-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-9 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    aria-label="Hapus"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 className="size-4" />
+                                </Button>
+                            </>
+                        )}
                     </div>
                 );
             },

@@ -87,10 +87,7 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            onClick={() => {
-                                logout();
-                                router.visit(route("login"));
-                            }}
+                            onClick={logout}
                             className="text-destructive focus:text-destructive"
                         >
                             <LogOut className="size-4 mr-2" /> Keluar

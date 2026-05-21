@@ -10,7 +10,7 @@ import {
     AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Archive,
     ArrowLeft,
@@ -36,6 +36,7 @@ function Field({ label, value, className }) {
 }
 
 export default function ShowSuratKeluar({ letter }) {
+    const canManageSurat = usePage().props.auth.canManageSurat;
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const handleArsipkan = () => {
@@ -131,58 +132,91 @@ export default function ShowSuratKeluar({ letter }) {
                             )}
                         </dl>
 
-                        {/* Action buttons */}
-                        <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
-                            {!letter.diarsipkan_at ? (
-                                <Button
-                                    variant="outline"
-                                    onClick={handleArsipkan}
-                                    className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
-                                >
-                                    <Archive className="size-4 mr-1.5" />
-                                    Arsipkan
-                                </Button>
-                            ) : (
-                                <Button asChild variant="outline" className="rounded-xl">
-                                    <Link
-                                        href={route(
-                                            "admin.arsip-surat.show",
-                                            {
-                                                jenis: "keluar",
-                                                id: letter.id,
-                                            },
+                        {(canManageSurat || letter.diarsipkan_at) && (
+                            <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
+                                {canManageSurat && (
+                                    <>
+                                        {!letter.diarsipkan_at ? (
+                                            <Button
+                                                variant="outline"
+                                                onClick={handleArsipkan}
+                                                className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
+                                            >
+                                                <Archive className="size-4 mr-1.5" />
+                                                Arsipkan
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                asChild
+                                                variant="outline"
+                                                className="rounded-xl"
+                                            >
+                                                <Link
+                                                    href={route(
+                                                        "admin.arsip-surat.show",
+                                                        {
+                                                            jenis: "keluar",
+                                                            id: letter.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    <Archive className="size-4 mr-1.5" />
+                                                    Lihat di Arsip
+                                                </Link>
+                                            </Button>
                                         )}
+
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="rounded-xl"
+                                        >
+                                            <Link
+                                                href={route(
+                                                    "admin.surat-keluar.edit",
+                                                    {
+                                                        surat_keluar: letter.id,
+                                                    },
+                                                )}
+                                            >
+                                                <Pencil className="size-4 mr-1.5" />
+                                                Edit
+                                            </Link>
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
+                                            onClick={() => setConfirmDelete(true)}
+                                        >
+                                            <Trash2 className="size-4 mr-1.5" />
+                                            Hapus
+                                        </Button>
+                                    </>
+                                )}
+
+                                {!canManageSurat && letter.diarsipkan_at && (
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        className="rounded-xl"
                                     >
-                                        <Archive className="size-4 mr-1.5" />
-                                        Lihat di Arsip
-                                    </Link>
-                                </Button>
-                            )}
-
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="rounded-xl"
-                            >
-                                <Link
-                                    href={route("admin.surat-keluar.edit", {
-                                        surat_keluar: letter.id,
-                                    })}
-                                >
-                                    <Pencil className="size-4 mr-1.5" />
-                                    Edit
-                                </Link>
-                            </Button>
-
-                            <Button
-                                variant="outline"
-                                className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
-                                onClick={() => setConfirmDelete(true)}
-                            >
-                                <Trash2 className="size-4 mr-1.5" />
-                                Hapus
-                            </Button>
-                        </div>
+                                        <Link
+                                            href={route(
+                                                "admin.arsip-surat.show",
+                                                {
+                                                    jenis: "keluar",
+                                                    id: letter.id,
+                                                },
+                                            )}
+                                        >
+                                            <Archive className="size-4 mr-1.5" />
+                                            Lihat di Arsip
+                                        </Link>
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* File lampiran */}
@@ -201,15 +235,17 @@ export default function ShowSuratKeluar({ letter }) {
                             <p className="font-medium">
                                 Surat ini belum memiliki lampiran.
                             </p>
-                            <Button asChild variant="link" className="mt-2">
-                                <Link
-                                    href={route("admin.surat-keluar.edit", {
-                                        surat_keluar: letter.id,
-                                    })}
-                                >
-                                    Tambahkan lampiran
-                                </Link>
-                            </Button>
+                            {canManageSurat && (
+                                <Button asChild variant="link" className="mt-2">
+                                    <Link
+                                        href={route("admin.surat-keluar.edit", {
+                                            surat_keluar: letter.id,
+                                        })}
+                                    >
+                                        Tambahkan lampiran
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>
@@ -251,6 +287,7 @@ export default function ShowSuratKeluar({ letter }) {
                 </aside>
             </div>
 
+            {canManageSurat && (
             <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -280,6 +317,7 @@ export default function ShowSuratKeluar({ letter }) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            )}
         </AppLayout>
     );
 }

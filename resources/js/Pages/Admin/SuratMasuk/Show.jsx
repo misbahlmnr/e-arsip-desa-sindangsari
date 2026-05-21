@@ -1,6 +1,6 @@
 import { Button } from "@/Components/ui/button";
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Archive,
     ArrowLeft,
@@ -80,6 +80,9 @@ function DisposisiBadge({ status }) {
 }
 
 export default function ShowSuratMasuk({ letter }) {
+    const { canManageSurat, user } = usePage().props.auth;
+    const canCreateDisposisi =
+        canManageSurat || user?.role === "sekdes";
     const [openDispo, setOpenDispo] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -191,77 +194,112 @@ export default function ShowSuratMasuk({ letter }) {
                             )}
                         </dl>
 
-                        {/* Action buttons */}
-                        <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
-                            <Button
-                                onClick={() => setOpenDispo(true)}
-                                className="rounded-xl font-semibold"
-                            >
-                                <Send className="size-4 mr-1.5" />
-                                Buat Disposisi
-                            </Button>
-
-                            {letter.status !== "selesai" && (
-                                <Button
-                                    variant="outline"
-                                    onClick={handleStatusSelesai}
-                                    className="rounded-xl"
-                                >
-                                    <CheckCircle2 className="size-4 mr-1.5" />
-                                    Tandai Selesai
-                                </Button>
-                            )}
-
-                            {!letter.diarsipkan_at ? (
-                                <Button
-                                    variant="outline"
-                                    onClick={handleArsipkan}
-                                    className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
-                                >
-                                    <Archive className="size-4 mr-1.5" />
-                                    Arsipkan
-                                </Button>
-                            ) : (
-                                <Button asChild variant="outline" className="rounded-xl">
-                                    <Link
-                                        href={route(
-                                            "admin.arsip-surat.show",
-                                            {
-                                                jenis: "masuk",
-                                                id: letter.id,
-                                            },
-                                        )}
+                        {(canCreateDisposisi || canManageSurat) && (
+                            <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
+                                {canCreateDisposisi && (
+                                    <Button
+                                        onClick={() => setOpenDispo(true)}
+                                        className="rounded-xl font-semibold"
                                     >
-                                        <Archive className="size-4 mr-1.5" />
-                                        Lihat di Arsip
-                                    </Link>
-                                </Button>
-                            )}
+                                        <Send className="size-4 mr-1.5" />
+                                        Buat Disposisi
+                                    </Button>
+                                )}
 
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="rounded-xl"
-                            >
-                                <Link
-                                    href={route("admin.surat-masuk.edit", {
-                                        surat_masuk: letter.id,
-                                    })}
-                                >
-                                    <Pencil className="size-4 mr-1.5" />
-                                    Edit
-                                </Link>
-                            </Button>
+                                {canManageSurat && (
+                                    <>
+                                        {letter.status !== "selesai" && (
+                                            <Button
+                                                variant="outline"
+                                                onClick={handleStatusSelesai}
+                                                className="rounded-xl"
+                                            >
+                                                <CheckCircle2 className="size-4 mr-1.5" />
+                                                Tandai Selesai
+                                            </Button>
+                                        )}
 
-                            <Button
-                                variant="outline"
-                                className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
-                                onClick={() => setConfirmDelete(true)}
-                            >
-                                <Trash2 className="size-4 mr-1.5" />
-                                Hapus
-                            </Button>
-                        </div>
+                                        {!letter.diarsipkan_at ? (
+                                            <Button
+                                                variant="outline"
+                                                onClick={handleArsipkan}
+                                                className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
+                                            >
+                                                <Archive className="size-4 mr-1.5" />
+                                                Arsipkan
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                asChild
+                                                variant="outline"
+                                                className="rounded-xl"
+                                            >
+                                                <Link
+                                                    href={route(
+                                                        "admin.arsip-surat.show",
+                                                        {
+                                                            jenis: "masuk",
+                                                            id: letter.id,
+                                                        },
+                                                    )}
+                                                >
+                                                    <Archive className="size-4 mr-1.5" />
+                                                    Lihat di Arsip
+                                                </Link>
+                                            </Button>
+                                        )}
+
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="rounded-xl"
+                                        >
+                                            <Link
+                                                href={route(
+                                                    "admin.surat-masuk.edit",
+                                                    {
+                                                        surat_masuk: letter.id,
+                                                    },
+                                                )}
+                                            >
+                                                <Pencil className="size-4 mr-1.5" />
+                                                Edit
+                                            </Link>
+                                        </Button>
+
+                                        <Button
+                                            variant="outline"
+                                            className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
+                                            onClick={() => setConfirmDelete(true)}
+                                        >
+                                            <Trash2 className="size-4 mr-1.5" />
+                                            Hapus
+                                        </Button>
+                                    </>
+                                )}
+
+                                {!canManageSurat && letter.diarsipkan_at && (
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        className="rounded-xl"
+                                    >
+                                        <Link
+                                            href={route(
+                                                "admin.arsip-surat.show",
+                                                {
+                                                    jenis: "masuk",
+                                                    id: letter.id,
+                                                },
+                                            )}
+                                        >
+                                            <Archive className="size-4 mr-1.5" />
+                                            Lihat di Arsip
+                                        </Link>
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* File lampiran */}
@@ -280,15 +318,17 @@ export default function ShowSuratMasuk({ letter }) {
                             <p className="font-medium">
                                 Surat ini belum memiliki lampiran.
                             </p>
-                            <Button asChild variant="link" className="mt-2">
-                                <Link
-                                    href={route("admin.surat-masuk.edit", {
-                                        surat_masuk: letter.id,
-                                    })}
-                                >
-                                    Tambahkan lampiran
-                                </Link>
-                            </Button>
+                            {canManageSurat && (
+                                <Button asChild variant="link" className="mt-2">
+                                    <Link
+                                        href={route("admin.surat-masuk.edit", {
+                                            surat_masuk: letter.id,
+                                        })}
+                                    >
+                                        Tambahkan lampiran
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
                     )}
                 </div>
@@ -340,17 +380,21 @@ export default function ShowSuratMasuk({ letter }) {
                 </aside>
             </div>
 
-            <CreateDisposisiModal
-                letter={letter}
-                openDispo={openDispo}
-                setOpenDispo={setOpenDispo}
-            />
+            {canCreateDisposisi && (
+                <CreateDisposisiModal
+                    letter={letter}
+                    openDispo={openDispo}
+                    setOpenDispo={setOpenDispo}
+                />
+            )}
 
-            <DeleteConfirmModal
-                letter={letter}
-                confirmDelete={confirmDelete}
-                setConfirmDelete={setConfirmDelete}
-            />
+            {canManageSurat && (
+                <DeleteConfirmModal
+                    letter={letter}
+                    confirmDelete={confirmDelete}
+                    setConfirmDelete={setConfirmDelete}
+                />
+            )}
         </AppLayout>
     );
 }

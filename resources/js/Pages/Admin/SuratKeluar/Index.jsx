@@ -1,5 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Button } from "@/Components/ui/button";
@@ -8,6 +8,7 @@ import { useServerTable } from "@/Hooks/useServerTable";
 import { getColumns } from "./Columns";
 
 export default function SuratKeluar({ letters, filters }) {
+    const canManageSurat = usePage().props.auth.canManageSurat;
     const { loading, searchInput, setSearchInput, visit } = useServerTable({
         routeName: "admin.surat-keluar.index",
         filters,
@@ -20,6 +21,7 @@ export default function SuratKeluar({ letters, filters }) {
         () =>
             getColumns({
                 startIndex,
+                canManage: canManageSurat,
                 onDetail: (row) =>
                     router.visit(
                         route("admin.surat-keluar.show", {
@@ -33,7 +35,7 @@ export default function SuratKeluar({ letters, filters }) {
                         }),
                     ),
             }),
-        [startIndex],
+        [startIndex, canManageSurat],
     );
 
     return (
@@ -44,20 +46,24 @@ export default function SuratKeluar({ letters, filters }) {
             <Head title="Surat Keluar" />
 
             <div className="space-y-8">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-end"
-                >
-                    <Button
-                        size="lg"
-                        onClick={() =>
-                            router.visit(route("admin.surat-keluar.create"))
-                        }
+                {canManageSurat && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center justify-end"
                     >
-                        Tambah Surat
-                    </Button>
-                </motion.div>
+                        <Button
+                            size="lg"
+                            onClick={() =>
+                                router.visit(
+                                    route("admin.surat-keluar.create"),
+                                )
+                            }
+                        >
+                            Tambah Surat
+                        </Button>
+                    </motion.div>
+                )}
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

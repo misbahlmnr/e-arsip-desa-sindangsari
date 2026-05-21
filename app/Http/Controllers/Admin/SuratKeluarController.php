@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\AuthorizesSuratManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratKeluar\StoreRequest;
 use App\Http\Requests\SuratKeluar\UpdateRequest;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 
 class SuratKeluarController extends Controller
 {
+    use AuthorizesSuratManagement;
     public function __construct(protected SuratKeluarService $services)
     {
         $this->services = $services;
@@ -28,6 +30,8 @@ class SuratKeluarController extends Controller
 
     public function create()
     {
+        $this->authorizeSuratManagement();
+
         return inertia('Admin/SuratKeluar/Create');
     }
 
@@ -40,6 +44,8 @@ class SuratKeluarController extends Controller
 
     public function edit(SuratKeluar $surat_keluar)
     {
+        $this->authorizeSuratManagement();
+
         return inertia('Admin/SuratKeluar/Edit', [
             'letter' => $surat_keluar,
         ]);
@@ -47,6 +53,8 @@ class SuratKeluarController extends Controller
 
     public function store(StoreRequest $req)
     {
+        $this->authorizeSuratManagement();
+
         $this->services->store($req);
 
         return redirect()->route('admin.surat-keluar.index')->with('success', 'Surat Keluar berhasil ditambahkan.');
@@ -54,6 +62,8 @@ class SuratKeluarController extends Controller
 
     public function update(UpdateRequest $req, SuratKeluar $surat_keluar)
     {
+        $this->authorizeSuratManagement();
+
         $this->services->update($req, $surat_keluar);
 
         return redirect()->route('admin.surat-keluar.index')->with('success', 'Surat Keluar berhasil diperbarui.');
@@ -61,6 +71,8 @@ class SuratKeluarController extends Controller
 
     public function destroy(SuratKeluar $surat_keluar)
     {
+        $this->authorizeSuratManagement();
+
         $this->services->destroy($surat_keluar);
 
         return redirect()->route('admin.surat-keluar.index')->with('success', 'Surat Keluar berhasil dihapus.');
@@ -68,6 +80,8 @@ class SuratKeluarController extends Controller
 
     public function archive(SuratKeluar $surat_keluar)
     {
+        $this->authorizeSuratManagement();
+
         if ($surat_keluar->diarsipkan_at) {
             return back()->with('info', 'Surat ini sudah berada di arsip.');
         }
@@ -79,6 +93,8 @@ class SuratKeluarController extends Controller
 
     public function unarchive(SuratKeluar $surat_keluar)
     {
+        $this->authorizeSuratManagement();
+
         if (! $surat_keluar->diarsipkan_at) {
             return back()->with('info', 'Surat ini tidak dalam arsip.');
         }

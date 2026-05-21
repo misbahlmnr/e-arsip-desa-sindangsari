@@ -33,6 +33,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'canManageSurat' => $request->user()?->canManageSurat() ?? false,
+                'canViewSurat' => $request->user()?->canViewSurat() ?? false,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),

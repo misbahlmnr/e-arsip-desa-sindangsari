@@ -103,6 +103,16 @@ class User extends Authenticatable
         return $this->role === 'kades';
     }
 
+    public function canManageSurat(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canViewSurat(): bool
+    {
+        return $this->isAdmin() || $this->isSekdes();
+    }
+
     public function guruProfile()
     {
         return $this->hasOne(GuruProfile::class);
