@@ -35,6 +35,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'canManageSurat' => $request->user()?->canManageSurat() ?? false,
                 'canViewSurat' => $request->user()?->canViewSurat() ?? false,
+                'canCreateDisposisi' => $request->user()?->canCreateDisposisi() ?? false,
+                'canManageUsers' => $request->user()?->canManageUsers() ?? false,
+                'canExportLaporan' => $request->user()?->canExportLaporan() ?? false,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),

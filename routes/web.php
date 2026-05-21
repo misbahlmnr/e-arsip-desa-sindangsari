@@ -31,17 +31,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Surat & arsip: admin + sekdes (read-only untuk sekdes)
-    Route::middleware('role:admin,sekdes')->name('admin.')->group(function () {
+    // Surat & arsip: admin + sekdes + kades (read-only untuk sekdes/kades)
+    Route::middleware('role:admin,sekdes,kades')->name('admin.')->group(function () {
         Route::get('arsip-surat', [ArsipSuratController::class, 'index'])->name('arsip-surat.index');
         Route::get('arsip-surat/{jenis}/{id}', [ArsipSuratController::class, 'show'])
             ->whereIn('jenis', ['masuk', 'keluar'])
             ->whereNumber('id')
             ->name('arsip-surat.show');
         Route::get('surat-masuk', [SuratMasukController::class, 'index'])->name('surat-masuk.index');
-        Route::get('surat-masuk/{surat_masuk}', [SuratMasukController::class, 'show'])->name('surat-masuk.show');
+        Route::get('surat-masuk/{surat_masuk}', [SuratMasukController::class, 'show'])
+            ->whereNumber('surat_masuk')
+            ->name('surat-masuk.show');
         Route::get('surat-keluar', [SuratKeluarController::class, 'index'])->name('surat-keluar.index');
-        Route::get('surat-keluar/{surat_keluar}', [SuratKeluarController::class, 'show'])->name('surat-keluar.show');
+        Route::get('surat-keluar/{surat_keluar}', [SuratKeluarController::class, 'show'])
+            ->whereNumber('surat_keluar')
+            ->name('surat-keluar.show');
     });
 
     // Mutasi surat & manajemen user: admin saja

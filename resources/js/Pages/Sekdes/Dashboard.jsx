@@ -22,6 +22,26 @@ export default function Dashboard() {
         >
             <Head title="Beranda Sekretaris Desa" />
 
+            <section aria-labelledby="akses-cepat" className="mb-6">
+                <h3 id="akses-cepat" className="sr-only">
+                    Akses cepat
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                    <Button asChild variant="outline" className="rounded-xl">
+                        <Link href={route("admin.surat-masuk.index")}>
+                            <FileInput className="size-4 mr-1.5" />
+                            Surat Masuk
+                        </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="rounded-xl">
+                        <Link href={route("admin.arsip-surat.index")}>
+                            <Archive className="size-4 mr-1.5" />
+                            Arsip Surat
+                        </Link>
+                    </Button>
+                </div>
+            </section>
+
             <section aria-labelledby="ringkasan" className="space-y-6">
                 <h3 id="ringkasan" className="sr-only">
                     Ringkasan

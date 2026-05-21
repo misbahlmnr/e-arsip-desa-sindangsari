@@ -80,9 +80,7 @@ function DisposisiBadge({ status }) {
 }
 
 export default function ShowSuratMasuk({ letter }) {
-    const { canManageSurat, user } = usePage().props.auth;
-    const canCreateDisposisi =
-        canManageSurat || user?.role === "sekdes";
+    const { canManageSurat, canCreateDisposisi } = usePage().props.auth;
     const [openDispo, setOpenDispo] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 

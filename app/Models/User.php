@@ -110,7 +110,22 @@ class User extends Authenticatable
 
     public function canViewSurat(): bool
     {
-        return $this->isAdmin() || $this->isSekdes();
+        return $this->isAdmin() || $this->isSekdes() || $this->isKades();
+    }
+
+    public function canCreateDisposisi(): bool
+    {
+        return $this->isSekdes() || $this->isKades();
+    }
+
+    public function canManageUsers(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canExportLaporan(): bool
+    {
+        return $this->isAdmin() || $this->isKades();
     }
 
     public function guruProfile()
