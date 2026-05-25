@@ -1,14 +1,9 @@
 ﻿import { RoleBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
+import { badgeLabel, ROLE_LABELS } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-
-const ROLE_LABEL_MAP = {
-    admin: "Admin",
-    sekdes: "Sekretaris Desa",
-    kades: "Kepala Desa",
-};
 
 /**
  * @param {{
@@ -77,7 +72,7 @@ export function getColumns({
                 <RoleBadge
                     value={row.original.role}
                     label={
-                        ROLE_LABEL_MAP[row.original.role] ?? row.original.role
+                        badgeLabel(ROLE_LABELS, row.original.role)
                     }
                 />
             ),

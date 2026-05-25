@@ -24,9 +24,9 @@ export const NAVBAR_ITEMS = [
     },
     {
         label: "Disposisi",
-        href: "#",
+        href: route("admin.disposisi.index"),
         icon: Send,
-        routeName: "#",
+        routeName: "admin.disposisi.index",
         roles: ["sekdes", "kades"],
     },
     {

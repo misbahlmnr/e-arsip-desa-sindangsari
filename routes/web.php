@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ArsipSuratController;
+use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SuratKeluarController;
 use App\Http\Controllers\Admin\SuratMasukController;
@@ -48,8 +49,27 @@ Route::middleware('auth')->group(function () {
             ->name('surat-keluar.show');
     });
 
+    // Disposisi: sekdes & kades saja
+    Route::middleware('role:sekdes,kades')->name('admin.')->group(function () {
+        Route::get('disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
+        Route::get('disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
+        Route::post('disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
+        Route::get('disposisi/{disposisi}', [DisposisiController::class, 'show'])
+            ->whereNumber('disposisi')
+            ->name('disposisi.show');
+        Route::patch('disposisi/{disposisi}/status', [DisposisiController::class, 'updateStatus'])
+            ->whereNumber('disposisi')
+            ->name('disposisi.update-status');
+        Route::post('surat-masuk/{surat_masuk}/disposisi', [DisposisiController::class, 'storeFromSurat'])
+            ->whereNumber('surat_masuk')
+            ->name('surat-masuk.disposisi.store');
+    });
+
     // Mutasi surat & manajemen user: admin saja
     Route::middleware('role:admin')->name('admin.')->group(function () {
+        Route::patch('surat-masuk/{surat_masuk}/status', [SuratMasukController::class, 'updateStatus'])
+            ->whereNumber('surat_masuk')
+            ->name('surat-masuk.update-status');
         Route::patch('surat-masuk/{surat_masuk}/arsipkan', [SuratMasukController::class, 'archive'])->name('surat-masuk.archive');
         Route::patch('surat-masuk/{surat_masuk}/batal-arsip', [SuratMasukController::class, 'unarchive'])->name('surat-masuk.unarchive');
         Route::patch('surat-keluar/{surat_keluar}/arsipkan', [SuratKeluarController::class, 'archive'])->name('surat-keluar.archive');

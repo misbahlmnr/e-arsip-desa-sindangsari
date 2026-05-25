@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class SuratMasuk extends Model
@@ -48,5 +49,19 @@ class SuratMasuk extends Model
         }
 
         return Storage::disk('public')->url($this->file);
+    }
+
+    public function disposisi(): HasMany
+    {
+        return $this->hasMany(Disposisi::class)->latest();
+    }
+
+    public function hasDisposisi(): bool
+    {
+        if ($this->relationLoaded('disposisi')) {
+            return $this->disposisi->isNotEmpty();
+        }
+
+        return $this->disposisi()->exists();
     }
 }

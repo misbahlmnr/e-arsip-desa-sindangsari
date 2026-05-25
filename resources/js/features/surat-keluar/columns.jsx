@@ -1,14 +1,12 @@
 ﻿import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
-
+import {
+    badgeLabel,
+    SURAT_KELUAR_STATUS_LABELS,
+} from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-
-const STATUS_LABEL_MAP = {
-    draft: "Draft",
-    terkirim: "Terkirim",
-};
 
 /**
  * @param {{
@@ -89,8 +87,10 @@ export function getColumns({
                 <StatusBadge
                     value={row.original.status}
                     label={
-                        STATUS_LABEL_MAP[row.original.status] ??
-                        row.original.status
+                        badgeLabel(
+                            SURAT_KELUAR_STATUS_LABELS,
+                            row.original.status,
+                        )
                     }
                 />
             ),

@@ -34,6 +34,12 @@ export default function Dashboard() {
                         </Link>
                     </Button>
                     <Button asChild variant="outline" className="rounded-xl">
+                        <Link href={route("admin.disposisi.index")}>
+                            <FileOutput className="size-4 mr-1.5" />
+                            Disposisi
+                        </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="rounded-xl">
                         <Link href={route("admin.arsip-surat.index")}>
                             <Archive className="size-4 mr-1.5" />
                             Arsip Surat

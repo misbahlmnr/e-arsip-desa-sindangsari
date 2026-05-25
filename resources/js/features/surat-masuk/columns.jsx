@@ -1,19 +1,13 @@
 ﻿import { Button } from "@/components/ui/button";
 import { DisposisiBadge, StatusBadge } from "@/components/StatusBadge";
+import {
+    badgeLabel,
+    DISPOSISI_FLAG_LABELS,
+    SURAT_MASUK_STATUS_LABELS,
+} from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
-
-const STATUS_LABEL_MAP = {
-    belum_diproses: "Belum Diproses",
-    sedang_diproses: "Sedang Diproses",
-    selesai: "Selesai",
-};
-
-const DISPOSISI_LABEL_MAP = {
-    belum: "Belum",
-    sudah: "Sudah",
-};
 
 /**
  * @param {{
@@ -90,7 +84,10 @@ export function getColumns({
             cell: ({ row }) => (
                 <StatusBadge
                     value={row.original.status}
-                    label={STATUS_LABEL_MAP[row.original.status]}
+                    label={badgeLabel(
+                        SURAT_MASUK_STATUS_LABELS,
+                        row.original.status,
+                    )}
                 />
             ),
         },
@@ -102,7 +99,7 @@ export function getColumns({
                 return (
                     <DisposisiBadge
                         value={key}
-                        label={DISPOSISI_LABEL_MAP[key]}
+                        label={badgeLabel(DISPOSISI_FLAG_LABELS, key)}
                     />
                 );
             },

@@ -1,13 +1,11 @@
 ﻿import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
+import {
+    badgeLabel,
+    SURAT_MASUK_STATUS_LABELS,
+} from "@/shared/constants/badgeLabels";
 import { formatDate } from "@/shared/lib/utils";
-
-const STATUS_LABEL_MAP = {
-    belum_diproses: "Belum Diproses",
-    sedang_diproses: "Sedang Diproses",
-    selesai: "Selesai",
-};
 import { Head, Link, usePage } from "@inertiajs/react";
 import {
     Inbox,
@@ -181,9 +179,10 @@ export default function Dashboard() {
                                                 <StatusBadge
                                                     value={s.status}
                                                     label={
-                                                        STATUS_LABEL_MAP[
-                                                            s.status
-                                                        ] ?? s.status
+                                                        badgeLabel(
+                                                            SURAT_MASUK_STATUS_LABELS,
+                                                            s.status,
+                                                        )
                                                     }
                                                 />
                                             </td>

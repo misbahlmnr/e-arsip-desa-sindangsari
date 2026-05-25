@@ -6,17 +6,19 @@ use App\Http\Controllers\Concerns\AuthorizesSuratManagement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Http\Requests\SuratMasuk\UpdateRequest;
+use App\Http\Requests\SuratMasuk\UpdateStatusRequest;
 use App\Models\SuratMasuk;
+use App\Services\DisposisiService;
 use App\Services\SuratMasukService;
 use Illuminate\Http\Request;
 
 class SuratMasukController extends Controller
 {
     use AuthorizesSuratManagement;
-    public function __construct(protected SuratMasukService $services)
-    {
-        $this->services = $services;
-    }
+    public function __construct(
+        protected SuratMasukService $services,
+        protected DisposisiService $disposisiService,
+    ) {}
 
     public function index(Request $request)
     {
@@ -37,8 +39,11 @@ class SuratMasukController extends Controller
 
     public function show(SuratMasuk $surat_masuk)
     {
+        $letter = $surat_masuk->toArray();
+        $letter['disposisi'] = $this->disposisiService->formatTimelineForSurat($surat_masuk);
+
         return inertia('surat-masuk/Show', [
-            'letter' => $surat_masuk,
+            'letter' => $letter,
         ]);
     }
 
@@ -76,6 +81,13 @@ class SuratMasukController extends Controller
         $this->services->destroy($surat_masuk);
 
         return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil dihapus.');
+    }
+
+    public function updateStatus(UpdateStatusRequest $request, SuratMasuk $surat_masuk)
+    {
+        $this->services->updateStatus($surat_masuk, $request->validated('status'));
+
+        return back()->with('success', 'Status surat berhasil diperbarui.');
     }
 
     public function archive(SuratMasuk $surat_masuk)

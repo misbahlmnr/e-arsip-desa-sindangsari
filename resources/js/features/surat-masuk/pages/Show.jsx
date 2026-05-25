@@ -11,31 +11,16 @@ import {
     Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
+import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
+import { DisposisiBadge, StatusBadge } from "@/components/StatusBadge";
+import {
+    badgeLabel,
+    DISPOSISI_STATUS_LABELS,
+    SURAT_MASUK_STATUS_LABELS,
+} from "@/shared/constants/badgeLabels";
 import CreateDisposisiModal from "../components/CreateDisposisiModal";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
-
-const STATUS_CONFIG = {
-    belum_diproses: {
-        label: "Belum Diproses",
-        className: "bg-yellow-100 text-yellow-800",
-    },
-    sedang_diproses: {
-        label: "Sedang Diproses",
-        className: "bg-blue-100 text-blue-800",
-    },
-    selesai: {
-        label: "Selesai",
-        className: "bg-green-100 text-green-800",
-    },
-};
-
-const DISPOSISI_STATUS_CONFIG = {
-    Menunggu: { label: "Menunggu", className: "bg-orange-100 text-orange-700" },
-    Diproses: { label: "Diproses", className: "bg-blue-100 text-blue-700" },
-    Selesai: { label: "Selesai", className: "bg-green-100 text-green-700" },
-};
 
 function Field({ label, value, className }) {
     return (
@@ -47,35 +32,6 @@ function Field({ label, value, className }) {
                 {value || "—"}
             </dd>
         </div>
-    );
-}
-
-function StatusBadge({ status }) {
-    const cfg = STATUS_CONFIG[status];
-    return (
-        <span
-            className={cn(
-                "inline-flex px-2.5 py-1 rounded-full text-xs font-semibold",
-                cfg?.className ?? "bg-gray-100 text-gray-700",
-            )}
-        >
-            {cfg?.label ?? status ?? "—"}
-        </span>
-    );
-}
-
-function DisposisiBadge({ status }) {
-    const cfg = DISPOSISI_STATUS_CONFIG[status];
-    if (!cfg) return null;
-    return (
-        <span
-            className={cn(
-                "inline-flex px-2.5 py-1 rounded-full text-xs font-semibold",
-                cfg.className,
-            )}
-        >
-            {cfg.label}
-        </span>
     );
 }
 
@@ -147,7 +103,13 @@ export default function ShowSuratMasuk({ letter }) {
                                 </p>
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
-                                <StatusBadge status={letter.status} />
+                                <StatusBadge
+                                    value={letter.status}
+                                    label={badgeLabel(
+                                        SURAT_MASUK_STATUS_LABELS,
+                                        letter.status,
+                                    )}
+                                />
                                 {letter.diarsipkan_at && (
                                     <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
                                         Diarsip
@@ -180,15 +142,15 @@ export default function ShowSuratMasuk({ letter }) {
                                 value={letter.perihal}
                                 className="sm:col-span-2"
                             />
+                            {letter.tujuan && (
+                                <Field label="Tujuan" value={letter.tujuan} />
+                            )}
                             {letter.catatan?.trim() && (
                                 <Field
                                     label="Catatan"
                                     value={letter.catatan}
                                     className="sm:col-span-2"
                                 />
-                            )}
-                            {letter.tujuan && (
-                                <Field label="Tujuan" value={letter.tujuan} />
                             )}
                         </dl>
 
@@ -268,7 +230,9 @@ export default function ShowSuratMasuk({ letter }) {
                                         <Button
                                             variant="outline"
                                             className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
-                                            onClick={() => setConfirmDelete(true)}
+                                            onClick={() =>
+                                                setConfirmDelete(true)
+                                            }
                                         >
                                             <Trash2 className="size-4 mr-1.5" />
                                             Hapus
@@ -369,7 +333,15 @@ export default function ShowSuratMasuk({ letter }) {
                                         {d.catatan}
                                     </p>
                                     {d.status && (
-                                        <DisposisiBadge status={d.status} />
+                                        <div className="mt-2">
+                                            <DisposisiBadge
+                                                value={d.status}
+                                                label={badgeLabel(
+                                                    DISPOSISI_STATUS_LABELS,
+                                                    d.status,
+                                                )}
+                                            />
+                                        </div>
                                     )}
                                 </li>
                             ))}

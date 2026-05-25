@@ -66,7 +66,17 @@ class SuratMasukService
             })
             ->orderBy($sortBy, $sortDir);
 
-        $letters = $query->paginate($perPage)->withQueryString();
+        $letters = $query
+            ->withCount('disposisi')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $letters->getCollection()->transform(function (SuratMasuk $letter) {
+            $arr = $letter->toArray();
+            $arr['disposisi'] = ($letter->disposisi_count ?? 0) > 0 ? 'sudah' : 'belum';
+
+            return $arr;
+        });
 
         return [
             'letters' => $letters,
@@ -144,6 +154,13 @@ class SuratMasukService
             Log::error('Error deleting surat masuk: '.$e->getMessage());
             throw $e;
         }
+    }
+
+    public function updateStatus(SuratMasuk $surat_masuk, string $status): SuratMasuk
+    {
+        $surat_masuk->update(['status' => $status]);
+
+        return $surat_masuk->fresh();
     }
 
     public function archive(SuratMasuk $surat_masuk): void

@@ -2,16 +2,19 @@
 import { cn } from "@/shared/lib/utils";
 
 const STATUS_STYLES = {
-    belum_diproses: "bg-yellow-100 text-yellow-800",
     sedang_diproses: "bg-warning-soft text-warning border-warning/20",
     selesai: "bg-success-soft text-success border-success/20",
     draft: "bg-muted text-muted-foreground border-border",
     terkirim: "bg-success-soft text-success border-success/20",
 };
 
-const DISPO_STYLES = {
+/** Semua style badge disposisi: flag (belum/sudah) + status alur */
+const DISPOSISI_STYLES = {
     belum: "bg-muted text-muted-foreground border-border",
     sudah: "bg-success-soft text-success border-success/20",
+    menunggu: "bg-orange-100 text-orange-800 border-orange-200",
+    diproses: "bg-warning-soft text-warning border-warning/20",
+    selesai: "bg-success-soft text-success border-success/20",
 };
 
 const ROLE_STYLES = {
@@ -20,45 +23,47 @@ const ROLE_STYLES = {
     kades: "bg-warning-soft text-warning border-warning/20",
 };
 
-export function RoleBadge({ value, label }) {
-    return (
-        <Badge
-            variant="outline"
-            className={cn(
-                "font-semibold rounded-full px-2.5 py-0.5 border",
-                ROLE_STYLES[value] ??
-                    "bg-muted text-muted-foreground border-border",
-            )}
-        >
-            {label}
-        </Badge>
-    );
-}
+const FALLBACK_STYLE = "bg-muted text-muted-foreground border-border";
 
-export function StatusBadge({ value, label }) {
-    return (
-        <Badge
-            variant="outline"
-            className={cn(
-                "font-semibold rounded-full px-2.5 py-0.5",
-                STATUS_STYLES[value],
-            )}
-        >
-            {label}
-        </Badge>
-    );
-}
-
-export function DisposisiBadge({ value, label }) {
+function OutlineBadge({ value, label, styleMap, className }) {
     return (
         <Badge
             variant="outline"
             className={cn(
                 "font-medium rounded-full px-2.5 py-0.5",
-                DISPO_STYLES[value],
+                styleMap[value] ?? FALLBACK_STYLE,
+                className,
             )}
         >
             {label}
         </Badge>
+    );
+}
+
+export function RoleBadge({ value, label }) {
+    return (
+        <OutlineBadge
+            value={value}
+            label={label}
+            styleMap={ROLE_STYLES}
+            className="font-semibold border"
+        />
+    );
+}
+
+export function StatusBadge({ value, label }) {
+    return (
+        <OutlineBadge
+            value={value}
+            label={label}
+            styleMap={STATUS_STYLES}
+            className="font-semibold"
+        />
+    );
+}
+
+export function DisposisiBadge({ value, label }) {
+    return (
+        <OutlineBadge value={value} label={label} styleMap={DISPOSISI_STYLES} />
     );
 }
