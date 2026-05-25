@@ -225,10 +225,9 @@ export default function ArsipSuratShow({ jenis, letter }) {
                 <aside className="surface-card p-6 md:p-8 self-start">
                     <h3 className="font-bold text-base">Informasi Arsip</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
-                        Metadata pengarsipan.
+                        Ringkasan data arsip surat.
                     </p>
                     <div className="space-y-4 text-sm">
-                        <InfoRow label="Diarsipkan oleh" value="—" />
                         <InfoRow
                             label="Tanggal arsip"
                             value={formatDateTime(letter.diarsipkan_at)}

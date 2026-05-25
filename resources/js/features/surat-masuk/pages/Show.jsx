@@ -179,16 +179,7 @@ export default function ShowSuratMasuk({ letter }) {
                                             </Button>
                                         )}
 
-                                        {!letter.diarsipkan_at ? (
-                                            <Button
-                                                variant="outline"
-                                                onClick={handleArsipkan}
-                                                className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
-                                            >
-                                                <Archive className="size-4 mr-1.5" />
-                                                Arsipkan
-                                            </Button>
-                                        ) : (
+                                        {letter.diarsipkan_at ? (
                                             <Button
                                                 asChild
                                                 variant="outline"
@@ -207,6 +198,17 @@ export default function ShowSuratMasuk({ letter }) {
                                                     Lihat di Arsip
                                                 </Link>
                                             </Button>
+                                        ) : (
+                                            letter.status === "selesai" && (
+                                                <Button
+                                                    variant="outline"
+                                                    onClick={handleArsipkan}
+                                                    className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
+                                                >
+                                                    <Archive className="size-4 mr-1.5" />
+                                                    Arsipkan
+                                                </Button>
+                                            )
                                         )}
 
                                         <Button

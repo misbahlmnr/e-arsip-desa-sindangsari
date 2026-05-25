@@ -98,6 +98,10 @@ class SuratMasukController extends Controller
             return back()->with('info', 'Surat ini sudah berada di arsip.');
         }
 
+        if ($surat_masuk->status !== 'selesai') {
+            return back()->with('error', 'Surat harus ditandai selesai terlebih dahulu sebelum diarsipkan.');
+        }
+
         $this->services->archive($surat_masuk);
 
         return back()->with('success', 'Surat masuk berhasil diarsipkan.');

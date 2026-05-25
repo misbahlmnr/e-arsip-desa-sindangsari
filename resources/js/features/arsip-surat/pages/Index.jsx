@@ -307,9 +307,6 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                             <SortIcon k="diarsipkan_at" />
                                         </th>
                                         <th className="px-4 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Pengarsip
-                                        </th>
-                                        <th className="px-4 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                             Status
                                         </th>
                                         <th className="px-6 md:px-8 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider text-right">
@@ -360,9 +357,6 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                                 {formatTanggalArsip(
                                                     a.diarsipkan_at,
                                                 )}
-                                            </td>
-                                            <td className="px-4 py-4 text-sm">
-                                                —
                                             </td>
                                             <td className="px-4 py-4">
                                                 <Badge

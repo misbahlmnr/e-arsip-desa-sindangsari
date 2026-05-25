@@ -38,6 +38,33 @@ class SuratMasukStatusTest extends TestCase
         $this->assertSame('selesai', $surat->fresh()->status);
     }
 
+    public function test_admin_cannot_archive_surat_before_selesai(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $surat = $this->createSurat();
+
+        $this->actingAs($admin)
+            ->patch(route('admin.surat-masuk.archive', ['surat_masuk' => $surat->id]))
+            ->assertRedirect()
+            ->assertSessionHas('error');
+
+        $this->assertNull($surat->fresh()->diarsipkan_at);
+    }
+
+    public function test_admin_can_archive_surat_when_selesai(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $surat = $this->createSurat();
+        $surat->update(['status' => 'selesai']);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.surat-masuk.archive', ['surat_masuk' => $surat->id]))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertNotNull($surat->fresh()->diarsipkan_at);
+    }
+
     public function test_sekdes_cannot_update_surat_masuk_status(): void
     {
         $sekdes = User::factory()->create(['role' => 'sekdes']);
