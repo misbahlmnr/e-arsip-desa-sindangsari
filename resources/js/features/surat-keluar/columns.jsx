@@ -87,7 +87,8 @@ export function getColumns({
             header: "Status",
             cell: ({ row }) => (
                 <StatusBadge
-                    status={
+                    value={row.original.status}
+                    label={
                         STATUS_LABEL_MAP[row.original.status] ??
                         row.original.status
                     }

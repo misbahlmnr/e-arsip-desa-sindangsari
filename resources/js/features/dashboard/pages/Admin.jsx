@@ -2,6 +2,12 @@
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import { formatDate } from "@/shared/lib/utils";
+
+const STATUS_LABEL_MAP = {
+    belum_diproses: "Belum Diproses",
+    sedang_diproses: "Sedang Diproses",
+    selesai: "Selesai",
+};
 import { Head, Link, usePage } from "@inertiajs/react";
 import {
     Inbox,
@@ -173,7 +179,12 @@ export default function Dashboard() {
                                             </td>
                                             <td className="px-6 md:px-8 py-4">
                                                 <StatusBadge
-                                                    status={s.status}
+                                                    value={s.status}
+                                                    label={
+                                                        STATUS_LABEL_MAP[
+                                                            s.status
+                                                        ] ?? s.status
+                                                    }
                                                 />
                                             </td>
                                         </tr>

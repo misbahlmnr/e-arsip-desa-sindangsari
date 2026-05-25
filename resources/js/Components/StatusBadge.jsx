@@ -2,38 +2,31 @@
 import { cn } from "@/shared/lib/utils";
 
 const STATUS_STYLES = {
-    Baru: "bg-info-soft text-info border-info/20",
-    Diproses: "bg-warning-soft text-warning border-warning/20",
-    Selesai: "bg-success-soft text-success border-success/20",
+    belum_diproses: "bg-yellow-100 text-yellow-800",
+    sedang_diproses: "bg-warning-soft text-warning border-warning/20",
+    selesai: "bg-success-soft text-success border-success/20",
     draft: "bg-muted text-muted-foreground border-border",
     terkirim: "bg-success-soft text-success border-success/20",
 };
 
 const DISPO_STYLES = {
-    Belum: "bg-muted text-muted-foreground border-border",
-    Sudah: "bg-success-soft text-success border-success/20",
-};
-
-const ROLE_LABEL = {
-    admin: "Admin",
-    sekdes: "Sekretaris Desa",
-    kades: "Kepala Desa",
+    belum: "bg-muted text-muted-foreground border-border",
+    sudah: "bg-success-soft text-success border-success/20",
 };
 
 const ROLE_STYLES = {
-    Admin: "bg-primary/10 text-primary border-primary/20",
-    "Sekretaris Desa": "bg-info-soft text-info border-info/20",
-    "Kepala Desa": "bg-warning-soft text-warning border-warning/20",
+    admin: "bg-primary/10 text-primary border-primary/20",
+    sekdes: "bg-info-soft text-info border-info/20",
+    kades: "bg-warning-soft text-warning border-warning/20",
 };
 
-export function RoleBadge({ role }) {
-    const label = ROLE_LABEL[role] ?? role;
+export function RoleBadge({ value, label }) {
     return (
         <Badge
             variant="outline"
             className={cn(
                 "font-semibold rounded-full px-2.5 py-0.5 border",
-                ROLE_STYLES[label] ??
+                ROLE_STYLES[value] ??
                     "bg-muted text-muted-foreground border-border",
             )}
         >
@@ -42,30 +35,30 @@ export function RoleBadge({ role }) {
     );
 }
 
-export function StatusBadge({ status }) {
+export function StatusBadge({ value, label }) {
     return (
         <Badge
             variant="outline"
             className={cn(
                 "font-semibold rounded-full px-2.5 py-0.5",
-                STATUS_STYLES[status],
+                STATUS_STYLES[value],
             )}
         >
-            {status}
+            {label}
         </Badge>
     );
 }
 
-export function DisposisiBadge({ status }) {
+export function DisposisiBadge({ value, label }) {
     return (
         <Badge
             variant="outline"
             className={cn(
                 "font-medium rounded-full px-2.5 py-0.5",
-                DISPO_STYLES[status],
+                DISPO_STYLES[value],
             )}
         >
-            {status}
+            {label}
         </Badge>
     );
 }

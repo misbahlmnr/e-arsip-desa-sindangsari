@@ -4,6 +4,12 @@ import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
+const ROLE_LABEL_MAP = {
+    admin: "Admin",
+    sekdes: "Sekretaris Desa",
+    kades: "Kepala Desa",
+};
+
 /**
  * @param {{
  *   startIndex?: number;
@@ -67,7 +73,14 @@ export function getColumns({
         {
             accessorKey: "role",
             header: "Peran",
-            cell: ({ row }) => <RoleBadge role={row.original.role} />,
+            cell: ({ row }) => (
+                <RoleBadge
+                    value={row.original.role}
+                    label={
+                        ROLE_LABEL_MAP[row.original.role] ?? row.original.role
+                    }
+                />
+            ),
         },
         {
             accessorKey: "created_at",

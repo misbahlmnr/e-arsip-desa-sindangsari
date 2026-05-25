@@ -5,8 +5,8 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 
 const STATUS_LABEL_MAP = {
-    belum_diproses: "Baru",
-    sedang_diproses: "Diproses",
+    belum_diproses: "Belum Diproses",
+    sedang_diproses: "Sedang Diproses",
     selesai: "Selesai",
 };
 
@@ -89,10 +89,8 @@ export function getColumns({
             header: "Status",
             cell: ({ row }) => (
                 <StatusBadge
-                    status={
-                        STATUS_LABEL_MAP[row.original.status] ??
-                        row.original.status
-                    }
+                    value={row.original.status}
+                    label={STATUS_LABEL_MAP[row.original.status]}
                 />
             ),
         },
@@ -103,7 +101,8 @@ export function getColumns({
                 const key = row.original.disposisi ?? "belum";
                 return (
                     <DisposisiBadge
-                        status={DISPOSISI_LABEL_MAP[key] ?? key}
+                        value={key}
+                        label={DISPOSISI_LABEL_MAP[key]}
                     />
                 );
             },

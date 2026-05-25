@@ -11,6 +11,12 @@
 import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/StatusBadge";
 import AppLayout from "@/layouts/AppLayout";
+
+const ROLE_LABEL_MAP = {
+    admin: "Admin",
+    sekdes: "Sekretaris Desa",
+    kades: "Kepala Desa",
+};
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
@@ -65,7 +71,10 @@ export default function UsersShow({ user }) {
                                     @{user.username}
                                 </p>
                             </div>
-                            <RoleBadge role={user.role} />
+                            <RoleBadge
+                                value={user.role}
+                                label={ROLE_LABEL_MAP[user.role] ?? user.role}
+                            />
                         </div>
 
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
@@ -119,7 +128,10 @@ export default function UsersShow({ user }) {
                     <div className="space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-3">
                             <span className="text-muted-foreground">Peran</span>
-                            <RoleBadge role={user.role} />
+                            <RoleBadge
+                                value={user.role}
+                                label={ROLE_LABEL_MAP[user.role] ?? user.role}
+                            />
                         </div>
                     </div>
                 </aside>

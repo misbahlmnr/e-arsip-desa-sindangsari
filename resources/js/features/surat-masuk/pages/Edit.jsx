@@ -181,6 +181,17 @@ export default function EditSuratMasuk({ letter }) {
                                 maxLength={250}
                             />
                         </FormField>
+
+                        <FormField label="Tujuan" error={pageErrors.tujuan}>
+                            <Input
+                                value={data.tujuan}
+                                onChange={(e) =>
+                                    setData("tujuan", e.target.value)
+                                }
+                                className="h-11 rounded-xl"
+                            />
+                        </FormField>
+
                         <FormField
                             label="Status"
                             required
@@ -204,20 +215,6 @@ export default function EditSuratMasuk({ letter }) {
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </FormField>
-
-                        <FormField
-                            label="Tujuan"
-                            error={pageErrors.tujuan}
-                            className="col-span-2"
-                        >
-                            <Input
-                                value={data.tujuan}
-                                onChange={(e) =>
-                                    setData("tujuan", e.target.value)
-                                }
-                                className="h-11 rounded-xl"
-                            />
                         </FormField>
                     </div>
 
