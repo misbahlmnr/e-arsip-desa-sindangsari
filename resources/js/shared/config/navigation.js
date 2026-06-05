@@ -45,9 +45,9 @@ export const NAVBAR_ITEMS = [
     },
     {
         label: "Laporan",
-        href: "#",
+        href: route("admin.laporan.index"),
         icon: BarChart3,
-        routeName: "#",
+        routeName: "admin.laporan.index",
         roles: ["admin", "sekdes", "kades"],
     },
     {

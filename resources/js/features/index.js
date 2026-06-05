@@ -5,6 +5,7 @@
 export * as arsipSurat from "./arsip-surat";
 export * as auth from "./auth";
 export * as dashboard from "./dashboard";
+export * as laporan from "./laporan";
 export * as profile from "./profile";
 export * as suratKeluar from "./surat-keluar";
 export * as suratMasuk from "./surat-masuk";

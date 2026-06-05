@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\ArsipSuratController;
-use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\SuratKeluarController;
 use App\Http\Controllers\Admin\SuratMasukController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\Kades\DashboardController as KadesDashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sekdes\DashboardController as SekdesDashboardController;
@@ -47,6 +48,12 @@ Route::middleware('auth')->group(function () {
         Route::get('surat-keluar/{surat_keluar}', [SuratKeluarController::class, 'show'])
             ->whereNumber('surat_keluar')
             ->name('surat-keluar.show');
+        Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    });
+
+    // Export laporan PDF: admin & kades
+    Route::middleware('role:admin,kades')->name('admin.')->group(function () {
+        Route::get('laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     });
 
     // Disposisi: sekdes & kades saja

@@ -10,7 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { Menu, UserIcon, LogOut } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 
 const ROLE_LABEL = {
     admin: "Administrator",
@@ -78,13 +78,13 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
                         <DropdownMenuLabel>
                             <div className="font-semibold">{user?.name}</div>
                             <div className="text-xs text-muted-foreground font-normal">
-                                {user?.jabatan}
+                                {user?.email}
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem disabled>
+                        {/* <DropdownMenuItem disabled>
                             <UserIcon className="size-4 mr-2" /> Profil Saya
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={logout}

@@ -53,6 +53,8 @@ const defaultServerSort = { sort_by: "tanggal_terima", sort_dir: "desc" };
  * @param {string} [props.searchPlaceholder]
  * @param {string} [props.emptyMessage]
  * @param {{ sort_by?: string, sort_dir?: 'asc'|'desc' }} [props.serverSortClearDefaults]
+ * @param {import('react').ReactNode} [props.toolbarFilters] — filter controls (e.g. role, status), shown between search and page size
+ * @param {import('react').ReactNode} [props.toolbarActions] — primary actions (e.g. create button), shown after page size
  */
 
 export function DataTable({
@@ -66,6 +68,8 @@ export function DataTable({
     searchPlaceholder,
     emptyMessage,
     serverSortClearDefaults = defaultServerSort,
+    toolbarFilters,
+    toolbarActions,
 }) {
     const tableData = pagination?.data ?? [];
 
@@ -168,7 +172,7 @@ export function DataTable({
                     "flex flex-col md:flex-row md:items-center gap-3 px-6 md:px-8 py-5 border-b border-border",
                 )}
             >
-                <div className="relative flex-1 max-w-md">
+                <div className="relative flex-1 min-w-0 max-w-md">
                     <Search className="size-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <Input
                         placeholder={searchPlaceholder ?? "Cari data..."}
@@ -177,6 +181,11 @@ export function DataTable({
                         className="pl-10 h-11 rounded-xl"
                     />
                 </div>
+                {toolbarFilters ? (
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                        {toolbarFilters}
+                    </div>
+                ) : null}
                 <Select
                     value={String(pageSize)}
                     onValueChange={(value) =>
@@ -189,7 +198,7 @@ export function DataTable({
                         })
                     }
                 >
-                    <SelectTrigger className="w-full md:w-44 h-11 rounded-xl">
+                    <SelectTrigger className="w-full md:w-44 h-11 rounded-xl shrink-0">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -200,6 +209,9 @@ export function DataTable({
                         ))}
                     </SelectContent>
                 </Select>
+                {toolbarActions ? (
+                    <div className="flex shrink-0">{toolbarActions}</div>
+                ) : null}
             </div>
 
             {loading ? (

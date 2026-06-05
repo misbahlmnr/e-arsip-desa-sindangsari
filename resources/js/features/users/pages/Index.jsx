@@ -61,34 +61,10 @@ export default function UsersIndex({ users, filters }) {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                    className="flex items-center justify-end"
                 >
-                    <Select
-                        value={roleValue}
-                        onValueChange={(v) =>
-                            visit({
-                                page: 1,
-                                role: v === "all" ? "" : v,
-                                search: filters?.search,
-                                sort_by: filters?.sort_by,
-                                sort_dir: filters?.sort_dir,
-                                per_page: filters?.per_page,
-                            })
-                        }
-                    >
-                        <SelectTrigger className="w-full sm:w-52 h-11 rounded-xl">
-                            <SelectValue placeholder="Filter peran" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua peran</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="sekdes">Sekretaris Desa</SelectItem>
-                            <SelectItem value="kades">Kepala Desa</SelectItem>
-                        </SelectContent>
-                    </Select>
                     <Button
                         size="lg"
-                        className="shrink-0"
                         onClick={() =>
                             router.visit(route("admin.users.create"))
                         }
@@ -113,6 +89,37 @@ export default function UsersIndex({ users, filters }) {
                         searchPlaceholder="Cari nama, username, atau email…"
                         emptyMessage="Coba ubah kata kunci pencarian atau filter peran."
                         serverSortClearDefaults={SORT_DEFAULT}
+                        toolbarFilters={
+                            <Select
+                                value={roleValue}
+                                onValueChange={(v) =>
+                                    visit({
+                                        page: 1,
+                                        role: v === "all" ? "" : v,
+                                        search: filters?.search,
+                                        sort_by: filters?.sort_by,
+                                        sort_dir: filters?.sort_dir,
+                                        per_page: filters?.per_page,
+                                    })
+                                }
+                            >
+                                <SelectTrigger className="w-full sm:w-52 h-11 rounded-xl">
+                                    <SelectValue placeholder="Filter peran" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Semua peran
+                                    </SelectItem>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="sekdes">
+                                        Sekretaris Desa
+                                    </SelectItem>
+                                    <SelectItem value="kades">
+                                        Kepala Desa
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        }
                     />
                 </motion.div>
             </div>
