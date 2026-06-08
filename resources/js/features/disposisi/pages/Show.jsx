@@ -1,13 +1,14 @@
-import { DisposisiBadge } from "@/components/StatusBadge";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import {
     badgeLabel,
-    DISPOSISI_STATUS_LABELS,
+    SURAT_MASUK_STATUS_LABELS,
+    TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
-import { Head, Link, router } from "@inertiajs/react";
-import { ArrowLeft, CheckCircle2, FileInput, PlayCircle } from "lucide-react";
+import { Head, Link } from "@inertiajs/react";
+import { ArrowLeft, FileInput } from "lucide-react";
 
 function Field({ label, value, className }) {
     return (
@@ -25,20 +26,12 @@ function Field({ label, value, className }) {
 export default function ShowDisposisi({ disposisi }) {
     const surat = disposisi.surat_masuk;
 
-    const updateStatus = (status) => {
-        router.patch(
-            route("admin.disposisi.update-status", {
-                disposisi: disposisi.id,
-            }),
-            { status },
-            { preserveScroll: true },
-        );
-    };
-
     return (
         <AppLayout
             title="Detail Disposisi"
-            subtitle={surat ? `Surat ${surat.no_surat}` : "Instruksi antar pejabat"}
+            subtitle={
+                surat ? `Surat ${surat.no_surat}` : "Instruksi antar pejabat"
+            }
         >
             <Head title="Detail Disposisi" />
 
@@ -57,69 +50,19 @@ export default function ShowDisposisi({ disposisi }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 surface-card p-6 md:p-8">
-                    <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-                        <div>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                Status
-                            </p>
-                            <div className="mt-2">
-                                <DisposisiBadge
-                                    value={disposisi.status}
-                                    label={badgeLabel(
-                                        DISPOSISI_STATUS_LABELS,
-                                        disposisi.status,
-                                    )}
-                                />
-                            </div>
-                        </div>
-                        {disposisi.can_update_status && (
-                            <div className="flex flex-wrap gap-2">
-                                {disposisi.status === "menunggu" && (
-                                    <Button
-                                        variant="outline"
-                                        className="rounded-xl"
-                                        onClick={() =>
-                                            updateStatus("diproses")
-                                        }
-                                    >
-                                        <PlayCircle className="size-4 mr-1.5" />
-                                        Proses
-                                    </Button>
-                                )}
-                                {disposisi.status !== "selesai" && (
-                                    <Button
-                                        className="rounded-xl font-semibold"
-                                        onClick={() =>
-                                            updateStatus("selesai")
-                                        }
-                                    >
-                                        <CheckCircle2 className="size-4 mr-1.5" />
-                                        Selesai
-                                    </Button>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
                     <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
-                        <Field label="Pengirim" value={disposisi.dari} />
-                        <Field label="Penerima" value={disposisi.kepada} />
+                        <Field label="Dari" value={disposisi.dari_jabatan} />
+                        <Field label="Kepada" value={disposisi.kepada} />
+                        <Field
+                            label="Dibuat oleh"
+                            value={disposisi.dari}
+                        />
                         <Field
                             label="Tanggal"
                             value={
                                 disposisi.tanggal
                                     ? formatTanggalKalenderWib(
                                           disposisi.tanggal,
-                                      )
-                                    : null
-                            }
-                        />
-                        <Field
-                            label="Dibuat"
-                            value={
-                                disposisi.created_at
-                                    ? formatTanggalKalenderWib(
-                                          disposisi.created_at,
                                       )
                                     : null
                             }
@@ -147,8 +90,41 @@ export default function ShowDisposisi({ disposisi }) {
                                     {surat.no_surat}
                                 </dd>
                             </div>
-                            <Field label="Pengirim Surat" value={surat.pengirim} />
+                            <Field
+                                label="Pengirim Surat"
+                                value={surat.pengirim}
+                            />
                             <Field label="Perihal" value={surat.perihal} />
+                            <div>
+                                <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    Status Surat
+                                </dt>
+                                <dd className="mt-2">
+                                    <StatusBadge
+                                        value={surat.status}
+                                        label={badgeLabel(
+                                            SURAT_MASUK_STATUS_LABELS,
+                                            surat.status,
+                                        )}
+                                    />
+                                </dd>
+                            </div>
+                            {surat.tingkat && (
+                                <div>
+                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        Tingkat
+                                    </dt>
+                                    <dd className="mt-2">
+                                        <StatusBadge
+                                            value={surat.tingkat}
+                                            label={badgeLabel(
+                                                TINGKAT_SURAT_LABELS,
+                                                surat.tingkat,
+                                            )}
+                                        />
+                                    </dd>
+                                </div>
+                            )}
                             <Button
                                 asChild
                                 variant="outline"

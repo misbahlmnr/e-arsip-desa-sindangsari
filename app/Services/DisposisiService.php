@@ -5,12 +5,13 @@ namespace App\Services;
 use App\Http\Requests\Disposisi\StoreFromSuratRequest;
 use App\Http\Requests\Disposisi\StoreRequest;
 use App\Models\Disposisi;
+use App\Models\JabatanTujuanDisposisi;
 use App\Models\SuratMasuk;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class DisposisiService
 {
@@ -20,8 +21,8 @@ class DisposisiService
     private const SORTABLE = [
         'id',
         'tanggal',
-        'status',
         'kepada',
+        'dari_jabatan',
         'created_at',
     ];
 
@@ -36,14 +37,14 @@ class DisposisiService
             'sort_by' => ['nullable', 'string', 'max:64'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
-            'status' => ['nullable', Rule::in(Disposisi::STATUSES)],
+            'surat_status' => ['nullable', 'in:'.implode(',', SuratMasuk::STATUSES)],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
         $perPage = (int) ($validated['per_page'] ?? 10);
         $sortBy = $validated['sort_by'] ?? 'tanggal';
         $sortDir = $validated['sort_dir'] ?? 'desc';
-        $status = $validated['status'] ?? null;
+        $suratStatus = $validated['surat_status'] ?? null;
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal';
@@ -51,18 +52,14 @@ class DisposisiService
 
         /** @var User $user */
         $user = $req->user();
+        $dariJabatan = $user->isKades() ? Disposisi::DARI_KADES : Disposisi::DARI_SEKDES;
 
         $query = Disposisi::query()
             ->with([
-                'suratMasuk:id,no_surat,pengirim,perihal',
+                'suratMasuk:id,no_surat,pengirim,perihal,status',
                 'user:id,name,role',
             ])
-            ->when($user->isKades(), function ($q) {
-                $q->where(function ($q) {
-                    $q->where('kepada', 'like', '%Kepala Desa%')
-                        ->orWhereHas('user', fn ($u) => $u->where('role', 'kades'));
-                });
-            })
+            ->where('dari_jabatan', $dariJabatan)
             ->when($search !== '', function ($q) use ($search) {
                 $like = '%'.$search.'%';
                 $q->where(function ($q) use ($like) {
@@ -76,7 +73,10 @@ class DisposisiService
                         ->orWhereHas('user', fn ($u) => $u->where('name', 'like', $like));
                 });
             })
-            ->when($status, fn ($q) => $q->where('status', $status))
+            ->when($suratStatus, fn ($q) => $q->whereHas(
+                'suratMasuk',
+                fn ($s) => $s->where('status', $suratStatus),
+            ))
             ->orderBy($sortBy, $sortDir);
 
         $disposisi = $query->paginate($perPage)->withQueryString();
@@ -89,7 +89,7 @@ class DisposisiService
                 'sort_by' => $sortBy,
                 'sort_dir' => $sortDir,
                 'per_page' => $perPage,
-                'status' => $status,
+                'surat_status' => $suratStatus,
             ],
         ];
     }
@@ -97,11 +97,22 @@ class DisposisiService
     /**
      * @return Collection<int, array<string, mixed>>
      */
-    public function suratOptions(): Collection
+    public function suratOptions(User $user): Collection
     {
-        return SuratMasuk::query()
+        $query = SuratMasuk::query()
             ->whereNull('diarsipkan_at')
-            ->orderByDesc('tanggal_terima')
+            ->orderByDesc('tanggal_terima');
+
+        if ($user->isSekdes()) {
+            $query->where('tingkat', SuratMasuk::TINGKAT_BIASA)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI);
+        } elseif ($user->isKades()) {
+            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNotNull('verified_kades_at');
+        }
+
+        return $query
             ->get(['id', 'no_surat', 'pengirim', 'perihal'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
@@ -114,56 +125,52 @@ class DisposisiService
     public function store(StoreRequest $req, ?SuratMasuk $suratMasuk = null): Disposisi
     {
         $data = $req->validated();
+        /** @var User $user */
+        $user = $req->user();
         $letter = $suratMasuk ?? SuratMasuk::query()->findOrFail($data['surat_masuk_id']);
+
+        $this->assertCanCreate($letter, $user);
+
+        $jabatan = JabatanTujuanDisposisi::query()->findOrFail($data['jabatan_tujuan_id']);
 
         $disposisi = Disposisi::create([
             'surat_masuk_id' => $letter->id,
-            'user_id' => $req->user()->id,
-            'kepada' => $data['kepada'],
+            'user_id' => $user->id,
+            'jabatan_tujuan_id' => $jabatan->id,
+            'dari_jabatan' => $this->dariJabatanFor($user),
+            'kepada' => $jabatan->nama_jabatan,
             'catatan' => $data['catatan'],
             'tanggal' => $data['tanggal'],
-            'status' => Disposisi::initialStatusFor($data['kepada']),
         ]);
 
-        if ($letter->status === 'belum_diproses') {
-            $letter->update(['status' => 'sedang_diproses']);
-        }
+        $this->advanceSuratStatus($letter);
 
         return $disposisi;
     }
 
     public function storeFromSurat(StoreFromSuratRequest $req, SuratMasuk $suratMasuk): Disposisi
     {
+        /** @var User $user */
+        $user = $req->user();
         $data = $req->validated();
+
+        $this->assertCanCreate($suratMasuk, $user);
+
+        $jabatan = JabatanTujuanDisposisi::query()->findOrFail($data['jabatan_tujuan_id']);
 
         $disposisi = Disposisi::create([
             'surat_masuk_id' => $suratMasuk->id,
-            'user_id' => $req->user()->id,
-            'kepada' => $data['kepada'],
+            'user_id' => $user->id,
+            'jabatan_tujuan_id' => $jabatan->id,
+            'dari_jabatan' => $this->dariJabatanFor($user),
+            'kepada' => $jabatan->nama_jabatan,
             'catatan' => $data['catatan'],
             'tanggal' => now()->toDateString(),
-            'status' => Disposisi::initialStatusFor($data['kepada']),
         ]);
 
-        if ($suratMasuk->status === 'belum_diproses') {
-            $suratMasuk->update(['status' => 'sedang_diproses']);
-        }
+        $this->advanceSuratStatus($suratMasuk);
 
         return $disposisi;
-    }
-
-    public function updateStatus(Disposisi $disposisi, string $status): Disposisi
-    {
-        $disposisi->update(['status' => $status]);
-
-        if ($status === Disposisi::STATUS_SELESAI && $disposisi->suratMasuk) {
-            $letter = $disposisi->suratMasuk;
-            if ($letter->status !== 'selesai') {
-                $letter->update(['status' => 'selesai']);
-            }
-        }
-
-        return $disposisi->fresh(['suratMasuk', 'user']);
     }
 
     /**
@@ -171,19 +178,19 @@ class DisposisiService
      */
     public function formatDetail(Disposisi $disposisi): array
     {
-        $disposisi->loadMissing(['suratMasuk', 'user']);
+        $disposisi->loadMissing(['suratMasuk', 'user', 'jabatanTujuan']);
 
         return [
             'id' => $disposisi->id,
             'surat_masuk_id' => $disposisi->surat_masuk_id,
+            'jabatan_tujuan_id' => $disposisi->jabatan_tujuan_id,
             'kepada' => $disposisi->kepada,
+            'dari_jabatan' => $disposisi->dari_jabatan,
             'catatan' => $disposisi->catatan,
-            'status' => $disposisi->status,
             'tanggal' => $disposisi->tanggal?->format('Y-m-d'),
             'created_at' => $disposisi->created_at?->toIso8601String(),
             'dari' => $disposisi->user?->name,
             'dari_role' => $disposisi->user?->role,
-            'can_update_status' => $this->canUpdateStatus($disposisi),
             'surat_masuk' => $disposisi->suratMasuk ? [
                 'id' => $disposisi->suratMasuk->id,
                 'no_surat' => $disposisi->suratMasuk->no_surat,
@@ -191,6 +198,7 @@ class DisposisiService
                 'perihal' => $disposisi->suratMasuk->perihal,
                 'tanggal_terima' => $disposisi->suratMasuk->tanggal_terima?->format('Y-m-d'),
                 'status' => $disposisi->suratMasuk->status,
+                'tingkat' => $disposisi->suratMasuk->tingkat,
             ] : null,
         ];
     }
@@ -205,31 +213,34 @@ class DisposisiService
             ->get()
             ->map(fn (Disposisi $d) => [
                 'id' => $d->id,
-                'dari' => $d->user?->name,
+                'dari' => $d->dari_jabatan ?? $d->user?->name,
                 'kepada' => $d->kepada,
                 'catatan' => $d->catatan,
-                'status' => $d->status,
                 'tanggal' => $d->tanggal?->format('Y-m-d'),
                 'created_at' => $d->created_at?->toIso8601String(),
             ])
             ->all();
     }
 
-    public function canUpdateStatus(Disposisi $disposisi): bool
+    private function assertCanCreate(SuratMasuk $letter, User $user): void
     {
-        $user = auth()->user();
-        if (! $user?->isKades()) {
-            return false;
+        if (! $letter->canCreateDisposisi($user)) {
+            throw ValidationException::withMessages([
+                'surat_masuk_id' => 'Surat belum memenuhi syarat untuk dibuatkan disposisi.',
+            ]);
         }
+    }
 
-        if (! $disposisi->isForKades()) {
-            return false;
+    private function advanceSuratStatus(SuratMasuk $letter): void
+    {
+        if ($letter->status === SuratMasuk::STATUS_TERVERIFIKASI) {
+            $letter->update(['status' => SuratMasuk::STATUS_DIDISPOSISIKAN]);
         }
+    }
 
-        return in_array($disposisi->status, [
-            Disposisi::STATUS_MENUNGGU,
-            Disposisi::STATUS_DIPROSES,
-        ], true);
+    private function dariJabatanFor(User $user): string
+    {
+        return $user->isKades() ? Disposisi::DARI_KADES : Disposisi::DARI_SEKDES;
     }
 
     /**
@@ -243,12 +254,12 @@ class DisposisiService
             'id' => $d->id,
             'no_surat' => $d->suratMasuk?->no_surat,
             'surat_masuk_id' => $d->surat_masuk_id,
+            'surat_status' => $d->suratMasuk?->status,
             'pengirim' => $d->user?->name,
+            'dari_jabatan' => $d->dari_jabatan,
             'kepada' => $d->kepada,
             'catatan' => $d->catatan,
             'tanggal' => $d->tanggal?->format('Y-m-d'),
-            'status' => $d->status,
-            'can_update_status' => $this->canUpdateStatus($d),
         ];
     }
 }

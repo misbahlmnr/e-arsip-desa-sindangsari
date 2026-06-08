@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\AuthorizesSuratManagement;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SuratMasuk\ReviewSekdesRequest;
 use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Http\Requests\SuratMasuk\UpdateRequest;
-use App\Http\Requests\SuratMasuk\UpdateStatusRequest;
+use App\Http\Requests\SuratMasuk\VerifikasiKadesRequest;
+use App\Models\JabatanTujuanDisposisi;
 use App\Models\SuratMasuk;
 use App\Services\DisposisiService;
 use App\Services\SuratMasukService;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 class SuratMasukController extends Controller
 {
     use AuthorizesSuratManagement;
+
     public function __construct(
         protected SuratMasukService $services,
         protected DisposisiService $disposisiService,
@@ -39,11 +42,16 @@ class SuratMasukController extends Controller
 
     public function show(SuratMasuk $surat_masuk)
     {
-        $letter = $surat_masuk->toArray();
+        $user = request()->user();
+        $letter = $this->services->formatShowPayload($surat_masuk, $user);
         $letter['disposisi'] = $this->disposisiService->formatTimelineForSurat($surat_masuk);
 
         return inertia('surat-masuk/Show', [
             'letter' => $letter,
+            'jabatanOptions' => JabatanTujuanDisposisi::activeOptions(),
+            'dariJabatan' => $user?->isKades()
+                ? \App\Models\Disposisi::DARI_KADES
+                : \App\Models\Disposisi::DARI_SEKDES,
         ]);
     }
 
@@ -83,11 +91,22 @@ class SuratMasukController extends Controller
         return redirect()->route('admin.surat-masuk.index')->with('success', 'Surat Masuk berhasil dihapus.');
     }
 
-    public function updateStatus(UpdateStatusRequest $request, SuratMasuk $surat_masuk)
+    public function reviewSekdes(ReviewSekdesRequest $request, SuratMasuk $surat_masuk)
     {
-        $this->services->updateStatus($surat_masuk, $request->validated('status'));
+        $this->services->reviewBySekdes(
+            $surat_masuk,
+            $request->validated('tingkat'),
+            $request->user(),
+        );
 
-        return back()->with('success', 'Status surat berhasil diperbarui.');
+        return back()->with('success', 'Surat berhasil direview dan tingkat ditetapkan.');
+    }
+
+    public function verifikasiKades(VerifikasiKadesRequest $request, SuratMasuk $surat_masuk)
+    {
+        $this->services->verifyByKades($surat_masuk, $request->user());
+
+        return back()->with('success', 'Surat penting berhasil diverifikasi.');
     }
 
     public function archive(SuratMasuk $surat_masuk)
@@ -98,8 +117,8 @@ class SuratMasukController extends Controller
             return back()->with('info', 'Surat ini sudah berada di arsip.');
         }
 
-        if ($surat_masuk->status !== 'selesai') {
-            return back()->with('error', 'Surat harus ditandai selesai terlebih dahulu sebelum diarsipkan.');
+        if (! $surat_masuk->canArchive()) {
+            return back()->with('error', 'Surat harus didisposisikan terlebih dahulu sebelum diarsipkan.');
         }
 
         $this->services->archive($surat_masuk);

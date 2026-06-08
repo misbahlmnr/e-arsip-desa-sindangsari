@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/select";
 import {
     badgeLabel,
-    DISPOSISI_STATUS_LABELS,
     SURAT_KELUAR_STATUS_LABELS,
     SURAT_MASUK_STATUS_LABELS,
+    TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
@@ -66,7 +66,7 @@ export default function LaporanIndex({
     summary,
     surat_masuk_status,
     surat_keluar_status,
-    disposisi_status,
+    tingkat_surat,
     monthly_trend,
     top_pengirim,
     disposisi_by_kepada,
@@ -95,7 +95,7 @@ export default function LaporanIndex({
             tone: "primary",
         },
         {
-            label: "Belum Diproses",
+            label: "Menunggu Review",
             value: summary?.surat_masuk_belum_diproses ?? 0,
             hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} tanpa disposisi`,
             icon: Clock,
@@ -118,7 +118,7 @@ export default function LaporanIndex({
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.disposisi_menunggu ?? 0} menunggu`,
+            hint: `${summary?.surat_penting_menunggu_kades ?? 0} penting menunggu Kades`,
             icon: Send,
             tone: "disposisi",
         },
@@ -136,8 +136,8 @@ export default function LaporanIndex({
         key: row.status,
     }));
 
-    const disposisiChartData = (disposisi_status ?? []).map((row) => ({
-        name: badgeLabel(DISPOSISI_STATUS_LABELS, row.status),
+    const tingkatChartData = (tingkat_surat ?? []).map((row) => ({
+        name: badgeLabel(TINGKAT_SURAT_LABELS, row.status),
         value: row.total,
         key: row.status,
     }));
@@ -297,9 +297,9 @@ export default function LaporanIndex({
                         icon={FileOutput}
                     />
                     <StatusPieCard
-                        title="Status Disposisi"
-                        subtitle="Semua disposisi dalam periode"
-                        data={disposisiChartData}
+                        title="Tingkat Surat"
+                        subtitle="Surat yang sudah direview Sekdes"
+                        data={tingkatChartData}
                         icon={Send}
                     />
                 </div>

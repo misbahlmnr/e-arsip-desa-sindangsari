@@ -15,10 +15,11 @@ import { useMemo } from "react";
 import { getColumns } from "../columns";
 
 const STATUS_FILTER_OPTIONS = [
-    { value: "all", label: "Semua status" },
-    { value: "menunggu", label: "Menunggu" },
-    { value: "diproses", label: "Diproses" },
-    { value: "selesai", label: "Selesai" },
+    { value: "all", label: "Semua status surat" },
+    { value: "draft", label: "Draft" },
+    { value: "terverifikasi", label: "Terverifikasi" },
+    { value: "didisposisikan", label: "Didisposisikan" },
+    { value: "diarsipkan", label: "Diarsipkan" },
 ];
 
 export default function DisposisiIndex({ disposisi, filters }) {
@@ -26,7 +27,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
         routeName: "admin.disposisi.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status"],
+        preserveQueryKeys: ["surat_status"],
     });
     const startIndex =
         ((disposisi?.current_page ?? 1) - 1) * (disposisi?.per_page ?? 10);
@@ -45,7 +46,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
         [startIndex],
     );
 
-    const statusValue = filters?.status || "all";
+    const statusValue = filters?.surat_status || "all";
 
     return (
         <AppLayout
@@ -95,7 +96,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
                                 onValueChange={(v) =>
                                     visit({
                                         page: 1,
-                                        status: v === "all" ? "" : v,
+                                        surat_status: v === "all" ? "" : v,
                                         search: filters?.search,
                                         sort_by: filters?.sort_by,
                                         sort_dir: filters?.sort_dir,

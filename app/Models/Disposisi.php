@@ -7,36 +7,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Disposisi extends Model
 {
+    public const DARI_SEKDES = 'Sekretaris Desa';
+
+    public const DARI_KADES = 'Kepala Desa';
+
     protected $table = 'disposisi';
-
-    public const STATUS_MENUNGGU = 'menunggu';
-
-    public const STATUS_DIPROSES = 'diproses';
-
-    public const STATUS_SELESAI = 'selesai';
-
-    /** @var list<string> */
-    public const STATUSES = [
-        self::STATUS_MENUNGGU,
-        self::STATUS_DIPROSES,
-        self::STATUS_SELESAI,
-    ];
-
-    /** @var list<string> */
-    public const TUJUAN_OPTIONS = [
-        'Kepala Desa',
-        'Sekretaris Desa',
-        'Kaur Pemerintahan',
-        'Kaur Keuangan',
-        'Kaur Umum',
-    ];
 
     protected $fillable = [
         'surat_masuk_id',
         'user_id',
+        'jabatan_tujuan_id',
+        'dari_jabatan',
         'kepada',
         'catatan',
-        'status',
         'tanggal',
     ];
 
@@ -60,15 +43,8 @@ class Disposisi extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function isForKades(): bool
+    public function jabatanTujuan(): BelongsTo
     {
-        return stripos($this->kepada, 'Kepala Desa') !== false;
-    }
-
-    public static function initialStatusFor(string $kepada): string
-    {
-        return stripos($kepada, 'Kepala Desa') !== false
-            ? self::STATUS_MENUNGGU
-            : self::STATUS_DIPROSES;
+        return $this->belongsTo(JabatanTujuanDisposisi::class, 'jabatan_tujuan_id');
     }
 }

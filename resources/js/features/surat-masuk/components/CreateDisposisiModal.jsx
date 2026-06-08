@@ -16,23 +16,35 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import { router } from "@inertiajs/react";
 
-const CreateDisposisiModal = ({ letter, openDispo, setOpenDispo }) => {
-    const [dispoTo, setDispoTo] = useState("Kepala Desa");
+const CreateDisposisiModal = ({
+    letter,
+    jabatanOptions = [],
+    dariJabatan,
+    openDispo,
+    setOpenDispo,
+}) => {
+    const [jabatanId, setJabatanId] = useState(
+        jabatanOptions[0] ? String(jabatanOptions[0].id) : "",
+    );
     const [dispoNote, setDispoNote] = useState("");
     const [dispoLoading, setDispoLoading] = useState(false);
 
     const submitDispo = () => {
-        if (!dispoNote.trim()) return;
+        if (!dispoNote.trim() || !jabatanId) return;
         setDispoLoading(true);
         router.post(
             route("admin.surat-masuk.disposisi.store", {
                 surat_masuk: letter.id,
             }),
-            { kepada: dispoTo, catatan: dispoNote.trim() },
+            {
+                jabatan_tujuan_id: Number(jabatanId),
+                catatan: dispoNote.trim(),
+            },
             {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -50,34 +62,36 @@ const CreateDisposisiModal = ({ letter, openDispo, setOpenDispo }) => {
                 <DialogHeader>
                     <DialogTitle>Buat Disposisi</DialogTitle>
                     <DialogDescription>
-                        Teruskan surat ini kepada pejabat yang berwenang beserta
+                        Teruskan surat ini kepada jabatan terkait beserta
                         arahan.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
-                        <Label>Tujuan</Label>
-                        <Select value={dispoTo} onValueChange={setDispoTo}>
+                        <Label>Dari</Label>
+                        <Input
+                            value={dariJabatan ?? "—"}
+                            readOnly
+                            className="h-11 rounded-xl bg-muted"
+                        />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label>Kepada</Label>
+                        <Select value={jabatanId} onValueChange={setJabatanId}>
                             <SelectTrigger className="h-11 rounded-xl">
-                                <SelectValue />
+                                <SelectValue placeholder="Pilih jabatan" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Kepala Desa">
-                                    Kepala Desa
-                                </SelectItem>
-                                <SelectItem value="Sekretaris Desa">
-                                    Sekretaris Desa
-                                </SelectItem>
-                                <SelectItem value="Kaur Pemerintahan">
-                                    Kaur Pemerintahan
-                                </SelectItem>
-                                <SelectItem value="Kaur Keuangan">
-                                    Kaur Keuangan
-                                </SelectItem>
-                                <SelectItem value="Kaur Umum">
-                                    Kaur Umum
-                                </SelectItem>
+                                {jabatanOptions.map((j) => (
+                                    <SelectItem
+                                        key={j.id}
+                                        value={String(j.id)}
+                                    >
+                                        {j.nama_jabatan}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -109,7 +123,9 @@ const CreateDisposisiModal = ({ letter, openDispo, setOpenDispo }) => {
                     </Button>
                     <Button
                         onClick={submitDispo}
-                        disabled={!dispoNote.trim() || dispoLoading}
+                        disabled={
+                            !dispoNote.trim() || !jabatanId || dispoLoading
+                        }
                         className="rounded-xl font-semibold"
                     >
                         <Send className="size-4 mr-1.5" />

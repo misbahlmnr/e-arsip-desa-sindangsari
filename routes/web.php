@@ -64,19 +64,25 @@ Route::middleware('auth')->group(function () {
         Route::get('disposisi/{disposisi}', [DisposisiController::class, 'show'])
             ->whereNumber('disposisi')
             ->name('disposisi.show');
-        Route::patch('disposisi/{disposisi}/status', [DisposisiController::class, 'updateStatus'])
-            ->whereNumber('disposisi')
-            ->name('disposisi.update-status');
         Route::post('surat-masuk/{surat_masuk}/disposisi', [DisposisiController::class, 'storeFromSurat'])
             ->whereNumber('surat_masuk')
             ->name('surat-masuk.disposisi.store');
     });
 
+    Route::middleware('role:sekdes')->name('admin.')->group(function () {
+        Route::patch('surat-masuk/{surat_masuk}/review-sekdes', [SuratMasukController::class, 'reviewSekdes'])
+            ->whereNumber('surat_masuk')
+            ->name('surat-masuk.review-sekdes');
+    });
+
+    Route::middleware('role:kades')->name('admin.')->group(function () {
+        Route::patch('surat-masuk/{surat_masuk}/verifikasi-kades', [SuratMasukController::class, 'verifikasiKades'])
+            ->whereNumber('surat_masuk')
+            ->name('surat-masuk.verifikasi-kades');
+    });
+
     // Mutasi surat & manajemen user: admin saja
     Route::middleware('role:admin')->name('admin.')->group(function () {
-        Route::patch('surat-masuk/{surat_masuk}/status', [SuratMasukController::class, 'updateStatus'])
-            ->whereNumber('surat_masuk')
-            ->name('surat-masuk.update-status');
         Route::patch('surat-masuk/{surat_masuk}/arsipkan', [SuratMasukController::class, 'archive'])->name('surat-masuk.archive');
         Route::patch('surat-masuk/{surat_masuk}/batal-arsip', [SuratMasukController::class, 'unarchive'])->name('surat-masuk.unarchive');
         Route::patch('surat-keluar/{surat_keluar}/arsipkan', [SuratKeluarController::class, 'archive'])->name('surat-keluar.archive');

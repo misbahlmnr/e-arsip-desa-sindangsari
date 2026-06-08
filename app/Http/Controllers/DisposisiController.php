@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\AuthorizesDisposisi;
 use App\Http\Requests\Disposisi\StoreFromSuratRequest;
 use App\Http\Requests\Disposisi\StoreRequest;
-use App\Http\Requests\Disposisi\UpdateStatusRequest;
 use App\Models\Disposisi;
+use App\Models\JabatanTujuanDisposisi;
 use App\Models\SuratMasuk;
 use App\Services\DisposisiService;
 use Illuminate\Http\Request;
@@ -33,10 +33,12 @@ class DisposisiController extends Controller
         $this->authorizeDisposisi();
 
         $suratMasukId = $request->integer('surat_masuk_id') ?: null;
+        $user = $request->user();
 
         return inertia('disposisi/Create', [
-            'suratOptions' => $this->services->suratOptions(),
-            'tujuanOptions' => Disposisi::TUJUAN_OPTIONS,
+            'suratOptions' => $this->services->suratOptions($user),
+            'jabatanOptions' => JabatanTujuanDisposisi::activeOptions(),
+            'dariJabatan' => $user->isKades() ? Disposisi::DARI_KADES : Disposisi::DARI_SEKDES,
             'selectedSuratMasukId' => $suratMasukId,
         ]);
     }
@@ -64,16 +66,5 @@ class DisposisiController extends Controller
         return inertia('disposisi/Show', [
             'disposisi' => $this->services->formatDetail($disposisi),
         ]);
-    }
-
-    public function updateStatus(UpdateStatusRequest $request, Disposisi $disposisi)
-    {
-        if (! $this->services->canUpdateStatus($disposisi)) {
-            abort(403, 'Anda tidak dapat memperbarui status disposisi ini.');
-        }
-
-        $this->services->updateStatus($disposisi, $request->validated('status'));
-
-        return back()->with('success', 'Status disposisi berhasil diperbarui.');
     }
 }

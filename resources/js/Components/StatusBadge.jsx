@@ -2,10 +2,13 @@
 import { cn } from "@/shared/lib/utils";
 
 const STATUS_STYLES = {
-    sedang_diproses: "bg-warning-soft text-warning border-warning/20",
-    selesai: "bg-success-soft text-success border-success/20",
     draft: "bg-muted text-muted-foreground border-border",
+    terverifikasi: "bg-info-soft text-info border-info/20",
+    didisposisikan: "bg-success-soft text-success border-success/20",
+    diarsipkan: "bg-success-soft text-success border-success/20",
     terkirim: "bg-success-soft text-success border-success/20",
+    biasa: "bg-muted text-muted-foreground border-border",
+    penting: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 /** Semua style badge disposisi: flag (belum/sudah) + status alur */

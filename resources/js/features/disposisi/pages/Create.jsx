@@ -18,9 +18,7 @@ function FormField({ label, required, error, children }) {
         <div className="space-y-1.5">
             <Label>
                 {label}
-                {required && (
-                    <span className="text-destructive ml-0.5">*</span>
-                )}
+                {required && <span className="text-destructive ml-0.5">*</span>}
             </Label>
             {children}
             {error && (
@@ -32,14 +30,17 @@ function FormField({ label, required, error, children }) {
 
 export default function CreateDisposisi({
     suratOptions,
-    tujuanOptions,
+    jabatanOptions,
+    dariJabatan,
     selectedSuratMasukId,
 }) {
     const { data, setData, post, processing, errors } = useForm({
         surat_masuk_id: selectedSuratMasukId
             ? String(selectedSuratMasukId)
             : "",
-        kepada: "Kepala Desa",
+        jabatan_tujuan_id: jabatanOptions[0]
+            ? String(jabatanOptions[0].id)
+            : "",
         catatan: "",
         tanggal: new Date().toISOString().slice(0, 10),
     });
@@ -52,7 +53,7 @@ export default function CreateDisposisi({
     return (
         <AppLayout
             title="Buat Disposisi"
-            subtitle="Teruskan surat masuk kepada pejabat terkait beserta arahan."
+            subtitle="Teruskan surat masuk kepada jabatan terkait beserta arahan."
         >
             <Head title="Buat Disposisi" />
 
@@ -96,18 +97,32 @@ export default function CreateDisposisi({
                     </Select>
                 </FormField>
 
-                <FormField label="Tujuan" required error={errors.kepada}>
+                <FormField label="Dari">
+                    <Input
+                        value={dariJabatan ?? "—"}
+                        readOnly
+                        className="h-11 rounded-xl bg-muted"
+                    />
+                </FormField>
+
+                <FormField
+                    label="Kepada"
+                    required
+                    error={errors.jabatan_tujuan_id}
+                >
                     <Select
-                        value={data.kepada}
-                        onValueChange={(v) => setData("kepada", v)}
+                        value={data.jabatan_tujuan_id}
+                        onValueChange={(v) =>
+                            setData("jabatan_tujuan_id", v)
+                        }
                     >
                         <SelectTrigger className="h-11 rounded-xl">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            {tujuanOptions.map((t) => (
-                                <SelectItem key={t} value={t}>
-                                    {t}
+                            {jabatanOptions.map((j) => (
+                                <SelectItem key={j.id} value={String(j.id)}>
+                                    {j.nama_jabatan}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -140,7 +155,11 @@ export default function CreateDisposisi({
                 <div className="flex flex-wrap gap-2 pt-2">
                     <Button
                         type="submit"
-                        disabled={processing || !data.surat_masuk_id}
+                        disabled={
+                            processing ||
+                            !data.surat_masuk_id ||
+                            !data.jabatan_tujuan_id
+                        }
                         className="rounded-xl font-semibold"
                     >
                         <Send className="size-4 mr-1.5" />

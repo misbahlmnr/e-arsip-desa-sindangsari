@@ -5,12 +5,19 @@ namespace Tests\Feature;
 use App\Models\Disposisi;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use Database\Seeders\JabatanTujuanDisposisiSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SekdesKadesDashboardTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(JabatanTujuanDisposisiSeeder::class);
+    }
 
     public function test_sekdes_dashboard_returns_summary_data(): void
     {
@@ -21,7 +28,7 @@ class SekdesKadesDashboardTest extends TestCase
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Dinas',
             'perihal' => 'Undangan',
-            'status' => 'belum_diproses',
+            'status' => SuratMasuk::STATUS_DRAFT,
             'tujuan' => '-',
         ]);
 
@@ -34,39 +41,46 @@ class SekdesKadesDashboardTest extends TestCase
                 ->has('recent_surat_masuk')
                 ->has('recent_disposisi')
                 ->where('summary.surat_masuk', 1)
-                ->where('summary.surat_masuk_tanpa_disposisi', 1)
+                ->where('summary.surat_masuk_draft', 1)
             );
     }
 
-    public function test_kades_dashboard_only_counts_kepala_desa_disposisi(): void
+    public function test_kades_dashboard_counts_penting_surat_awaiting_action(): void
     {
         $kades = User::factory()->create(['role' => 'kades']);
         $sekdes = User::factory()->create(['role' => 'sekdes']);
 
-        $surat = SuratMasuk::query()->create([
+        $suratPenting = SuratMasuk::query()->create([
             'no_surat' => 'SM-011',
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Camat',
-            'perihal' => 'Edaran',
-            'status' => 'sedang_diproses',
+            'perihal' => 'Edaran penting',
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'tingkat' => SuratMasuk::TINGKAT_PENTING,
+            'verified_sekdes_at' => now(),
+            'verified_sekdes_by' => $sekdes->id,
+            'tujuan' => '-',
+        ]);
+
+        SuratMasuk::query()->create([
+            'no_surat' => 'SM-012',
+            'tanggal_terima' => now()->toDateString(),
+            'pengirim' => 'Dinas',
+            'perihal' => 'Biasa',
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'tingkat' => SuratMasuk::TINGKAT_BIASA,
+            'verified_sekdes_at' => now(),
+            'verified_sekdes_by' => $sekdes->id,
             'tujuan' => '-',
         ]);
 
         Disposisi::query()->create([
-            'surat_masuk_id' => $surat->id,
-            'user_id' => $sekdes->id,
-            'kepada' => 'Kepala Desa',
-            'catatan' => 'Mohon ditindaklanjuti',
-            'status' => Disposisi::STATUS_MENUNGGU,
-            'tanggal' => now()->toDateString(),
-        ]);
-
-        Disposisi::query()->create([
-            'surat_masuk_id' => $surat->id,
-            'user_id' => $sekdes->id,
-            'kepada' => 'Sekretaris Desa',
-            'catatan' => 'Koordinasi',
-            'status' => Disposisi::STATUS_DIPROSES,
+            'surat_masuk_id' => $suratPenting->id,
+            'user_id' => $kades->id,
+            'jabatan_tujuan_id' => 1,
+            'dari_jabatan' => Disposisi::DARI_KADES,
+            'kepada' => 'Kaur Pemerintahan',
+            'catatan' => 'Tindaklanjuti',
             'tanggal' => now()->toDateString(),
         ]);
 

@@ -3,16 +3,12 @@
 namespace App\Http\Requests\SuratMasuk;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
     use NormalizesSuratMasukInput;
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -21,10 +17,6 @@ class StoreRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->normalizeSuratMasukAliases();
-
-        if (! $this->filled('status')) {
-            $this->merge(['status' => 'belum_diproses']);
-        }
     }
 
     /**
@@ -39,7 +31,6 @@ class StoreRequest extends FormRequest
             'pengirim' => ['required', 'string', 'max:120'],
             'perihal' => ['required', 'string', 'max:250'],
             'catatan' => ['nullable', 'string', 'max:5000'],
-            'status' => ['required', 'in:belum_diproses,sedang_diproses,selesai'],
             'tujuan' => ['nullable', 'string', 'max:191'],
             'file' => ['nullable', 'file', 'mimes:pdf,jpeg,jpg,png,doc,docx', 'max:5120'],
         ];

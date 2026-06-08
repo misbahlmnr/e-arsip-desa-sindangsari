@@ -20,17 +20,27 @@ class DashboardService
 
         $summary = [
             'surat_masuk' => (clone $suratMasukAktif)->count(),
+            'surat_masuk_draft' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_DRAFT)
+                ->count(),
+            'surat_masuk_terverifikasi' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->count(),
+            'surat_masuk_didisposisikan' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_DIDISPOSISIKAN)
+                ->count(),
             'surat_masuk_belum_diproses' => (clone $suratMasukAktif)
-                ->where('status', 'belum_diproses')
+                ->where('status', SuratMasuk::STATUS_DRAFT)
                 ->count(),
             'surat_masuk_sedang_diproses' => (clone $suratMasukAktif)
-                ->where('status', 'sedang_diproses')
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
                 ->count(),
             'surat_masuk_selesai' => (clone $suratMasukAktif)
-                ->where('status', 'selesai')
+                ->where('status', SuratMasuk::STATUS_DIDISPOSISIKAN)
                 ->count(),
             'surat_masuk_tanpa_disposisi' => (clone $suratMasukAktif)
                 ->whereDoesntHave('disposisi')
+                ->where('status', '!=', SuratMasuk::STATUS_DRAFT)
                 ->count(),
             'surat_masuk_bulan_ini' => SuratMasuk::query()
                 ->whereMonth('tanggal_terima', now()->month)
@@ -48,21 +58,25 @@ class DashboardService
                 ->whereYear('tanggal_kirim', now()->year)
                 ->count(),
             'disposisi' => Disposisi::query()->count(),
-            'disposisi_menunggu' => Disposisi::query()
-                ->where('status', Disposisi::STATUS_MENUNGGU)
+            'disposisi_menunggu' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at')
                 ->count(),
-            'disposisi_diproses' => Disposisi::query()
-                ->where('status', Disposisi::STATUS_DIPROSES)
+            'disposisi_diproses' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNotNull('verified_kades_at')
                 ->count(),
-            'disposisi_selesai' => Disposisi::query()
-                ->where('status', Disposisi::STATUS_SELESAI)
+            'disposisi_selesai' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_DIDISPOSISIKAN)
                 ->count(),
             'arsip_masuk' => SuratMasuk::query()->whereNotNull('diarsipkan_at')->count(),
             'arsip_keluar' => SuratKeluar::query()->whereNotNull('diarsipkan_at')->count(),
             'arsip' => SuratMasuk::query()->whereNotNull('diarsipkan_at')->count()
                 + SuratKeluar::query()->whereNotNull('diarsipkan_at')->count(),
             'siap_arsip' => (clone $suratMasukAktif)
-                ->where('status', 'selesai')
+                ->where('status', SuratMasuk::STATUS_DIDISPOSISIKAN)
                 ->count(),
             'users' => User::query()->count(),
             'users_admin' => User::query()->where('role', 'admin')->count(),
@@ -86,40 +100,44 @@ class DashboardService
     public function sekdes(): array
     {
         $suratMasukAktif = SuratMasuk::query()->whereNull('diarsipkan_at');
-        $disposisiQuery = Disposisi::query();
-        $disposisiKeKades = (clone $disposisiQuery)->where('kepada', 'like', '%Kepala Desa%');
+        $disposisiQuery = Disposisi::query()->where('dari_jabatan', Disposisi::DARI_SEKDES);
 
         $summary = [
             'surat_masuk' => (clone $suratMasukAktif)->count(),
+            'surat_masuk_draft' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_DRAFT)
+                ->count(),
             'surat_masuk_belum_diproses' => (clone $suratMasukAktif)
-                ->where('status', 'belum_diproses')
+                ->where('status', SuratMasuk::STATUS_DRAFT)
                 ->count(),
-            'surat_masuk_sedang_diproses' => (clone $suratMasukAktif)
-                ->where('status', 'sedang_diproses')
+            'surat_masuk_menunggu_review' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_DRAFT)
                 ->count(),
-            'surat_masuk_selesai' => (clone $suratMasukAktif)
-                ->where('status', 'selesai')
+            'surat_masuk_terverifikasi' => (clone $suratMasukAktif)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
                 ->count(),
             'surat_masuk_tanpa_disposisi' => (clone $suratMasukAktif)
-                ->whereDoesntHave('disposisi')
+                ->where('tingkat', SuratMasuk::TINGKAT_BIASA)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
                 ->count(),
             'surat_masuk_bulan_ini' => SuratMasuk::query()
                 ->whereMonth('tanggal_terima', now()->month)
                 ->whereYear('tanggal_terima', now()->year)
                 ->count(),
             'disposisi' => (clone $disposisiQuery)->count(),
-            'disposisi_menunggu' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_MENUNGGU)
+            'disposisi_menunggu' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at')
                 ->count(),
-            'disposisi_diproses' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_DIPROSES)
+            'disposisi_ke_kades' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
                 ->count(),
-            'disposisi_selesai' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_SELESAI)
-                ->count(),
-            'disposisi_ke_kades' => (clone $disposisiKeKades)->count(),
-            'disposisi_ke_kades_menunggu' => (clone $disposisiKeKades)
-                ->where('status', Disposisi::STATUS_MENUNGGU)
+            'disposisi_ke_kades_menunggu' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at')
                 ->count(),
             'arsip' => SuratMasuk::query()->whereNotNull('diarsipkan_at')->count()
                 + SuratKeluar::query()->whereNotNull('diarsipkan_at')->count(),
@@ -131,10 +149,10 @@ class DashboardService
             'attention' => $this->buildSekdesAttention($summary),
             'monthly_trend' => $this->monthlyTrend(),
             'recent_surat_masuk' => $this->recentSuratMasuk(),
-            'recent_disposisi' => $this->recentDisposisi(),
-            'pending_disposisi' => $this->pendingDisposisi(
-                fn (Builder $q) => $q->where('kepada', 'like', '%Kepala Desa%'),
+            'recent_disposisi' => $this->recentDisposisi(
+                fn (Builder $q) => $q->where('dari_jabatan', Disposisi::DARI_SEKDES),
             ),
+            'pending_disposisi' => $this->pendingSuratForSekdes(),
         ];
     }
 
@@ -144,18 +162,21 @@ class DashboardService
     public function kades(): array
     {
         $disposisiQuery = $this->kadesDisposisiQuery();
+        $suratMasukAktif = SuratMasuk::query()->whereNull('diarsipkan_at');
 
         $summary = [
             'disposisi' => (clone $disposisiQuery)->count(),
-            'disposisi_menunggu' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_MENUNGGU)
+            'disposisi_menunggu' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at')
                 ->count(),
-            'disposisi_diproses' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_DIPROSES)
+            'disposisi_diproses' => (clone $suratMasukAktif)
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNotNull('verified_kades_at')
                 ->count(),
-            'disposisi_selesai' => (clone $disposisiQuery)
-                ->where('status', Disposisi::STATUS_SELESAI)
-                ->count(),
+            'disposisi_selesai' => (clone $disposisiQuery)->count(),
             'disposisi_bulan_ini' => (clone $disposisiQuery)
                 ->whereMonth('tanggal', now()->month)
                 ->whereYear('tanggal', now()->year)
@@ -169,14 +190,12 @@ class DashboardService
             'summary' => $summary,
             'attention' => $this->buildKadesAttention($summary),
             'monthly_trend' => $this->monthlyDisposisiTrend(
-                fn (Builder $q) => $q->where('kepada', 'like', '%Kepala Desa%'),
+                fn (Builder $q) => $q->where('dari_jabatan', Disposisi::DARI_KADES),
             ),
             'recent_disposisi' => $this->recentDisposisi(
-                fn (Builder $q) => $q->where('kepada', 'like', '%Kepala Desa%'),
+                fn (Builder $q) => $q->where('dari_jabatan', Disposisi::DARI_KADES),
             ),
-            'pending_disposisi' => $this->pendingDisposisi(
-                fn (Builder $q) => $q->where('kepada', 'like', '%Kepala Desa%'),
-            ),
+            'pending_disposisi' => $this->pendingSuratForKades(),
         ];
     }
 
@@ -196,18 +215,18 @@ class DashboardService
                 'severity' => 'warning',
             ],
             [
-                'key' => 'disposisi_menunggu',
-                'label' => 'Disposisi menunggu Kepala Desa',
-                'description' => 'Belum ditindaklanjuti Kepala Desa',
+                'key' => 'penting_menunggu_kades',
+                'label' => 'Surat penting menunggu Kades',
+                'description' => 'Perlu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_ke_kades_menunggu'],
                 'route' => 'admin.disposisi.index',
                 'severity' => 'danger',
             ],
             [
-                'key' => 'belum_diproses',
-                'label' => 'Surat belum diproses',
-                'description' => 'Surat masuk perlu ditinjau',
-                'count' => $summary['surat_masuk_belum_diproses'],
+                'key' => 'menunggu_review',
+                'label' => 'Surat menunggu review',
+                'description' => 'Perlu ditelaah dan ditetapkan tingkatnya',
+                'count' => $summary['surat_masuk_draft'] ?? $summary['surat_masuk_belum_diproses'],
                 'route' => 'admin.surat-masuk.index',
                 'severity' => 'info',
             ],
@@ -227,17 +246,17 @@ class DashboardService
     {
         $items = [
             [
-                'key' => 'disposisi_menunggu',
-                'label' => 'Disposisi menunggu arahan',
-                'description' => 'Perlu persetujuan atau instruksi Anda',
+                'key' => 'verifikasi_penting',
+                'label' => 'Surat penting menunggu verifikasi',
+                'description' => 'Perlu verifikasi sebelum disposisi',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.disposisi.index',
                 'severity' => 'danger',
             ],
             [
-                'key' => 'disposisi_diproses',
-                'label' => 'Disposisi sedang diproses',
-                'description' => 'Masih dalam tindak lanjut',
+                'key' => 'siap_disposisi',
+                'label' => 'Surat penting siap disposisi',
+                'description' => 'Sudah diverifikasi, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
                 'route' => 'admin.disposisi.index',
                 'severity' => 'warning',
@@ -258,10 +277,10 @@ class DashboardService
     {
         $items = [
             [
-                'key' => 'belum_diproses',
-                'label' => 'Surat belum diproses',
-                'description' => 'Surat masuk yang belum ditindaklanjuti',
-                'count' => $summary['surat_masuk_belum_diproses'],
+                'key' => 'menunggu_review',
+                'label' => 'Surat menunggu review Sekdes',
+                'description' => 'Surat masuk baru belum ditelaah',
+                'count' => $summary['surat_masuk_draft'] ?? $summary['surat_masuk_belum_diproses'],
                 'route' => 'admin.surat-masuk.index',
                 'severity' => 'warning',
             ],
@@ -274,9 +293,9 @@ class DashboardService
                 'severity' => 'warning',
             ],
             [
-                'key' => 'disposisi_menunggu',
-                'label' => 'Disposisi menunggu Kepala Desa',
-                'description' => 'Menunggu persetujuan atau arahan',
+                'key' => 'penting_menunggu_kades',
+                'label' => 'Surat penting menunggu Kades',
+                'description' => 'Menunggu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.laporan.index',
                 'severity' => 'danger',
@@ -284,7 +303,7 @@ class DashboardService
             [
                 'key' => 'siap_arsip',
                 'label' => 'Surat siap diarsipkan',
-                'description' => 'Status selesai, belum masuk arsip',
+                'description' => 'Sudah didisposisikan, belum masuk arsip',
                 'count' => $summary['siap_arsip'],
                 'route' => 'admin.surat-masuk.index',
                 'severity' => 'info',
@@ -363,7 +382,62 @@ class DashboardService
      */
     private function kadesDisposisiQuery(): Builder
     {
-        return Disposisi::query()->where('kepada', 'like', '%Kepala Desa%');
+        return Disposisi::query()->where('dari_jabatan', Disposisi::DARI_KADES);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function pendingSuratForSekdes(): array
+    {
+        return SuratMasuk::query()
+            ->whereNull('diarsipkan_at')
+            ->where(function (Builder $q) {
+                $q->where('status', SuratMasuk::STATUS_DRAFT)
+                    ->orWhere(function (Builder $q) {
+                        $q->where('tingkat', SuratMasuk::TINGKAT_BIASA)
+                            ->where('status', SuratMasuk::STATUS_TERVERIFIKASI);
+                    });
+            })
+            ->orderByDesc('tanggal_terima')
+            ->limit(5)
+            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat'])
+            ->map(fn (SuratMasuk $s) => [
+                'id' => $s->id,
+                'no_surat' => $s->no_surat,
+                'pengirim' => $s->pengirim,
+                'perihal' => $s->perihal,
+                'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
+                'status' => $s->status,
+                'tingkat' => $s->tingkat,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function pendingSuratForKades(): array
+    {
+        return SuratMasuk::query()
+            ->whereNull('diarsipkan_at')
+            ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+            ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+            ->orderByDesc('tanggal_terima')
+            ->limit(5)
+            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->map(fn (SuratMasuk $s) => [
+                'id' => $s->id,
+                'no_surat' => $s->no_surat,
+                'pengirim' => $s->pengirim,
+                'perihal' => $s->perihal,
+                'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
+                'status' => $s->verified_kades_at ? 'siap_disposisi' : 'menunggu_verifikasi',
+                'tingkat' => $s->tingkat,
+            ])
+            ->values()
+            ->all();
     }
 
     /**
@@ -443,7 +517,6 @@ class DashboardService
     {
         $query = Disposisi::query()
             ->with('suratMasuk:id,no_surat,perihal,pengirim')
-            ->where('status', Disposisi::STATUS_MENUNGGU)
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -467,8 +540,9 @@ class DashboardService
         return [
             'id' => $d->id,
             'kepada' => $d->kepada,
+            'dari_jabatan' => $d->dari_jabatan,
             'tanggal' => $d->tanggal?->format('Y-m-d'),
-            'status' => $d->status,
+            'surat_status' => $d->suratMasuk?->status,
             'surat_masuk' => $d->suratMasuk ? [
                 'id' => $d->suratMasuk->id,
                 'no_surat' => $d->suratMasuk->no_surat,

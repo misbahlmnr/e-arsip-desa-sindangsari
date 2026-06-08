@@ -7,7 +7,7 @@ import {
     TrendChart,
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
-import { DISPOSISI_STATUS_LABELS } from "@/shared/constants/badgeLabels";
+import { SURAT_MASUK_STATUS_LABELS } from "@/shared/constants/badgeLabels";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
@@ -26,7 +26,7 @@ function mapDisposisiRows(items) {
         perihal: row.surat_masuk?.perihal ?? "—",
         kepada: row.kepada,
         tanggal: row.tanggal,
-        status: row.status,
+        status: row.surat_status ?? row.status,
     }));
 }
 
@@ -57,17 +57,17 @@ export default function KadesDashboard({
             href: route("admin.disposisi.index"),
         },
         {
-            label: "Menunggu Arahan",
+            label: "Menunggu Verifikasi",
             value: summary?.disposisi_menunggu ?? 0,
-            hint: "Perlu persetujuan Anda",
+            hint: "Surat penting perlu diverifikasi",
             icon: Clock,
             tone: "warning",
             href: route("admin.disposisi.index"),
         },
         {
-            label: "Sedang Diproses",
+            label: "Siap Disposisi",
             value: summary?.disposisi_diproses ?? 0,
-            hint: "Dalam tindak lanjut",
+            hint: "Sudah diverifikasi, menunggu disposisi",
             icon: Send,
             tone: "info",
             href: route("admin.disposisi.index"),
@@ -207,7 +207,7 @@ export default function KadesDashboard({
                                 disposisi: row.id,
                             })
                         }
-                        statusLabels={DISPOSISI_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_STATUS_LABELS}
                         dateKey="tanggal"
                     />
                     <DataTable

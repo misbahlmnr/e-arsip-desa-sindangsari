@@ -7,10 +7,7 @@ import {
     TrendChart,
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
-import {
-    DISPOSISI_STATUS_LABELS,
-    SURAT_MASUK_STATUS_LABELS,
-} from "@/shared/constants/badgeLabels";
+import { SURAT_MASUK_STATUS_LABELS } from "@/shared/constants/badgeLabels";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
@@ -30,7 +27,7 @@ function mapDisposisiRows(items) {
         perihal: row.surat_masuk?.perihal ?? "—",
         kepada: row.kepada,
         tanggal: row.tanggal,
-        status: row.status,
+        status: row.surat_status ?? row.status,
     }));
 }
 
@@ -178,33 +175,33 @@ export default function SekdesDashboard({
                                 title="Surat Masuk"
                                 items={[
                                     {
-                                        label: "Belum diproses",
-                                        value: summary?.surat_masuk_belum_diproses,
+                                        label: "Draft",
+                                        value: summary?.surat_masuk_draft ?? summary?.surat_masuk_belum_diproses,
                                     },
                                     {
-                                        label: "Sedang diproses",
-                                        value: summary?.surat_masuk_sedang_diproses,
+                                        label: "Terverifikasi",
+                                        value: summary?.surat_masuk_terverifikasi,
                                     },
                                     {
-                                        label: "Selesai",
-                                        value: summary?.surat_masuk_selesai,
+                                        label: "Didisposisikan",
+                                        value: summary?.surat_masuk_didisposisikan,
                                     },
                                 ]}
                             />
                             <StatusGroup
-                                title="Disposisi"
+                                title="Surat Penting"
                                 items={[
                                     {
-                                        label: "Menunggu",
-                                        value: summary?.disposisi_menunggu,
+                                        label: "Menunggu Kades",
+                                        value: summary?.disposisi_ke_kades_menunggu,
                                     },
                                     {
-                                        label: "Diproses",
-                                        value: summary?.disposisi_diproses,
+                                        label: "Tanpa disposisi (biasa)",
+                                        value: summary?.surat_masuk_tanpa_disposisi,
                                     },
                                     {
-                                        label: "Selesai",
-                                        value: summary?.disposisi_selesai,
+                                        label: "Total disposisi",
+                                        value: summary?.disposisi,
                                     },
                                 ]}
                             />
@@ -254,7 +251,7 @@ export default function SekdesDashboard({
                                 disposisi: row.id,
                             })
                         }
-                        statusLabels={DISPOSISI_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_STATUS_LABELS}
                         dateKey="tanggal"
                     />
                 </div>

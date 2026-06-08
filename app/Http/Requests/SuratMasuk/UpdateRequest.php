@@ -41,7 +41,6 @@ class UpdateRequest extends FormRequest
             'pengirim' => ['required', 'string', 'max:120'],
             'perihal' => ['required', 'string', 'max:250'],
             'catatan' => ['nullable', 'string', 'max:5000'],
-            'status' => ['required', 'in:belum_diproses,sedang_diproses,selesai'],
             'tujuan' => ['nullable', 'string', 'max:191'],
             'file' => ['nullable', 'file', 'mimes:pdf,jpeg,jpg,png,doc,docx', 'max:5120'],
         ];

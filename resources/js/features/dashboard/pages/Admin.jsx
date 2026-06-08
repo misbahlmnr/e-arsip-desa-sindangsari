@@ -72,7 +72,7 @@ export default function AdminDashboard({
             href: route("admin.surat-masuk.index"),
         },
         {
-            label: "Belum Diproses",
+            label: "Menunggu Review",
             value: summary?.surat_masuk_belum_diproses ?? 0,
             hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} tanpa disposisi`,
             icon: Clock,

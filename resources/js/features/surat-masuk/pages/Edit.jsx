@@ -2,13 +2,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { Save } from "lucide-react";
@@ -16,12 +9,6 @@ import { useMemo, useState } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { FilePreview } from "@/components/FilePreview";
 import { cn } from "@/shared/lib/utils";
-
-const STATUS_OPTIONS = [
-    { value: "belum_diproses", label: "Belum Diproses" },
-    { value: "sedang_diproses", label: "Sedang Diproses" },
-    { value: "selesai", label: "Selesai" },
-];
 
 function tanggalToInput(value) {
     if (!value) return "";
@@ -45,7 +32,6 @@ export default function EditSuratMasuk({ letter }) {
             pengirim: letter.pengirim ?? "",
             perihal: letter.perihal ?? "",
             catatan: letter.catatan ?? "",
-            status: letter.status ?? "belum_diproses",
             tujuan: letter.tujuan ?? "-",
             file: null,
         }),
@@ -192,30 +178,6 @@ export default function EditSuratMasuk({ letter }) {
                             />
                         </FormField>
 
-                        <FormField
-                            label="Status"
-                            required
-                            error={pageErrors.status}
-                        >
-                            <Select
-                                value={data.status}
-                                onValueChange={(v) => setData("status", v)}
-                            >
-                                <SelectTrigger className="h-11 rounded-xl">
-                                    <SelectValue placeholder="Pilih status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {STATUS_OPTIONS.map((opt) => (
-                                        <SelectItem
-                                            key={opt.value}
-                                            value={opt.value}
-                                        >
-                                            {opt.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </FormField>
                     </div>
 
                     <FormField

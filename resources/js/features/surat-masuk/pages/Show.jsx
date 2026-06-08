@@ -4,22 +4,24 @@ import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Archive,
     ArrowLeft,
-    CheckCircle2,
+    ClipboardCheck,
     FileText,
     Pencil,
     Send,
+    ShieldCheck,
     Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
-import { DisposisiBadge, StatusBadge } from "@/components/StatusBadge";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
     badgeLabel,
-    DISPOSISI_STATUS_LABELS,
     SURAT_MASUK_STATUS_LABELS,
+    TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import CreateDisposisiModal from "../components/CreateDisposisiModal";
+import ReviewSuratModal from "../components/ReviewSuratModal";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
 
 function Field({ label, value, className }) {
@@ -35,29 +37,34 @@ function Field({ label, value, className }) {
     );
 }
 
-export default function ShowSuratMasuk({ letter }) {
-    const { canManageSurat, canCreateDisposisi } = usePage().props.auth;
+export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) {
+    const { canManageSurat } = usePage().props.auth;
     const [openDispo, setOpenDispo] = useState(false);
+    const [openReview, setOpenReview] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [verifyLoading, setVerifyLoading] = useState(false);
 
-    // Pastikan disposisi selalu array meskipun null dari backend
     const disposisi = letter.disposisi ?? [];
-
-    const handleStatusSelesai = () => {
-        router.patch(
-            route("admin.surat-masuk.update-status", {
-                surat_masuk: letter.id,
-            }),
-            { status: "selesai" },
-            { preserveScroll: true },
-        );
-    };
 
     const handleArsipkan = () => {
         router.patch(
             route("admin.surat-masuk.archive", { surat_masuk: letter.id }),
             {},
             { preserveScroll: true },
+        );
+    };
+
+    const handleVerifikasiKades = () => {
+        setVerifyLoading(true);
+        router.patch(
+            route("admin.surat-masuk.verifikasi-kades", {
+                surat_masuk: letter.id,
+            }),
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => setVerifyLoading(false),
+            },
         );
     };
 
@@ -88,11 +95,8 @@ export default function ShowSuratMasuk({ letter }) {
             <Head title={`Surat — ${letter.no_surat}`} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/*  Kolom utama  */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Info card */}
                     <div className="surface-card p-6 md:p-8">
-                        {/* Header: nomor + badge */}
                         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                             <div>
                                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -110,6 +114,15 @@ export default function ShowSuratMasuk({ letter }) {
                                         letter.status,
                                     )}
                                 />
+                                {letter.tingkat && (
+                                    <StatusBadge
+                                        value={letter.tingkat}
+                                        label={badgeLabel(
+                                            TINGKAT_SURAT_LABELS,
+                                            letter.tingkat,
+                                        )}
+                                    />
+                                )}
                                 {letter.diarsipkan_at && (
                                     <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
                                         Diarsip
@@ -118,7 +131,6 @@ export default function ShowSuratMasuk({ letter }) {
                             </div>
                         </div>
 
-                        {/* Fields */}
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
                             <Field
                                 label="Tanggal Surat"
@@ -152,65 +164,61 @@ export default function ShowSuratMasuk({ letter }) {
                                     className="sm:col-span-2"
                                 />
                             )}
+                            {letter.verified_sekdes_at && (
+                                <Field
+                                    label="Direview Sekdes"
+                                    value={formatDateTime(
+                                        letter.verified_sekdes_at,
+                                    )}
+                                />
+                            )}
+                            {letter.verified_kades_at && (
+                                <Field
+                                    label="Diverifikasi Kades"
+                                    value={formatDateTime(
+                                        letter.verified_kades_at,
+                                    )}
+                                />
+                            )}
                         </dl>
 
-                        {(canCreateDisposisi || canManageSurat) && (
-                            <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
-                                {canCreateDisposisi && (
-                                    <Button
-                                        onClick={() => setOpenDispo(true)}
-                                        className="rounded-xl font-semibold"
-                                    >
-                                        <Send className="size-4 mr-1.5" />
-                                        Buat Disposisi
-                                    </Button>
-                                )}
+                        <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
+                            {letter.can_review_by_sekdes && (
+                                <Button
+                                    onClick={() => setOpenReview(true)}
+                                    className="rounded-xl font-semibold"
+                                >
+                                    <ClipboardCheck className="size-4 mr-1.5" />
+                                    Review Surat
+                                </Button>
+                            )}
 
-                                {canManageSurat && (
-                                    <>
-                                        {letter.status !== "selesai" && (
-                                            <Button
-                                                variant="outline"
-                                                onClick={handleStatusSelesai}
-                                                className="rounded-xl"
-                                            >
-                                                <CheckCircle2 className="size-4 mr-1.5" />
-                                                Tandai Selesai
-                                            </Button>
-                                        )}
+                            {letter.can_verify_by_kades && (
+                                <Button
+                                    onClick={handleVerifikasiKades}
+                                    disabled={verifyLoading}
+                                    className="rounded-xl font-semibold"
+                                >
+                                    <ShieldCheck className="size-4 mr-1.5" />
+                                    {verifyLoading
+                                        ? "Memverifikasi…"
+                                        : "Verifikasi Surat"}
+                                </Button>
+                            )}
 
-                                        {letter.diarsipkan_at ? (
-                                            <Button
-                                                asChild
-                                                variant="outline"
-                                                className="rounded-xl"
-                                            >
-                                                <Link
-                                                    href={route(
-                                                        "admin.arsip-surat.show",
-                                                        {
-                                                            jenis: "masuk",
-                                                            id: letter.id,
-                                                        },
-                                                    )}
-                                                >
-                                                    <Archive className="size-4 mr-1.5" />
-                                                    Lihat di Arsip
-                                                </Link>
-                                            </Button>
-                                        ) : (
-                                            letter.status === "selesai" && (
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={handleArsipkan}
-                                                    className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
-                                                >
-                                                    <Archive className="size-4 mr-1.5" />
-                                                    Arsipkan
-                                                </Button>
-                                            )
-                                        )}
+                            {letter.can_create_disposisi && (
+                                <Button
+                                    onClick={() => setOpenDispo(true)}
+                                    className="rounded-xl font-semibold"
+                                >
+                                    <Send className="size-4 mr-1.5" />
+                                    Buat Disposisi
+                                </Button>
+                            )}
 
+                            {canManageSurat && (
+                                <>
+                                    {letter.diarsipkan_at ? (
                                         <Button
                                             asChild
                                             variant="outline"
@@ -218,31 +226,30 @@ export default function ShowSuratMasuk({ letter }) {
                                         >
                                             <Link
                                                 href={route(
-                                                    "admin.surat-masuk.edit",
+                                                    "admin.arsip-surat.show",
                                                     {
-                                                        surat_masuk: letter.id,
+                                                        jenis: "masuk",
+                                                        id: letter.id,
                                                     },
                                                 )}
                                             >
-                                                <Pencil className="size-4 mr-1.5" />
-                                                Edit
+                                                <Archive className="size-4 mr-1.5" />
+                                                Lihat di Arsip
                                             </Link>
                                         </Button>
+                                    ) : (
+                                        letter.can_archive && (
+                                            <Button
+                                                variant="outline"
+                                                onClick={handleArsipkan}
+                                                className="rounded-xl text-muted-foreground border-border hover:bg-muted"
+                                            >
+                                                <Archive className="size-4 mr-1.5" />
+                                                Arsipkan
+                                            </Button>
+                                        )
+                                    )}
 
-                                        <Button
-                                            variant="outline"
-                                            className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
-                                            onClick={() =>
-                                                setConfirmDelete(true)
-                                            }
-                                        >
-                                            <Trash2 className="size-4 mr-1.5" />
-                                            Hapus
-                                        </Button>
-                                    </>
-                                )}
-
-                                {!canManageSurat && letter.diarsipkan_at && (
                                     <Button
                                         asChild
                                         variant="outline"
@@ -250,23 +257,46 @@ export default function ShowSuratMasuk({ letter }) {
                                     >
                                         <Link
                                             href={route(
-                                                "admin.arsip-surat.show",
-                                                {
-                                                    jenis: "masuk",
-                                                    id: letter.id,
-                                                },
+                                                "admin.surat-masuk.edit",
+                                                { surat_masuk: letter.id },
                                             )}
                                         >
-                                            <Archive className="size-4 mr-1.5" />
-                                            Lihat di Arsip
+                                            <Pencil className="size-4 mr-1.5" />
+                                            Edit
                                         </Link>
                                     </Button>
-                                )}
-                            </div>
-                        )}
+
+                                    <Button
+                                        variant="outline"
+                                        className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
+                                        onClick={() => setConfirmDelete(true)}
+                                    >
+                                        <Trash2 className="size-4 mr-1.5" />
+                                        Hapus
+                                    </Button>
+                                </>
+                            )}
+
+                            {!canManageSurat && letter.diarsipkan_at && (
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    className="rounded-xl"
+                                >
+                                    <Link
+                                        href={route("admin.arsip-surat.show", {
+                                            jenis: "masuk",
+                                            id: letter.id,
+                                        })}
+                                    >
+                                        <Archive className="size-4 mr-1.5" />
+                                        Lihat di Arsip
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
-                    {/* File lampiran */}
                     {letter.file_url ? (
                         <div className="space-y-3">
                             <h3 className="font-bold text-base">
@@ -297,7 +327,6 @@ export default function ShowSuratMasuk({ letter }) {
                     )}
                 </div>
 
-                {/* ── Sidebar disposisi ────────────────────────────────── */}
                 <aside className="surface-card p-6 md:p-8 self-start">
                     <h3 className="font-bold text-base">Riwayat Disposisi</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
@@ -307,11 +336,7 @@ export default function ShowSuratMasuk({ letter }) {
                     {disposisi.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-border p-6 text-center">
                             <p className="text-sm text-muted-foreground">
-                                Belum ada disposisi. Klik{" "}
-                                <span className="font-semibold text-foreground">
-                                    Buat Disposisi
-                                </span>{" "}
-                                untuk memulai.
+                                Belum ada disposisi.
                             </p>
                         </div>
                     ) : (
@@ -334,17 +359,6 @@ export default function ShowSuratMasuk({ letter }) {
                                     <p className="text-sm text-foreground/80 mt-1.5 leading-relaxed">
                                         {d.catatan}
                                     </p>
-                                    {d.status && (
-                                        <div className="mt-2">
-                                            <DisposisiBadge
-                                                value={d.status}
-                                                label={badgeLabel(
-                                                    DISPOSISI_STATUS_LABELS,
-                                                    d.status,
-                                                )}
-                                            />
-                                        </div>
-                                    )}
                                 </li>
                             ))}
                         </ol>
@@ -352,11 +366,21 @@ export default function ShowSuratMasuk({ letter }) {
                 </aside>
             </div>
 
-            {canCreateDisposisi && (
+            {letter.can_create_disposisi && (
                 <CreateDisposisiModal
                     letter={letter}
+                    jabatanOptions={jabatanOptions}
+                    dariJabatan={dariJabatan}
                     openDispo={openDispo}
                     setOpenDispo={setOpenDispo}
+                />
+            )}
+
+            {letter.can_review_by_sekdes && (
+                <ReviewSuratModal
+                    letter={letter}
+                    open={openReview}
+                    onOpenChange={setOpenReview}
                 />
             )}
 

@@ -5,15 +5,15 @@ namespace App\Services;
 use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Http\Requests\SuratMasuk\UpdateRequest;
 use App\Models\SuratMasuk;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
 {
     /**
-     * Sortable columns (whitelist) — prevents arbitrary ORDER BY injection.
-     *
      * @var list<string>
      */
     private const SORTABLE = [
@@ -25,6 +25,7 @@ class SuratMasukService
         'pengirim',
         'perihal',
         'status',
+        'tingkat',
         'tujuan',
         'created_at',
         'diarsipkan_at',
@@ -38,7 +39,7 @@ class SuratMasukService
             'sort_by' => ['nullable', 'string', 'max:64'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
-            'status' => ['nullable', 'in:belum_diproses,sedang_diproses,selesai'],
+            'status' => ['nullable', Rule::in(SuratMasuk::STATUSES)],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
@@ -104,6 +105,8 @@ class SuratMasukService
         try {
             $data = $req->validated();
             $data['tujuan'] = $data['tujuan'] ?? '-';
+            $data['status'] = SuratMasuk::STATUS_DRAFT;
+            unset($data['tingkat']);
             $filePath = $this->handleFile($req);
 
             if ($filePath) {
@@ -124,6 +127,7 @@ class SuratMasukService
         try {
             $data = $req->validated();
             $data['tujuan'] = $data['tujuan'] ?? '-';
+            unset($data['status'], $data['tingkat']);
             $filePath = $this->handleFile($req);
 
             if ($filePath) {
@@ -156,20 +160,55 @@ class SuratMasukService
         }
     }
 
-    public function updateStatus(SuratMasuk $surat_masuk, string $status): SuratMasuk
+    public function reviewBySekdes(SuratMasuk $suratMasuk, string $tingkat, User $user): SuratMasuk
     {
-        $surat_masuk->update(['status' => $status]);
+        $suratMasuk->update([
+            'tingkat' => $tingkat,
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'verified_sekdes_at' => now(),
+            'verified_sekdes_by' => $user->id,
+        ]);
 
-        return $surat_masuk->fresh();
+        return $suratMasuk->fresh();
+    }
+
+    public function verifyByKades(SuratMasuk $suratMasuk, User $user): SuratMasuk
+    {
+        $suratMasuk->update([
+            'verified_kades_at' => now(),
+            'verified_kades_by' => $user->id,
+        ]);
+
+        return $suratMasuk->fresh();
     }
 
     public function archive(SuratMasuk $surat_masuk): void
     {
-        $surat_masuk->update(['diarsipkan_at' => now()]);
+        $surat_masuk->update([
+            'status' => SuratMasuk::STATUS_DIARSIPKAN,
+            'diarsipkan_at' => now(),
+        ]);
     }
 
     public function unarchive(SuratMasuk $surat_masuk): void
     {
-        $surat_masuk->update(['diarsipkan_at' => null]);
+        $surat_masuk->update([
+            'status' => SuratMasuk::STATUS_DIDISPOSISIKAN,
+            'diarsipkan_at' => null,
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function formatShowPayload(SuratMasuk $suratMasuk, User $user): array
+    {
+        $letter = $suratMasuk->toArray();
+        $letter['can_review_by_sekdes'] = $user->isSekdes() && $suratMasuk->canReviewBySekdes();
+        $letter['can_verify_by_kades'] = $user->isKades() && $suratMasuk->canVerifyByKades();
+        $letter['can_create_disposisi'] = $suratMasuk->canCreateDisposisi($user);
+        $letter['can_archive'] = $suratMasuk->canArchive();
+
+        return $letter;
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Disposisi;
+use App\Models\JabatanTujuanDisposisi;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\User;
@@ -11,27 +12,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 
 /**
- * Seeder data demo Kantor Desa — mensimulasikan alur kerja pengarsipan surat nyata.
- *
- * Workflow Surat Masuk (50) — urutan kronologis (indeks 0 = paling lama, 49 = paling baru):
- *   E.  5 surat selesai & diarsipkan (terlama)
- *   D.  5 surat sedang ditindaklanjuti
- *   C. 15 surat sudah didisposisikan
- *   B. 15 surat dibaca Sekdes, belum didisposisikan
- *   A. 10 surat baru diterima (terbaru, belum diproses)
- *
- * Workflow Disposisi:
- *   Dibuat hanya untuk surat masuk bucket C–E; status menunggu / diproses / selesai
- *   mengikuti tahapan tindak lanjut. Tujuan disposisi memakai opsi resmi aplikasi.
- *
- * Workflow Surat Keluar (50):
- *   Status DB: draft | terkirim (arsip via diarsipkan_at).
- *   Tahapan bisnis tambahan (menunggu persetujuan, disetujui, selesai) dicatat di kolom catatan.
- *   ±12 surat keluar merupakan balasan / tindak lanjut surat masuk (surat_masuk_id).
- *
- * Arsip:
- *   Surat masuk bucket E + sebagian surat keluar terkirim yang diarsipkan.
- *   Tidak ada tabel arsip terpisah — flag diarsipkan_at pada surat sumber.
+ * Seeder data demo Kantor Desa — alur: draft → review Sekdes → (verifikasi Kades) → disposisi → arsip.
  */
 class DesaWorkflowSeeder extends Seeder
 {
@@ -96,15 +77,6 @@ class DesaWorkflowSeeder extends Seeder
     ];
 
     /** @var list<string> */
-    private const TUJUAN_DISPOSISI = [
-        'Kepala Desa',
-        'Sekretaris Desa',
-        'Kaur Pemerintahan',
-        'Kaur Keuangan',
-        'Kaur Umum',
-    ];
-
-    /** @var list<string> */
     private const JENIS_SURAT_KELUAR = [
         'Surat Keterangan Domisili',
         'Surat Keterangan Usaha',
@@ -145,22 +117,33 @@ class DesaWorkflowSeeder extends Seeder
     /** @var Collection<int, SuratMasuk> */
     private Collection $suratMasuk;
 
+    /** @var list<array{id: int, nama_jabatan: string}> */
+    private array $jabatanOptions = [];
+
     public function run(): void
     {
         $sekdes = User::query()->where('role', 'sekdes')->first();
-        if (! $sekdes) {
-            $this->command?->warn('Lewati DesaWorkflowSeeder: user sekdes belum ada. Jalankan UserSeeder terlebih dahulu.');
+        $kades = User::query()->where('role', 'kades')->first();
+
+        if (! $sekdes || ! $kades) {
+            $this->command?->warn('Lewati DesaWorkflowSeeder: user sekdes/kades belum ada.');
 
             return;
+        }
+
+        $this->jabatanOptions = JabatanTujuanDisposisi::activeOptions();
+        if ($this->jabatanOptions === []) {
+            $this->call(JabatanTujuanDisposisiSeeder::class);
+            $this->jabatanOptions = JabatanTujuanDisposisi::activeOptions();
         }
 
         $this->resetDemoSurat();
 
         $this->command?->info('Menyemai 50 Surat Masuk dengan variasi workflow...');
-        $this->suratMasuk = $this->seedSuratMasuk();
+        $this->suratMasuk = $this->seedSuratMasuk($sekdes, $kades);
 
         $this->command?->info('Menyemai Disposisi terkait Surat Masuk...');
-        $this->seedDisposisi($sekdes);
+        $this->seedDisposisi($sekdes, $kades);
 
         $this->command?->info('Menyemai 50 Surat Keluar (termasuk balasan surat masuk)...');
         $this->seedSuratKeluar();
@@ -178,61 +161,70 @@ class DesaWorkflowSeeder extends Seeder
     /**
      * @return Collection<int, SuratMasuk>
      */
-    private function seedSuratMasuk(): Collection
+    private function seedSuratMasuk(User $sekdes, User $kades): Collection
     {
         $created = collect();
         $startDate = now()->subMonths(6)->startOfMonth();
 
-        // Indeks 0–49 = tanggal terima makin baru. Surat lama harus lebih jauh prosesnya.
-
-        // Bucket E — 5 surat terlama: selesai & diarsipkan
         for ($i = 0; $i < 5; $i++) {
             $terima = $startDate->copy()->addDays($i * 3);
-            $created->push($this->createSuratMasuk($i, $startDate, [
-                'status' => 'selesai',
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_DIARSIPKAN,
+                'tingkat' => $i % 2 === 0 ? SuratMasuk::TINGKAT_BIASA : SuratMasuk::TINGKAT_PENTING,
                 'catatan' => 'Proses penanganan selesai. Surat telah diarsipkan.',
                 'diarsipkan_at' => $terima->copy()->addDays(21),
-                'bucket' => 'arsip',
+                'verified_kades' => $i % 2 !== 0,
             ]));
         }
 
-        // Bucket D — 5 surat: tindak lanjut aktif (sudah lama di proses)
-        for ($i = 5; $i < 10; $i++) {
-            $created->push($this->createSuratMasuk($i, $startDate, [
-                'status' => 'sedang_diproses',
-                'catatan' => 'Tindak lanjut sedang berjalan; menunggu laporan akhir.',
-                'diarsipkan_at' => null,
-                'bucket' => 'tindak_lanjut',
-            ]));
-        }
-
-        // Bucket C — 15 surat: sudah didisposisikan
-        for ($i = 10; $i < 25; $i++) {
-            $created->push($this->createSuratMasuk($i, $startDate, [
-                'status' => 'sedang_diproses',
+        for ($i = 5; $i < 20; $i++) {
+            $isPenting = $i % 3 === 0;
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_DIDISPOSISIKAN,
+                'tingkat' => $isPenting ? SuratMasuk::TINGKAT_PENTING : SuratMasuk::TINGKAT_BIASA,
                 'catatan' => 'Disposisi telah dikeluarkan ke perangkat desa terkait.',
                 'diarsipkan_at' => null,
-                'bucket' => 'didisposisikan',
+                'verified_kades' => $isPenting,
             ]));
         }
 
-        // Bucket B — 15 surat: dibaca, belum disposisi (relatif baru)
-        for ($i = 25; $i < 40; $i++) {
-            $created->push($this->createSuratMasuk($i, $startDate, [
-                'status' => 'belum_diproses',
-                'catatan' => 'Sudah dibaca Sekretaris Desa. Menunggu pembuatan disposisi.',
+        for ($i = 20; $i < 30; $i++) {
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+                'tingkat' => SuratMasuk::TINGKAT_BIASA,
+                'catatan' => 'Sudah direview Sekdes. Menunggu pembuatan disposisi.',
                 'diarsipkan_at' => null,
-                'bucket' => 'dibaca_belum_disposisi',
+                'verified_kades' => false,
             ]));
         }
 
-        // Bucket A — 10 surat terbaru: baru diterima
+        for ($i = 30; $i < 35; $i++) {
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+                'tingkat' => SuratMasuk::TINGKAT_PENTING,
+                'catatan' => 'Surat penting menunggu verifikasi Kepala Desa.',
+                'diarsipkan_at' => null,
+                'verified_kades' => false,
+            ]));
+        }
+
+        for ($i = 35; $i < 40; $i++) {
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+                'tingkat' => SuratMasuk::TINGKAT_PENTING,
+                'catatan' => 'Sudah diverifikasi Kades. Menunggu disposisi.',
+                'diarsipkan_at' => null,
+                'verified_kades' => true,
+            ]));
+        }
+
         for ($i = 40; $i < 50; $i++) {
-            $created->push($this->createSuratMasuk($i, $startDate, [
-                'status' => 'belum_diproses',
+            $created->push($this->createSuratMasuk($i, $startDate, $sekdes, $kades, [
+                'status' => SuratMasuk::STATUS_DRAFT,
+                'tingkat' => null,
                 'catatan' => null,
                 'diarsipkan_at' => null,
-                'bucket' => 'baru',
+                'verified_kades' => false,
             ]));
         }
 
@@ -240,123 +232,78 @@ class DesaWorkflowSeeder extends Seeder
     }
 
     /**
-     * @param  array{bucket: string, status: string, catatan: ?string, diarsipkan_at: ?Carbon}  $meta
+     * @param  array{status: string, tingkat: ?string, catatan: ?string, diarsipkan_at: ?Carbon, verified_kades: bool}  $meta
      */
-    private function createSuratMasuk(int $index, Carbon $startDate, array $meta): SuratMasuk
+    private function createSuratMasuk(int $index, Carbon $startDate, User $sekdes, User $kades, array $meta): SuratMasuk
     {
         $tanggalTerima = $startDate->copy()->addDays($index * 3);
         $tanggalSurat = $tanggalTerima->copy()->subDays(($index % 5) + 1);
-        $pengirim = self::PENGIRIM[$index % count(self::PENGIRIM)];
-        $perihal = self::PERIHAL_MASUK[$index % count(self::PERIHAL_MASUK)];
+        $reviewAt = $meta['tingkat'] ? $tanggalTerima->copy()->addDay() : null;
 
         return SuratMasuk::query()->create([
             'no_surat' => $this->nomorSuratMasuk($index, $tanggalTerima),
             'tanggal_terima' => $tanggalTerima->toDateString(),
             'tanggal_surat' => $tanggalSurat->toDateString(),
-            'pengirim' => $pengirim,
-            'perihal' => $perihal,
+            'pengirim' => self::PENGIRIM[$index % count(self::PENGIRIM)],
+            'perihal' => self::PERIHAL_MASUK[$index % count(self::PERIHAL_MASUK)],
             'catatan' => $meta['catatan'],
             'status' => $meta['status'],
+            'tingkat' => $meta['tingkat'],
             'tujuan' => 'Kantor Desa Mekarsari',
             'file' => null,
             'diarsipkan_at' => $meta['diarsipkan_at'],
+            'verified_sekdes_at' => $reviewAt,
+            'verified_sekdes_by' => $reviewAt ? $sekdes->id : null,
+            'verified_kades_at' => $meta['verified_kades'] && $meta['tingkat'] === SuratMasuk::TINGKAT_PENTING
+                ? $reviewAt?->copy()->addDays(2)
+                : null,
+            'verified_kades_by' => $meta['verified_kades'] && $meta['tingkat'] === SuratMasuk::TINGKAT_PENTING
+                ? $kades->id
+                : null,
         ]);
     }
 
-    private function seedDisposisi(User $sekdes): void
+    private function seedDisposisi(User $sekdes, User $kades): void
     {
-        $bucketC = $this->suratMasuk->slice(10, 15)->values();
-        $bucketD = $this->suratMasuk->slice(5, 5)->values();
-        $bucketE = $this->suratMasuk->slice(0, 5)->values();
+        $didispos = $this->suratMasuk->slice(5, 15)->values();
+        $arsip = $this->suratMasuk->slice(0, 5)->values();
 
-        // Bucket C: surat cukup lama — disposisi lama; yang lebih baru dalam bucket cenderung menunggu
-        foreach ($bucketC as $idx => $surat) {
-            $hariSetelahTerima = 2 + (int) ($idx / 3);
-            $tanggal = Carbon::parse($surat->tanggal_terima)->addDays($hariSetelahTerima);
-            $kepada = self::TUJUAN_DISPOSISI[$idx % count(self::TUJUAN_DISPOSISI)];
-            $status = $idx >= 10
-                ? Disposisi::STATUS_MENUNGGU
-                : Disposisi::STATUS_DIPROSES;
-
-            if (stripos($kepada, 'Kepala Desa') !== false && $idx >= 8) {
-                $status = Disposisi::STATUS_MENUNGGU;
-            }
-
-            $this->createDisposisi($surat, $sekdes, $kepada, $status, $tanggal, $idx);
-
-            // Beberapa surat didisposisikan ke dua perangkat sekaligus
-            if ($idx % 4 === 0) {
-                $kepada2 = self::TUJUAN_DISPOSISI[($idx + 2) % count(self::TUJUAN_DISPOSISI)];
-                if ($kepada2 !== $kepada) {
-                    $this->createDisposisi(
-                        $surat,
-                        $sekdes,
-                        $kepada2,
-                        Disposisi::STATUS_DIPROSES,
-                        $tanggal->copy()->addDay(),
-                        $idx + 100,
-                    );
-                }
-            }
-        }
-
-        // Bucket D: surat lama — hampir selesai, mayoritas disposisi sudah diproses
-        foreach ($bucketD as $idx => $surat) {
-            $tanggal = Carbon::parse($surat->tanggal_terima)->addDays(4);
-            $this->createDisposisi(
-                $surat,
-                $sekdes,
-                'Kepala Desa',
-                $idx === 0 ? Disposisi::STATUS_MENUNGGU : Disposisi::STATUS_DIPROSES,
-                $tanggal,
-                $idx + 200,
-            );
-            $this->createDisposisi(
-                $surat,
-                $sekdes,
-                'Kaur Pemerintahan',
-                Disposisi::STATUS_DIPROSES,
-                $tanggal->copy()->addDay(),
-                $idx + 300,
-            );
-        }
-
-        // Bucket E: semua disposisi selesai sebelum diarsipkan
-        foreach ($bucketE as $idx => $surat) {
+        foreach ($didispos->merge($arsip) as $idx => $surat) {
+            $isPenting = $surat->tingkat === SuratMasuk::TINGKAT_PENTING;
+            $user = $isPenting ? $kades : $sekdes;
+            $dari = $isPenting ? Disposisi::DARI_KADES : Disposisi::DARI_SEKDES;
             $tanggal = Carbon::parse($surat->tanggal_terima)->addDays(3);
-            $this->createDisposisi(
-                $surat,
-                $sekdes,
-                'Kepala Desa',
-                Disposisi::STATUS_SELESAI,
-                $tanggal,
-                $idx + 400,
-            );
-            $this->createDisposisi(
-                $surat,
-                $sekdes,
-                'Kaur Umum',
-                Disposisi::STATUS_SELESAI,
-                $tanggal->copy()->addDays(2),
-                $idx + 500,
-            );
+
+            $this->createDisposisi($surat, $user, $dari, $tanggal, $idx);
+
+            if ($idx % 4 === 0) {
+                $this->createDisposisi(
+                    $surat,
+                    $user,
+                    $dari,
+                    $tanggal->copy()->addDay(),
+                    $idx + 100,
+                );
+            }
         }
     }
 
     private function createDisposisi(
         SuratMasuk $surat,
-        User $sekdes,
-        string $kepada,
-        string $status,
+        User $user,
+        string $dariJabatan,
         Carbon $tanggal,
         int $instruksiIndex,
     ): void {
+        $jabatan = $this->jabatanOptions[$instruksiIndex % count($this->jabatanOptions)];
+
         Disposisi::query()->create([
             'surat_masuk_id' => $surat->id,
-            'user_id' => $sekdes->id,
-            'kepada' => $kepada,
+            'user_id' => $user->id,
+            'jabatan_tujuan_id' => $jabatan['id'],
+            'dari_jabatan' => $dariJabatan,
+            'kepada' => $jabatan['nama_jabatan'],
             'catatan' => self::INSTRUKSI_DISPOSISI[$instruksiIndex % count(self::INSTRUKSI_DISPOSISI)],
-            'status' => $status,
             'tanggal' => $tanggal->toDateString(),
         ]);
     }
@@ -367,7 +314,7 @@ class DesaWorkflowSeeder extends Seeder
         $balasanCandidates = $this->suratMasuk
             ->filter(fn (SuratMasuk $s) => in_array(
                 $s->status,
-                ['sedang_diproses', 'selesai'],
+                [SuratMasuk::STATUS_DIDISPOSISIKAN, SuratMasuk::STATUS_DIARSIPKAN],
                 true,
             ))
             ->sortBy('tanggal_terima')
@@ -429,7 +376,6 @@ class DesaWorkflowSeeder extends Seeder
         $suratMasukId = null;
         $perihal = $jenis.' — Desa Mekarsari';
 
-        // 12 surat keluar pertama merupakan tindak lanjut surat masuk
         if ($index < 12 && $balasanCandidates->isNotEmpty()) {
             /** @var SuratMasuk $sumber */
             $sumber = $balasanCandidates[$balasanIndex % $balasanCandidates->count()];
@@ -459,7 +405,6 @@ class DesaWorkflowSeeder extends Seeder
             ];
         }
 
-        // Surat keluar layanan warga / administrasi desa (tanpa surat masuk sumber)
         if ($index < 17) {
             return ['draft', 'Draf surat layanan; menunggu kelengkapan berkas warga.', null, null, $perihal];
         }

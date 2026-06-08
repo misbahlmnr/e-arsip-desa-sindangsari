@@ -6,12 +6,19 @@ use App\Models\Disposisi;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use Database\Seeders\JabatanTujuanDisposisiSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class LaporanTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(JabatanTujuanDisposisiSeeder::class);
+    }
 
     public function test_admin_can_view_laporan(): void
     {
@@ -53,7 +60,7 @@ class LaporanTest extends TestCase
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Dinas Pendidikan',
             'perihal' => 'Undangan rapat',
-            'status' => 'belum_diproses',
+            'status' => SuratMasuk::STATUS_DRAFT,
             'tujuan' => '-',
         ]);
 
@@ -105,7 +112,7 @@ class LaporanTest extends TestCase
             ->assertHeader('content-type', 'application/pdf');
     }
 
-    public function test_kades_disposisi_stats_only_include_kepala_desa(): void
+    public function test_kades_disposisi_stats_only_include_kades_disposisi(): void
     {
         $kades = User::factory()->create(['role' => 'kades']);
         $sekdes = User::factory()->create(['role' => 'sekdes']);
@@ -115,25 +122,28 @@ class LaporanTest extends TestCase
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Camat',
             'perihal' => 'Edaran',
-            'status' => 'sedang_diproses',
+            'status' => SuratMasuk::STATUS_DIDISPOSISIKAN,
+            'tingkat' => SuratMasuk::TINGKAT_PENTING,
             'tujuan' => '-',
         ]);
 
         Disposisi::query()->create([
             'surat_masuk_id' => $surat->id,
-            'user_id' => $sekdes->id,
-            'kepada' => 'Kepala Desa',
+            'user_id' => $kades->id,
+            'jabatan_tujuan_id' => 1,
+            'dari_jabatan' => Disposisi::DARI_KADES,
+            'kepada' => 'Kaur Pemerintahan',
             'catatan' => 'Mohon ditindaklanjuti',
-            'status' => Disposisi::STATUS_MENUNGGU,
             'tanggal' => now()->toDateString(),
         ]);
 
         Disposisi::query()->create([
             'surat_masuk_id' => $surat->id,
             'user_id' => $sekdes->id,
-            'kepada' => 'Sekretaris Desa',
+            'jabatan_tujuan_id' => 2,
+            'dari_jabatan' => Disposisi::DARI_SEKDES,
+            'kepada' => 'Kaur Keuangan',
             'catatan' => 'Koordinasi',
-            'status' => Disposisi::STATUS_DIPROSES,
             'tanggal' => now()->toDateString(),
         ]);
 

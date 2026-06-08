@@ -151,7 +151,7 @@
                 <div class="hint">{{ $summary['surat_masuk_aktif'] }} aktif</div>
             </td>
             <td>
-                <div class="label">Belum Diproses</div>
+                <div class="label">Menunggu Review</div>
                 <div class="value">{{ $summary['surat_masuk_belum_diproses'] }}</div>
                 <div class="hint">{{ $summary['surat_masuk_tanpa_disposisi'] }} tanpa disposisi</div>
             </td>
@@ -168,7 +168,7 @@
             <td>
                 <div class="label">Disposisi</div>
                 <div class="value">{{ $summary['disposisi'] }}</div>
-                <div class="hint">{{ $summary['disposisi_menunggu'] }} menunggu</div>
+                <div class="hint">{{ $summary['surat_penting_menunggu_kades'] ?? 0 }} penting menunggu Kades</div>
             </td>
         </tr>
     </table>
@@ -236,16 +236,16 @@
         </tr>
     </table>
 
-    <h2>Status Disposisi</h2>
+    <h2>Tingkat Surat</h2>
     <table class="data" style="width: 50%;">
         <thead>
             <tr>
-                <th>Status</th>
+                <th>Tingkat</th>
                 <th class="num">Jumlah</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($disposisi_status as $row)
+            @foreach ($tingkat_surat as $row)
                 <tr>
                     <td>{{ $row['label'] }}</td>
                     <td class="num">{{ $row['total'] }}</td>

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Disposisi;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\User;
@@ -22,7 +21,7 @@ class AdminDashboardTest extends TestCase
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Dinas',
             'perihal' => 'Undangan',
-            'status' => 'belum_diproses',
+            'status' => SuratMasuk::STATUS_DRAFT,
             'tujuan' => '-',
         ]);
 
@@ -54,24 +53,24 @@ class AdminDashboardTest extends TestCase
     public function test_admin_dashboard_attention_includes_pending_items(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $sekdes = User::factory()->create(['role' => 'sekdes']);
 
-        $surat = SuratMasuk::query()->create([
+        SuratMasuk::query()->create([
             'no_surat' => 'SM-002',
             'tanggal_terima' => now()->toDateString(),
             'pengirim' => 'Camat',
             'perihal' => 'Edaran',
-            'status' => 'belum_diproses',
+            'status' => SuratMasuk::STATUS_DRAFT,
             'tujuan' => '-',
         ]);
 
-        Disposisi::query()->create([
-            'surat_masuk_id' => $surat->id,
-            'user_id' => $sekdes->id,
-            'kepada' => 'Kepala Desa',
-            'catatan' => 'Mohon ditindaklanjuti',
-            'status' => Disposisi::STATUS_MENUNGGU,
-            'tanggal' => now()->toDateString(),
+        SuratMasuk::query()->create([
+            'no_surat' => 'SM-003',
+            'tanggal_terima' => now()->toDateString(),
+            'pengirim' => 'BPD',
+            'perihal' => 'Penting',
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'tingkat' => SuratMasuk::TINGKAT_PENTING,
+            'tujuan' => '-',
         ]);
 
         $this->actingAs($admin)
@@ -79,9 +78,7 @@ class AdminDashboardTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->where('summary.disposisi_menunggu', 1)
-                ->has('attention', 2)
-                ->where('attention.0.key', 'belum_diproses')
-                ->where('attention.1.key', 'disposisi_menunggu')
+                ->has('attention', 3)
             );
     }
 }

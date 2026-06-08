@@ -1,8 +1,8 @@
-import { DisposisiBadge } from "@/components/StatusBadge";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import {
     badgeLabel,
-    DISPOSISI_STATUS_LABELS,
+    SURAT_MASUK_STATUS_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Eye } from "lucide-react";
@@ -40,17 +40,17 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
-            accessorKey: "pengirim",
-            header: "Pengirim",
+            accessorKey: "dari_jabatan",
+            header: "Dari",
             cell: ({ row }) => (
                 <span className="text-sm font-medium">
-                    {row.original.pengirim}
+                    {row.original.dari_jabatan}
                 </span>
             ),
         },
         {
             accessorKey: "kepada",
-            header: "Penerima",
+            header: "Kepada",
             cell: ({ row }) => (
                 <span className="text-sm">{row.original.kepada}</span>
             ),
@@ -79,14 +79,14 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
-            accessorKey: "status",
-            header: "Status",
+            accessorKey: "surat_status",
+            header: "Status Surat",
             cell: ({ row }) => (
-                <DisposisiBadge
-                    value={row.original.status}
+                <StatusBadge
+                    value={row.original.surat_status}
                     label={badgeLabel(
-                        DISPOSISI_STATUS_LABELS,
-                        row.original.status,
+                        SURAT_MASUK_STATUS_LABELS,
+                        row.original.surat_status,
                     )}
                 />
             ),

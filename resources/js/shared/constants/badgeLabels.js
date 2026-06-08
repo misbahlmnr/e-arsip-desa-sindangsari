@@ -1,8 +1,15 @@
 /** Label tampilan untuk key status surat masuk */
 export const SURAT_MASUK_STATUS_LABELS = {
-    belum_diproses: "Belum Diproses",
-    sedang_diproses: "Sedang Diproses",
-    selesai: "Selesai",
+    draft: "Draft",
+    terverifikasi: "Terverifikasi",
+    didisposisikan: "Didisposisikan",
+    diarsipkan: "Diarsipkan",
+};
+
+/** Tingkat surat setelah review Sekdes */
+export const TINGKAT_SURAT_LABELS = {
+    biasa: "Biasa",
+    penting: "Penting",
 };
 
 /** Label tampilan untuk key status surat keluar */
@@ -15,13 +22,6 @@ export const SURAT_KELUAR_STATUS_LABELS = {
 export const DISPOSISI_FLAG_LABELS = {
     belum: "Belum",
     sudah: "Sudah",
-};
-
-/** Status alur disposisi (modul disposisi) */
-export const DISPOSISI_STATUS_LABELS = {
-    menunggu: "Menunggu",
-    diproses: "Diproses",
-    selesai: "Selesai",
 };
 
 export const ROLE_LABELS = {

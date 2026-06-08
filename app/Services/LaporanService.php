@@ -19,22 +19,22 @@ class LaporanService
 
     /** @var array<string, string> */
     private const SURAT_MASUK_STATUS_LABELS = [
-        'belum_diproses' => 'Belum Diproses',
-        'sedang_diproses' => 'Sedang Diproses',
-        'selesai' => 'Selesai',
+        'draft' => 'Draft',
+        'terverifikasi' => 'Terverifikasi',
+        'didisposisikan' => 'Didisposisikan',
+        'diarsipkan' => 'Diarsipkan',
+    ];
+
+    /** @var array<string, string> */
+    private const TINGKAT_SURAT_LABELS = [
+        'biasa' => 'Biasa',
+        'penting' => 'Penting',
     ];
 
     /** @var array<string, string> */
     private const SURAT_KELUAR_STATUS_LABELS = [
         'draft' => 'Draft',
         'terkirim' => 'Terkirim',
-    ];
-
-    /** @var array<string, string> */
-    private const DISPOSISI_STATUS_LABELS = [
-        'menunggu' => 'Menunggu',
-        'diproses' => 'Diproses',
-        'selesai' => 'Selesai',
     ];
 
     /**
@@ -64,9 +64,9 @@ class LaporanService
                 $report['surat_keluar_status'],
                 self::SURAT_KELUAR_STATUS_LABELS,
             ),
-            'disposisi_status' => $this->withStatusLabels(
-                $report['disposisi_status'],
-                self::DISPOSISI_STATUS_LABELS,
+            'tingkat_surat' => $this->withStatusLabels(
+                $report['tingkat_surat'],
+                self::TINGKAT_SURAT_LABELS,
             ),
         ])
             ->setPaper('a4', 'portrait')
@@ -92,7 +92,7 @@ class LaporanService
             'summary' => $this->buildSummary($dateFrom, $user),
             'surat_masuk_status' => $this->countSuratMasukByStatus($dateFrom),
             'surat_keluar_status' => $this->countSuratKeluarByStatus($dateFrom),
-            'disposisi_status' => $this->countDisposisiByStatus($user, $dateFrom),
+            'tingkat_surat' => $this->countSuratMasukByTingkat($dateFrom),
             'monthly_trend' => $this->monthlyTrend(),
             'top_pengirim' => $this->topPengirim($dateFrom),
             'disposisi_by_kepada' => $this->disposisiByKepada($user, $dateFrom),
@@ -165,7 +165,7 @@ class LaporanService
             'surat_masuk_aktif' => (clone $suratMasukQuery)->whereNull('diarsipkan_at')->count(),
             'surat_masuk_belum_diproses' => (clone $suratMasukQuery)
                 ->whereNull('diarsipkan_at')
-                ->where('status', 'belum_diproses')
+                ->where('status', SuratMasuk::STATUS_DRAFT)
                 ->count(),
             'surat_masuk_tanpa_disposisi' => (clone $suratMasukQuery)
                 ->whereNull('diarsipkan_at')
@@ -175,7 +175,12 @@ class LaporanService
             'surat_keluar_draft' => (clone $suratKeluarQuery)->where('status', 'draft')->count(),
             'arsip' => $arsipMasukQuery->count() + $arsipKeluarQuery->count(),
             'disposisi' => $disposisiQuery->count(),
-            'disposisi_menunggu' => (clone $disposisiQuery)->where('status', Disposisi::STATUS_MENUNGGU)->count(),
+            'surat_penting_menunggu_kades' => (clone $suratMasukQuery)
+                ->whereNull('diarsipkan_at')
+                ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at')
+                ->count(),
         ];
     }
 
@@ -184,7 +189,7 @@ class LaporanService
      */
     private function countSuratMasukByStatus(?Carbon $dateFrom): array
     {
-        $statuses = ['belum_diproses', 'sedang_diproses', 'selesai'];
+        $statuses = SuratMasuk::STATUSES;
 
         return $this->countByStatuses(
             $this->applyDateFilter(SuratMasuk::query()->whereNull('diarsipkan_at'), $dateFrom, 'tanggal_terima'),
@@ -210,12 +215,15 @@ class LaporanService
     /**
      * @return list<array{status: string, total: int}>
      */
-    private function countDisposisiByStatus(User $user, ?Carbon $dateFrom): array
+    private function countSuratMasukByTingkat(?Carbon $dateFrom): array
     {
-        $query = $this->disposisiBaseQuery($user);
-        $this->applyDateFilter($query, $dateFrom, 'tanggal');
+        $query = $this->applyDateFilter(
+            SuratMasuk::query()->whereNull('diarsipkan_at')->whereNotNull('tingkat'),
+            $dateFrom,
+            'tanggal_terima',
+        );
 
-        return $this->countByStatuses($query, 'status', Disposisi::STATUSES);
+        return $this->countByStatuses($query, 'tingkat', SuratMasuk::TINGKAT_OPTIONS);
     }
 
     /**
@@ -325,7 +333,9 @@ class LaporanService
     private function disposisiBaseQuery(User $user): Builder
     {
         return Disposisi::query()->when($user->isKades(), function (Builder $q) {
-            $q->where('kepada', 'like', '%Kepala Desa%');
+            $q->where('dari_jabatan', Disposisi::DARI_KADES);
+        })->when($user->isSekdes(), function (Builder $q) {
+            $q->where('dari_jabatan', Disposisi::DARI_SEKDES);
         });
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Disposisi;
 
-use App\Models\Disposisi;
+use App\Models\SuratMasuk;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -10,7 +10,20 @@ class StoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->canCreateDisposisi() ?? false;
+        $user = $this->user();
+
+        if (! $user?->isSekdes() && ! $user?->isKades()) {
+            return false;
+        }
+
+        $suratId = $this->input('surat_masuk_id');
+        if (! $suratId) {
+            return true;
+        }
+
+        $surat = SuratMasuk::query()->find($suratId);
+
+        return $surat instanceof SuratMasuk && $surat->canCreateDisposisi($user);
     }
 
     /**
@@ -20,7 +33,11 @@ class StoreRequest extends FormRequest
     {
         return [
             'surat_masuk_id' => ['required', 'integer', 'exists:surat_masuk,id'],
-            'kepada' => ['required', 'string', Rule::in(Disposisi::TUJUAN_OPTIONS)],
+            'jabatan_tujuan_id' => [
+                'required',
+                'integer',
+                Rule::exists('jabatan_tujuan_disposisi', 'id')->where('is_active', true),
+            ],
             'catatan' => ['required', 'string', 'max:500'],
             'tanggal' => ['required', 'date'],
         ];
@@ -33,7 +50,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'surat_masuk_id' => 'surat',
-            'kepada' => 'tujuan',
+            'jabatan_tujuan_id' => 'tujuan',
             'catatan' => 'catatan',
             'tanggal' => 'tanggal',
         ];
