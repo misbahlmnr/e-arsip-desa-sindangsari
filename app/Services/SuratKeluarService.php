@@ -5,12 +5,15 @@ namespace App\Services;
 use App\Http\Requests\SuratKeluar\StoreRequest;
 use App\Http\Requests\SuratKeluar\UpdateRequest;
 use App\Models\SuratKeluar;
+use App\Services\Search\SuratNomorSearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarService
 {
+    public function __construct(private SuratNomorSearchService $nomorSearch) {}
+
     /**
      * Sortable columns (whitelist) — prevents arbitrary ORDER BY injection.
      *
@@ -45,17 +48,19 @@ class SuratKeluarService
             $sortBy = 'tanggal_kirim';
         }
 
-        $query = SuratKeluar::query()
-            ->whereNull('diarsipkan_at')
-            ->when($search !== '', function ($q) use ($search) {
-                $q->where(function ($q) use ($search) {
-                    $like = '%'.$search.'%';
-                    $q->where('no_surat', 'like', $like)
-                        ->orWhere('tujuan', 'like', $like)
-                        ->orWhere('perihal', 'like', $like);
-                });
-            })
-            ->orderBy($sortBy, $sortDir);
+        $query = SuratKeluar::query()->whereNull('diarsipkan_at');
+
+        $matchingIds = $this->nomorSearch->matchingIds(clone $query, $search);
+
+        if ($matchingIds !== null) {
+            if ($matchingIds === []) {
+                $query->whereRaw('0 = 1');
+            } else {
+                $query->whereIn('id', $matchingIds);
+            }
+        }
+
+        $query->orderBy($sortBy, $sortDir);
 
         $letters = $query->paginate($perPage)->withQueryString();
 

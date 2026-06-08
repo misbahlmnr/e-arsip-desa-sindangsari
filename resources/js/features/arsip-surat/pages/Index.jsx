@@ -169,7 +169,7 @@ export default function ArsipSuratIndex({ letters, filters }) {
                         <Input
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder="Cari nomor, pihak, atau perihal…"
+                            placeholder="Cari nomor surat…"
                             className="pl-10 h-11 rounded-xl"
                         />
                     </div>

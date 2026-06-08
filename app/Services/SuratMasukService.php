@@ -6,6 +6,7 @@ use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Http\Requests\SuratMasuk\UpdateRequest;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\Search\SuratNomorSearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
 {
+    public function __construct(private SuratNomorSearchService $nomorSearch) {}
+
     /**
      * @var list<string>
      */
@@ -52,20 +55,23 @@ class SuratMasukService
             $sortBy = 'tanggal_terima';
         }
 
-        $query = SuratMasuk::query()
-            ->whereNull('diarsipkan_at')
-            ->when($search !== '', function ($q) use ($search) {
-                $q->where(function ($q) use ($search) {
-                    $like = '%'.$search.'%';
-                    $q->where('no_surat', 'like', $like)
-                        ->orWhere('pengirim', 'like', $like)
-                        ->orWhere('perihal', 'like', $like);
-                });
-            })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            })
-            ->orderBy($sortBy, $sortDir);
+        $query = SuratMasuk::query()->whereNull('diarsipkan_at');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $matchingIds = $this->nomorSearch->matchingIds(clone $query, $search);
+
+        if ($matchingIds !== null) {
+            if ($matchingIds === []) {
+                $query->whereRaw('0 = 1');
+            } else {
+                $query->whereIn('id', $matchingIds);
+            }
+        }
+
+        $query->orderBy($sortBy, $sortDir);
 
         $letters = $query
             ->withCount('disposisi')

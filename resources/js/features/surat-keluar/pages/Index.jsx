@@ -78,7 +78,7 @@ export default function SuratKeluar({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
-                        searchPlaceholder="Cari nomor, tujuan, atau perihal..."
+                        searchPlaceholder="Cari nomor surat…"
                         emptyMessage="Coba ubah kata kunci pencarian."
                     />
                 </motion.div>
