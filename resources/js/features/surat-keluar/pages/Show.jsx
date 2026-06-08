@@ -11,13 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import {
-    Archive,
-    ArrowLeft,
-    FileText,
-    Pencil,
-    Trash2,
-} from "lucide-react";
+import { Archive, ArrowLeft, FileText, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
@@ -140,7 +134,7 @@ export default function ShowSuratKeluar({ letter }) {
                                             <Button
                                                 variant="outline"
                                                 onClick={handleArsipkan}
-                                                className="rounded-xl border-amber-300/80 text-amber-900 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-100 dark:hover:bg-amber-950/40"
+                                                className="rounded-xl text-muted-foreground border-border hover:bg-muted"
                                             >
                                                 <Archive className="size-4 mr-1.5" />
                                                 Arsipkan
@@ -187,7 +181,9 @@ export default function ShowSuratKeluar({ letter }) {
                                         <Button
                                             variant="outline"
                                             className="rounded-xl text-destructive hover:text-destructive hover:bg-red-50 border-destructive/30"
-                                            onClick={() => setConfirmDelete(true)}
+                                            onClick={() =>
+                                                setConfirmDelete(true)
+                                            }
                                         >
                                             <Trash2 className="size-4 mr-1.5" />
                                             Hapus
@@ -258,7 +254,9 @@ export default function ShowSuratKeluar({ letter }) {
                     </p>
                     <div className="space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-3">
-                            <span className="text-muted-foreground">Status</span>
+                            <span className="text-muted-foreground">
+                                Status
+                            </span>
                             <span className="font-medium">
                                 {statusCfg?.label ?? letter.status ?? "—"}
                             </span>
@@ -288,35 +286,40 @@ export default function ShowSuratKeluar({ letter }) {
             </div>
 
             {canManageSurat && (
-            <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus surat ini?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Surat{" "}
-                            <span className="font-mono font-semibold text-foreground">
-                                {letter.no_surat}
-                            </span>{" "}
-                            akan dihapus permanen.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={() =>
-                                router.delete(
-                                    route("admin.surat-keluar.destroy", {
-                                        surat_keluar: letter.id,
-                                    }),
-                                )
-                            }
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                            Hapus Surat
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                <AlertDialog
+                    open={confirmDelete}
+                    onOpenChange={setConfirmDelete}
+                >
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Hapus surat ini?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Surat{" "}
+                                <span className="font-mono font-semibold text-foreground">
+                                    {letter.no_surat}
+                                </span>{" "}
+                                akan dihapus permanen.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Batal</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={() =>
+                                    router.delete(
+                                        route("admin.surat-keluar.destroy", {
+                                            surat_keluar: letter.id,
+                                        }),
+                                    )
+                                }
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                                Hapus Surat
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             )}
         </AppLayout>
     );
