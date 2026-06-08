@@ -71,7 +71,7 @@ class RolePermissionTest extends TestCase
         $this->assertTrue($sekdes->canViewSurat());
         $this->assertTrue($sekdes->canCreateDisposisi());
         $this->assertFalse($sekdes->canManageUsers());
-        $this->assertFalse($sekdes->canExportLaporan());
+        $this->assertTrue($sekdes->canExportLaporan());
 
         $this->assertFalse($kades->canManageSurat());
         $this->assertTrue($kades->canViewSurat());

@@ -125,7 +125,7 @@ class User extends Authenticatable
 
     public function canExportLaporan(): bool
     {
-        return $this->isAdmin() || $this->isKades();
+        return $this->isAdmin() || $this->isSekdes() || $this->isKades();
     }
 
     public function guruProfile()

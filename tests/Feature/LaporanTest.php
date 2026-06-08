@@ -95,13 +95,14 @@ class LaporanTest extends TestCase
             ->assertHeader('content-type', 'application/pdf');
     }
 
-    public function test_sekdes_cannot_export_laporan_pdf(): void
+    public function test_sekdes_can_export_laporan_pdf(): void
     {
         $sekdes = User::factory()->create(['role' => 'sekdes']);
 
         $this->actingAs($sekdes)
             ->get(route('admin.laporan.export'))
-            ->assertForbidden();
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
     }
 
     public function test_kades_disposisi_stats_only_include_kepala_desa(): void

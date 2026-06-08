@@ -51,8 +51,8 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
-    // Export laporan PDF: admin & kades
-    Route::middleware('role:admin,kades')->name('admin.')->group(function () {
+    // Export laporan PDF: admin, sekdes & kades
+    Route::middleware('role:admin,sekdes,kades')->name('admin.')->group(function () {
         Route::get('laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     });
 
