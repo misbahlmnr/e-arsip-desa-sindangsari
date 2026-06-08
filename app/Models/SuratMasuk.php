@@ -56,6 +56,11 @@ class SuratMasuk extends Model
         return $this->hasMany(Disposisi::class)->latest();
     }
 
+    public function suratKeluar(): HasMany
+    {
+        return $this->hasMany(SuratKeluar::class);
+    }
+
     public function hasDisposisi(): bool
     {
         if ($this->relationLoaded('disposisi')) {

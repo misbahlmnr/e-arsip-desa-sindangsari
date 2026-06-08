@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class SuratKeluar extends Model
@@ -10,6 +11,7 @@ class SuratKeluar extends Model
     protected $table = 'surat_keluar';
 
     protected $fillable = [
+        'surat_masuk_id',
         'no_surat',
         'tanggal_kirim',
         'tujuan',
@@ -45,5 +47,10 @@ class SuratKeluar extends Model
         }
 
         return Storage::disk('public')->url($this->file);
+    }
+
+    public function suratMasuk(): BelongsTo
+    {
+        return $this->belongsTo(SuratMasuk::class);
     }
 }
