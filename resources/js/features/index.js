@@ -1,6 +1,6 @@
 /**
  * Feature modules — domain logic grouped by business capability.
- * Inertia entry points live in Pages/ (thin re-exports).
+ * Inertia entry points live in features/{feature}/pages/.
  */
 export * as arsipSurat from "./arsip-surat";
 export * as auth from "./auth";
