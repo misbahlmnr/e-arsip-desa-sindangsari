@@ -12,7 +12,7 @@ const Sidebar = ({ collapsed = false }) => {
     return (
         <aside
             className={cn(
-                "hidden md:flex shrink-0 bg-sidebar border-r border-sidebar-border flex-col transition-[width] duration-200",
+                "hidden md:flex shrink-0 bg-sidebar border-r border-sidebar-border flex-col h-full min-h-0 overflow-hidden transition-[width] duration-200",
                 collapsed ? "w-20" : "w-72",
             )}
         >
@@ -37,7 +37,7 @@ const Sidebar = ({ collapsed = false }) => {
                 )}
             </div>
 
-            <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+            <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto min-h-0">
                 {menuItems.map((item) => {
                     const isActive = route().current(item.routeName);
                     return (
