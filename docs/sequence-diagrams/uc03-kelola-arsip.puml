@@ -1,0 +1,56 @@
+@startuml
+title Sequence Diagram Mengelola Arsip Surat
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin)" as User
+boundary "View\n(Detail Surat)" as View
+control "Controller\n(SuratMasukController /\nSuratKeluarController)" as Controller
+control "Service\n(SuratMasukService /\nSuratKeluarService)" as Service
+entity "Model\n(SuratMasuk / SuratKeluar)" as Model
+database "Database" as DB
+
+User -> View : Membuka detail surat masuk / keluar
+activate View
+View -> Controller : GET show
+activate Controller
+Controller -> View : Render halaman detail surat
+View -> User : Menampilkan detail surat
+deactivate Controller
+
+User -> View : Memilih arsipkan surat
+
+View -> Controller : PATCH arsipkan
+activate Controller
+Controller -> Model : canArchive() / cek diarsipkan_at
+activate Model
+Model --> Controller : Status surat
+deactivate Model
+
+alt Syarat arsip terpenuhi
+    Controller -> Service : archive(surat)
+    activate Service
+    Service -> Model : update status diarsipkan
+    activate Model
+    Model -> DB : UPDATE diarsipkan_at, status
+    activate DB
+    DB --> Model : OK
+    deactivate DB
+    deactivate Model
+    Service --> Controller : Surat diarsipkan
+    deactivate Service
+    Controller -> View : Redirect + pesan berhasil
+    View -> User : Menampilkan pesan arsip berhasil
+else Surat belum didisposisikan
+    Controller -> View : Redirect + pesan error
+    View -> User : Surat harus didisposisikan terlebih dahulu
+end
+
+deactivate Controller
+deactivate View
+@enduml

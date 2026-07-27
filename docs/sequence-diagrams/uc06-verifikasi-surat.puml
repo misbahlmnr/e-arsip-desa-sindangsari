@@ -1,0 +1,78 @@
+@startuml
+title Sequence Diagram Verifikasi Surat Masuk
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Kades)" as User
+boundary "View\n(Detail Surat Masuk)" as View
+control "Controller\n(SuratMasukController)" as Controller
+control "Request\n(VerifikasiKadesRequest)" as FormRequest
+control "Service\n(SuratMasukService)" as Service
+entity "Model\n(SuratMasuk)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Surat Masuk
+activate View
+View -> Controller : GET surat-masuk
+activate Controller
+Controller -> Service : index(request)
+activate Service
+Service -> Model : Query surat penting
+activate Model
+Model -> DB : SELECT surat_masuk
+activate DB
+DB --> Model : Daftar surat
+deactivate DB
+deactivate Model
+Service --> Controller : letters
+deactivate Service
+Controller -> View : Render surat-masuk/Index
+View -> User : Menampilkan daftar surat masuk
+deactivate Controller
+
+User -> View : Memilih surat penting menunggu verifikasi
+View -> Controller : GET surat-masuk/{id}
+activate Controller
+Controller -> View : Render surat-masuk/Show
+View -> User : Menampilkan detail surat
+
+User -> View : Konfirmasi verifikasi surat
+View -> Controller : PATCH verifikasi-kades
+Controller -> FormRequest : authorize() + validasi
+activate FormRequest
+FormRequest -> Model : canVerifyByKades()
+activate Model
+Model --> FormRequest : Status boleh verifikasi
+deactivate Model
+
+alt Surat penting & sudah direview Sekdes
+    FormRequest --> Controller : Data valid
+    deactivate FormRequest
+    Controller -> Service : verifyByKades(surat, user)
+    activate Service
+    Service -> Model : update verified_kades_at
+    activate Model
+    Model -> DB : UPDATE surat_masuk
+    activate DB
+    DB --> Model : OK
+    deactivate DB
+    deactivate Model
+    Service --> Controller : Verifikasi berhasil
+    deactivate Service
+    Controller -> View : Redirect + pesan sukses
+    View -> User : Menampilkan pesan berhasil
+else Verifikasi ditolak
+    FormRequest --> Controller : Unauthorized / validasi gagal
+    deactivate FormRequest
+    Controller -> View : Pesan error
+    View -> User : Verifikasi ditolak
+end
+
+deactivate Controller
+deactivate View
+@enduml

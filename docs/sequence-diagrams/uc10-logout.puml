@@ -1,0 +1,37 @@
+@startuml
+title Sequence Diagram Logout
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin / Sekdes / Kades)" as User
+boundary "View\n(Layout / Header)" as View
+control "Controller\n(AuthenticatedSessionController)" as Controller
+control "Auth\n(guard web)" as Auth
+
+User -> View : Memilih Logout pada menu profil
+activate View
+View -> Controller : POST /logout (destroy)
+activate Controller
+
+alt Sesi aktif
+    Controller -> Auth : logout()
+    activate Auth
+    Auth --> Controller : Sesi diakhiri
+    deactivate Auth
+    Controller -> Controller : session()->invalidate()
+    Controller -> Controller : session()->regenerateToken()
+    Controller -> View : Redirect ke /login
+    View -> User : Menampilkan halaman login
+else Sesi sudah berakhir
+    Controller -> View : Redirect ke /login
+    View -> User : Menampilkan halaman login
+end
+
+deactivate Controller
+deactivate View
+@enduml

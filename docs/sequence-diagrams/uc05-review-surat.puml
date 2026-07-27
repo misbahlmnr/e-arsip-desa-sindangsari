@@ -1,0 +1,78 @@
+@startuml
+title Sequence Diagram Review Surat Masuk
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Sekdes)" as User
+boundary "View\n(Detail Surat Masuk)" as View
+control "Controller\n(SuratMasukController)" as Controller
+control "Request\n(ReviewSekdesRequest)" as FormRequest
+control "Service\n(SuratMasukService)" as Service
+entity "Model\n(SuratMasuk)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Surat Masuk
+activate View
+View -> Controller : GET surat-masuk
+activate Controller
+Controller -> Service : index(request)
+activate Service
+Service -> Model : Query surat draft
+activate Model
+Model -> DB : SELECT surat_masuk
+activate DB
+DB --> Model : Daftar surat
+deactivate DB
+deactivate Model
+Service --> Controller : letters
+deactivate Service
+Controller -> View : Render surat-masuk/Index
+View -> User : Menampilkan daftar surat masuk
+deactivate Controller
+
+User -> View : Memilih surat berstatus draft
+View -> Controller : GET surat-masuk/{id}
+activate Controller
+Controller -> View : Render surat-masuk/Show
+View -> User : Menampilkan detail surat
+
+User -> View : Menentukan tingkat surat & konfirmasi review
+View -> Controller : PATCH review-sekdes
+Controller -> FormRequest : authorize() + validasi tingkat
+activate FormRequest
+FormRequest -> Model : canReviewBySekdes()
+activate Model
+Model --> FormRequest : Status boleh review
+deactivate Model
+
+alt Status draft & belum direview
+    FormRequest --> Controller : Data valid
+    deactivate FormRequest
+    Controller -> Service : reviewBySekdes(surat, tingkat, user)
+    activate Service
+    Service -> Model : update tingkat & status terverifikasi
+    activate Model
+    Model -> DB : UPDATE surat_masuk
+    activate DB
+    DB --> Model : OK
+    deactivate DB
+    deactivate Model
+    Service --> Controller : Review berhasil
+    deactivate Service
+    Controller -> View : Redirect + pesan sukses
+    View -> User : Menampilkan pesan berhasil
+else Surat tidak dapat direview
+    FormRequest --> Controller : Unauthorized / validasi gagal
+    deactivate FormRequest
+    Controller -> View : Pesan error
+    View -> User : Surat tidak dapat direview
+end
+
+deactivate Controller
+deactivate View
+@enduml

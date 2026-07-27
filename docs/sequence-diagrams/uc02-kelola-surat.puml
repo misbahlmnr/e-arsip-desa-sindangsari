@@ -1,0 +1,75 @@
+@startuml
+title Sequence Diagram Mengelola Surat Masuk & Keluar
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin)" as User
+boundary "View\n(Surat Masuk / Keluar)" as View
+control "Controller\n(SuratMasukController /\nSuratKeluarController)" as Controller
+control "Request\n(StoreRequest / UpdateRequest)" as FormRequest
+control "Service\n(SuratMasukService /\nSuratKeluarService)" as Service
+entity "Model\n(SuratMasuk / SuratKeluar)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Surat Masuk atau Surat Keluar
+activate View
+View -> Controller : GET index
+activate Controller
+Controller -> Service : index(request)
+activate Service
+Service -> Model : Query daftar surat aktif
+activate Model
+Model -> DB : SELECT surat
+activate DB
+DB --> Model : Daftar surat
+deactivate DB
+deactivate Model
+Service --> Controller : letters + filters
+deactivate Service
+Controller -> View : Render surat-masuk/Index atau surat-keluar/Index
+View -> User : Menampilkan daftar surat
+deactivate Controller
+
+User -> View : Memilih tambah / ubah / hapus surat
+User -> View : Mengisi form data surat
+
+View -> Controller : POST / PATCH / DELETE surat
+activate Controller
+Controller -> FormRequest : Validasi input & file
+activate FormRequest
+FormRequest --> Controller : Data tervalidasi
+deactivate FormRequest
+
+alt Data dan file valid
+    Controller -> Service : store() / update() / destroy()
+    activate Service
+
+    alt Jenis = Surat Masuk
+        Service -> Model : create() / update() / delete()
+    else Jenis = Surat Keluar
+        Service -> Model : create() / update() / delete()
+    end
+
+    activate Model
+    Model -> DB : INSERT / UPDATE / DELETE
+    activate DB
+    DB --> Model : Konfirmasi
+    deactivate DB
+    deactivate Model
+    Service --> Controller : Operasi berhasil
+    deactivate Service
+    Controller -> View : Redirect + pesan sukses
+    View -> User : Menampilkan pesan berhasil
+else Data atau file tidak valid
+    Controller -> View : Error validasi
+    View -> User : Menampilkan pesan error
+end
+
+deactivate Controller
+deactivate View
+@enduml

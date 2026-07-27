@@ -1,0 +1,62 @@
+@startuml
+title Sequence Diagram Rekapitulasi & Laporan Arsip Surat
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin / Sekdes / Kades)" as User
+boundary "View\n(Laporan)" as View
+control "Controller\n(LaporanController)" as Controller
+control "Service\n(LaporanService)" as Service
+entity "Model\n(SuratMasuk / SuratKeluar /\nDisposisi)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Laporan
+activate View
+View -> User : Menampilkan halaman laporan
+
+User -> View : Memilih rentang waktu laporan
+View -> Controller : GET laporan?range=...
+activate Controller
+Controller -> Service : index(request) / buildReport()
+activate Service
+Service -> Model : Agregasi statistik surat & arsip
+activate Model
+Model -> DB : SELECT COUNT, GROUP BY
+activate DB
+DB --> Model : Data rekapitulasi
+deactivate DB
+deactivate Model
+Service --> Controller : summary, grafik, tren
+deactivate Service
+Controller -> View : Render laporan/Index
+View -> User : Menampilkan statistik & grafik
+
+alt Export PDF
+    User -> View : Klik unduh laporan PDF
+    View -> Controller : GET laporan/export
+    Controller -> Service : exportPdf(request)
+    activate Service
+    Service -> Model : buildReport()
+    activate Model
+    Model -> DB : Query data laporan
+    activate DB
+    DB --> Model : Data laporan
+    deactivate DB
+    deactivate Model
+    Service -> Service : Generate PDF (DomPDF)
+    Service --> Controller : File PDF
+    deactivate Service
+    Controller -> View : Download laporan-surat.pdf
+    View -> User : Mengunduh file PDF
+else Hanya lihat di layar
+    User -> View : Melihat rekapitulasi di halaman
+end
+
+deactivate Controller
+deactivate View
+@enduml

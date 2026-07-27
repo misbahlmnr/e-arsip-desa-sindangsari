@@ -1,0 +1,81 @@
+@startuml
+title Sequence Diagram Pemberian Disposisi
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Sekdes / Kades)" as User
+boundary "View\n(Disposisi / Detail Surat)" as View
+control "Controller\n(DisposisiController)" as Controller
+control "Request\n(StoreRequest /\nStoreFromSuratRequest)" as FormRequest
+control "Service\n(DisposisiService)" as Service
+entity "Model\n(Disposisi / SuratMasuk)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Disposisi atau detail surat
+activate View
+View -> Controller : GET disposisi / surat-masuk/{id}
+activate Controller
+Controller -> Service : index() / suratOptions()
+activate Service
+Service -> Model : Query surat eligible
+activate Model
+Model -> DB : SELECT surat_masuk
+activate DB
+DB --> Model : Daftar surat
+deactivate DB
+deactivate Model
+Service --> Controller : Data surat
+deactivate Service
+Controller -> View : Render disposisi/Create atau Show
+View -> User : Menampilkan form disposisi
+deactivate Controller
+
+User -> View : Memilih jabatan tujuan & mengisi catatan
+View -> Controller : POST disposisi
+activate Controller
+Controller -> FormRequest : Validasi input
+activate FormRequest
+FormRequest --> Controller : Data tervalidasi
+deactivate FormRequest
+
+Controller -> Service : store() / storeFromSurat()
+activate Service
+Service -> Model : assertCanCreate(surat, user)
+activate Model
+Model --> Service : Syarat disposisi
+deactivate Model
+
+alt Syarat disposisi terpenuhi
+    Service -> Model : Disposisi::create()
+    activate Model
+    Model -> DB : INSERT disposisi
+    activate DB
+    DB --> Model : OK
+    deactivate DB
+    deactivate Model
+    Service -> Model : advanceSuratStatus() -> didisposisikan
+    activate Model
+    Model -> DB : UPDATE status surat_masuk
+    activate DB
+    DB --> Model : OK
+    deactivate DB
+    deactivate Model
+    Service --> Controller : Disposisi tersimpan
+    deactivate Service
+    Controller -> View : Redirect + pesan sukses
+    View -> User : Menampilkan pesan berhasil
+else Syarat belum terpenuhi
+    Service --> Controller : ValidationException
+    deactivate Service
+    Controller -> View : Pesan error
+    View -> User : Syarat disposisi belum terpenuhi
+end
+
+deactivate Controller
+deactivate View
+@enduml

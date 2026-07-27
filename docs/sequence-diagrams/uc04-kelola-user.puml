@@ -1,0 +1,75 @@
+@startuml
+title Sequence Diagram Mengelola User
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin)" as User
+boundary "View\n(Manajemen User)" as View
+control "Controller\n(UserController)" as Controller
+control "Request\n(StoreRequest / UpdateRequest)" as FormRequest
+control "Service\n(UserService)" as Service
+entity "Model\n(User)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Manajemen User
+activate View
+View -> Controller : GET admin/users
+activate Controller
+Controller -> Service : index(request)
+activate Service
+Service -> Model : Query daftar pengguna
+activate Model
+Model -> DB : SELECT users
+activate DB
+DB --> Model : Daftar user
+deactivate DB
+deactivate Model
+Service --> Controller : users + filters
+deactivate Service
+Controller -> View : Render users/Index
+View -> User : Menampilkan daftar pengguna
+deactivate Controller
+
+User -> View : Memilih tambah / ubah / hapus pengguna
+User -> View : Mengisi form data pengguna
+
+View -> Controller : POST / PATCH / DELETE user
+activate Controller
+
+alt Bukan ubah role akun sendiri
+    Controller -> FormRequest : Validasi input
+    activate FormRequest
+    FormRequest --> Controller : Data tervalidasi
+    deactivate FormRequest
+
+    alt Data valid
+        Controller -> Service : store() / update() / destroy()
+        activate Service
+        Service -> Model : create() / update() / delete()
+        activate Model
+        Model -> DB : INSERT / UPDATE / DELETE
+        activate DB
+        DB --> Model : Konfirmasi
+        deactivate DB
+        deactivate Model
+        Service --> Controller : Operasi berhasil
+        deactivate Service
+        Controller -> View : Redirect + pesan sukses
+        View -> User : Menampilkan pesan berhasil
+    else Data tidak valid
+        Controller -> View : Error validasi
+        View -> User : Menampilkan pesan error validasi
+    end
+else Mencoba ubah role akun sendiri
+    Controller -> View : Error role akun sendiri
+    View -> User : Tidak dapat mengubah peran akun sendiri
+end
+
+deactivate Controller
+deactivate View
+@enduml

@@ -1,0 +1,104 @@
+@startuml
+title Sequence Diagram Login
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin / Sekdes / Kades)" as User
+boundary "View\n(Halaman Login)" as View
+control "Controller\n(AuthenticatedSessionController)" as Controller
+control "Request\n(LoginRequest)" as LoginRequest
+control "Service\n(DashboardService)" as Service
+entity "Model\n(User)" as Model
+database "Database" as DB
+
+User -> View : Mengakses halaman login
+activate View
+View -> Controller : GET /login (create)
+activate Controller
+Controller -> View : Render Inertia auth/Login
+View -> User : Menampilkan form login
+deactivate Controller
+
+User -> View : Mengisi username & password
+User -> View : Menekan tombol "Login"
+
+View -> Controller : POST /login (store)
+activate Controller
+Controller -> LoginRequest : authenticate()
+activate LoginRequest
+LoginRequest -> Model : Auth::attempt(username, password)
+activate Model
+Model -> DB : Query data user
+activate DB
+DB --> Model : Data user & role
+deactivate DB
+deactivate Model
+LoginRequest --> Controller : Hasil autentikasi
+deactivate LoginRequest
+
+alt Kredensial valid
+    Controller -> Controller : session()->regenerate()
+    Controller -> View : Redirect ke /dashboard
+    View -> Controller : GET /dashboard
+    activate Controller
+
+    alt Peran = Admin
+        Controller -> Controller : AdminDashboardController::index()
+        Controller -> Service : DashboardService::admin()
+        activate Service
+        Service -> Model : Agregasi statistik surat
+        activate Model
+        Model -> DB : Query data dashboard
+        activate DB
+        DB --> Model : Data statistik
+        deactivate DB
+        deactivate Model
+        Service --> Controller : summary, grafik
+        deactivate Service
+        Controller -> View : Render dashboard/Admin
+        View -> User : Menampilkan Dashboard Admin
+    else Peran = Sekdes
+        Controller -> Controller : SekdesDashboardController::index()
+        Controller -> Service : DashboardService::sekdes()
+        activate Service
+        Service -> Model : Agregasi statistik surat
+        activate Model
+        Model -> DB : Query data dashboard
+        activate DB
+        DB --> Model : Data statistik
+        deactivate DB
+        deactivate Model
+        Service --> Controller : summary, grafik
+        deactivate Service
+        Controller -> View : Render dashboard/Sekdes
+        View -> User : Menampilkan Dashboard Sekdes
+    else Peran = Kades
+        Controller -> Controller : KadesDashboardController::index()
+        Controller -> Service : DashboardService::kades()
+        activate Service
+        Service -> Model : Agregasi statistik surat
+        activate Model
+        Model -> DB : Query data dashboard
+        activate DB
+        DB --> Model : Data statistik
+        deactivate DB
+        deactivate Model
+        Service --> Controller : summary, grafik
+        deactivate Service
+        Controller -> View : Render dashboard/Kades
+        View -> User : Menampilkan Dashboard Kades
+    end
+    deactivate Controller
+else Kredensial tidak valid
+    Controller -> View : ValidationException (auth.failed)
+    View -> User : Menampilkan pesan gagal login
+end
+
+deactivate Controller
+deactivate View
+@enduml

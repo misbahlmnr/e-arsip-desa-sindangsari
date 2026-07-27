@@ -1,0 +1,554 @@
+<mxfile host="app.diagrams.net" agent="Cursor">
+  <diagram id="erd-arsipdesa" name="ERD ArsipDesa">
+    <mxGraphModel dx="2692" dy="155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1900" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="USER" vertex="1">
+          <mxGeometry height="60" width="140" x="560" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="id" vertex="1">
+          <mxGeometry height="48" width="70" x="395" y="146" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-0" edge="1" parent="1" source="user-attr-0" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="name" vertex="1">
+          <mxGeometry height="48" width="70" x="435" y="76" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-1" edge="1" parent="1" source="user-attr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="username" vertex="1">
+          <mxGeometry height="48" width="88" x="526" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-2" edge="1" parent="1" source="user-attr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="email" vertex="1">
+          <mxGeometry height="48" width="70" x="635" y="36" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-3" edge="1" parent="1" source="user-attr-3" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="email_verified_at" vertex="1">
+          <mxGeometry height="48" width="150" x="725" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-4" edge="1" parent="1" source="user-attr-4" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="password" vertex="1">
+          <mxGeometry height="48" width="88" x="806" y="166" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-5" edge="1" parent="1" source="user-attr-5" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="role" vertex="1">
+          <mxGeometry height="48" width="70" x="815" y="236" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-6" edge="1" parent="1" source="user-attr-6" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="remember_token" vertex="1">
+          <mxGeometry height="48" width="136" x="670" y="296" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-7" edge="1" parent="1" source="user-attr-7" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="created_at" vertex="1">
+          <mxGeometry height="48" width="104" x="378" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-8" edge="1" parent="1" source="user-attr-8" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="updated_at" vertex="1">
+          <mxGeometry height="48" width="104" x="368" y="216" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attr-edge-9" edge="1" parent="1" source="user-attr-9" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="SURAT MASUK" vertex="1">
+          <mxGeometry height="60" width="170" x="40" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="id" vertex="1">
+          <mxGeometry height="48" width="70" x="67" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-0" edge="1" parent="1" source="surat_masuk-attr-0" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="no_surat" vertex="1">
+          <mxGeometry height="48" width="88" x="-33" y="628" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-1" edge="1" parent="1" source="surat_masuk-attr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tanggal_terima" vertex="1">
+          <mxGeometry height="48" width="136" x="-92" y="682" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-2" edge="1" parent="1" source="surat_masuk-attr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tanggal_surat" vertex="1">
+          <mxGeometry height="48" width="128" x="-128" y="818" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-3" edge="1" parent="1" source="surat_masuk-attr-3" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="pengirim" vertex="1">
+          <mxGeometry height="48" width="88" x="-136" y="878" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-4" edge="1" parent="1" source="surat_masuk-attr-4" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="perihal" vertex="1">
+          <mxGeometry height="48" width="80" x="-29" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-5" edge="1" parent="1" source="surat_masuk-attr-5" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="catatan" vertex="1">
+          <mxGeometry height="48" width="80" x="12" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-6" edge="1" parent="1" source="surat_masuk-attr-6" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="status" vertex="1">
+          <mxGeometry height="48" width="72" x="-66" y="738" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-7" edge="1" parent="1" source="surat_masuk-attr-7" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tingkat" vertex="1">
+          <mxGeometry height="48" width="80" x="100" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-8" edge="1" parent="1" source="surat_masuk-attr-8" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tujuan" vertex="1">
+          <mxGeometry height="48" width="72" x="-17" y="1011" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-9" edge="1" parent="1" source="surat_masuk-attr-9" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="file" vertex="1">
+          <mxGeometry height="48" width="70" x="67" y="1012" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-10" edge="1" parent="1" source="surat_masuk-attr-10" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="diarsipkan_at" vertex="1">
+          <mxGeometry height="48" width="128" x="-220" y="661" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-11" edge="1" parent="1" source="surat_masuk-attr-11" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-12" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="verified_sekdes_at" vertex="1">
+          <mxGeometry height="48" width="150" x="-183" y="934" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-12" edge="1" parent="1" source="surat_masuk-attr-12" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-13" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="verified_sekdes_by" vertex="1">
+          <mxGeometry height="48" width="150" x="-150" y="1046" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-13" edge="1" parent="1" source="surat_masuk-attr-13" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="40" y="980" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="surat_masuk-attr-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="verified_kades_at" vertex="1">
+          <mxGeometry height="42" width="150" x="-242" y="718" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-14" edge="1" parent="1" source="surat_masuk-attr-14" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="verified_kades_by" vertex="1">
+          <mxGeometry height="48" width="150" x="-167" y="989" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-15" edge="1" parent="1" source="surat_masuk-attr-15" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-16" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="created_at" vertex="1">
+          <mxGeometry height="48" width="104" x="-174" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-16" edge="1" parent="1" source="surat_masuk-attr-16" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="updated_at" vertex="1">
+          <mxGeometry height="48" width="104" x="12" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_masuk-attr-edge-17" edge="1" parent="1" source="surat_masuk-attr-17" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="64" y="710" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="surat_keluar" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="SURAT KELUAR" vertex="1">
+          <mxGeometry height="60" width="170" x="937.03" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="id" vertex="1">
+          <mxGeometry height="48" width="70" x="1001.03" y="963" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-0" edge="1" parent="1" source="surat_keluar-attr-0" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="surat_masuk_id" vertex="1">
+          <mxGeometry height="48" width="136" x="1080.03" y="988" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-1" edge="1" parent="1" source="surat_keluar-attr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="no_surat" vertex="1">
+          <mxGeometry height="48" width="88" x="1209.03" y="934" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-2" edge="1" parent="1" source="surat_keluar-attr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tanggal_kirim" vertex="1">
+          <mxGeometry height="48" width="128" x="1195.03" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-3" edge="1" parent="1" source="surat_keluar-attr-3" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tujuan" vertex="1">
+          <mxGeometry height="48" width="72" x="1236.03" y="746" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-4" edge="1" parent="1" source="surat_keluar-attr-4" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="perihal" vertex="1">
+          <mxGeometry height="48" width="80" x="1172.03" y="676" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-5" edge="1" parent="1" source="surat_keluar-attr-5" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="catatan" vertex="1">
+          <mxGeometry height="48" width="80" x="1062.03" y="646" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-6" edge="1" parent="1" source="surat_keluar-attr-6" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="status" vertex="1">
+          <mxGeometry height="48" width="72" x="1229.03" y="1012" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-7" edge="1" parent="1" source="surat_keluar-attr-7" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="file" vertex="1">
+          <mxGeometry height="48" width="70" x="1062.03" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-8" edge="1" parent="1" source="surat_keluar-attr-8" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="diarsipkan_at" vertex="1">
+          <mxGeometry height="48" width="128" x="920" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-9" edge="1" parent="1" source="surat_keluar-attr-9" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="created_at" vertex="1">
+          <mxGeometry height="48" width="104" x="875" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-10" edge="1" parent="1" source="surat_keluar-attr-10" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="929.9974171736937" y="989.6442342255345" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="surat_keluar-attr-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="updated_at" vertex="1">
+          <mxGeometry height="48" width="104" x="1313.03" y="878" as="geometry" />
+        </mxCell>
+        <mxCell id="surat_keluar-attr-edge-11" edge="1" parent="1" source="surat_keluar-attr-11" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="DISPOSISI" vertex="1">
+          <mxGeometry height="60" width="140" x="480" y="1199" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="id" vertex="1">
+          <mxGeometry height="48" width="70" x="315" y="1235" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-0" edge="1" parent="1" source="disposisi-attr-0" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="surat_masuk_id" vertex="1">
+          <mxGeometry height="48" width="136" x="272" y="1315" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-1" edge="1" parent="1" source="disposisi-attr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="user_id" vertex="1">
+          <mxGeometry height="48" width="80" x="318" y="1385" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-2" edge="1" parent="1" source="disposisi-attr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="jabatan_tujuan_id" vertex="1">
+          <mxGeometry height="48" width="150" x="399" y="1443" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-3" edge="1" parent="1" source="disposisi-attr-3" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="dari_jabatan" vertex="1">
+          <mxGeometry height="48" width="120" x="557" y="1452" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-4" edge="1" parent="1" source="disposisi-attr-4" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="kepada" vertex="1">
+          <mxGeometry height="48" width="72" x="685" y="1400" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-5" edge="1" parent="1" source="disposisi-attr-5" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="catatan" vertex="1">
+          <mxGeometry height="48" width="80" x="720" y="1315" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-6" edge="1" parent="1" source="disposisi-attr-6" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="tanggal" vertex="1">
+          <mxGeometry height="48" width="80" x="730" y="1246" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-7" edge="1" parent="1" source="disposisi-attr-7" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="created_at" vertex="1">
+          <mxGeometry height="48" width="104" x="576" y="1112" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-8" edge="1" parent="1" source="disposisi-attr-8" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="updated_at" vertex="1">
+          <mxGeometry height="48" width="104" x="453" y="1112" as="geometry" />
+        </mxCell>
+        <mxCell id="disposisi-attr-edge-9" edge="1" parent="1" source="disposisi-attr-9" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="disposisi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="JABATAN TUJUAN&#xa;DISPOSISI" vertex="1">
+          <mxGeometry height="70" width="180" x="1180" y="1193" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="id" vertex="1">
+          <mxGeometry height="48" width="70" x="1345" y="1094" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-0" edge="1" parent="1" source="jabatan-attr-0" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="nama_jabatan" vertex="1">
+          <mxGeometry height="48" width="120" x="1430" y="1164" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-1" edge="1" parent="1" source="jabatan-attr-1" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="is_active" vertex="1">
+          <mxGeometry height="48" width="96" x="1462" y="1254" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-2" edge="1" parent="1" source="jabatan-attr-2" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="sort_order" vertex="1">
+          <mxGeometry height="48" width="104" x="1418" y="1344" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-3" edge="1" parent="1" source="jabatan-attr-3" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="created_at" vertex="1">
+          <mxGeometry height="48" width="104" x="1308" y="1384" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-4" edge="1" parent="1" source="jabatan-attr-4" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="updated_at" vertex="1">
+          <mxGeometry height="48" width="104" x="1198" y="1394" as="geometry" />
+        </mxCell>
+        <mxCell id="jabatan-attr-edge-5" edge="1" parent="1" source="jabatan-attr-5" style="endArrow=none;html=1;rounded=0;fontFamily=Times New Roman;fontSize=14;" target="jabatan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="diverifikasi&#xa;sekdes" vertex="1">
+          <mxGeometry height="90" width="100" x="190" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="320" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="140" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-d-from" edge="1" parent="1" source="rel_verif_sekdes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_verif_sekdes-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-d-to" edge="1" parent="1" source="rel_verif_sekdes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_verif_sekdes-card-to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-to-entity-from" edge="1" parent="1" source="rel_verif_sekdes-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;" target="user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_verif_sekdes-to-entity-to" edge="1" parent="1" source="rel_verif_sekdes-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERzeroToMany;endFill=0;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="125" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_verif_kades" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="diverifikasi&#xa;kades" vertex="1">
+          <mxGeometry height="90" width="100" x="455" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_kades-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="500" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_kades-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="280" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_kades-d-from" edge="1" parent="1" source="rel_verif_kades" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_verif_kades-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_kades-d-to" edge="1" parent="1" source="rel_verif_kades" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_verif_kades-card-to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_verif_kades-to-entity-from" edge="1" parent="1" source="rel_verif_kades-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;" target="user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_verif_kades-to-entity-to" edge="1" parent="1" source="rel_verif_kades-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERzeroToMany;endFill=0;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="125" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_membuat" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="membuat" vertex="1">
+          <mxGeometry height="90" width="100" x="755" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_membuat-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="800" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_membuat-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="800" y="998" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_membuat-d-from" edge="1" parent="1" source="rel_membuat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_membuat-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_membuat-d-to" edge="1" parent="1" source="rel_membuat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="rel_membuat-card-to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="805" y="1003" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_membuat-to-entity-from" edge="1" parent="1" source="rel_membuat-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;" target="user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_membuat-to-entity-to" edge="1" parent="1" source="rel_membuat-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmany;endFill=0;" target="disposisi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="1199" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_merujuk" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="merujuk" vertex="1">
+          <mxGeometry height="90" width="100" x="600" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_merujuk-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="345" y="805" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_merujuk-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="865" y="805" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_merujuk-d-from" edge="1" parent="1" source="rel_merujuk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_merujuk-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_merujuk-d-to" edge="1" parent="1" source="rel_merujuk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_merujuk-card-to">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_merujuk-to-entity-from" edge="1" parent="1" source="rel_merujuk-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="810" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_merujuk-to-entity-to" edge="1" parent="1" source="rel_merujuk-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERzeroToMany;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="surat_keluar">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="925" y="808" as="sourcePoint" />
+            <mxPoint x="987.0299999999997" y="808" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_memiliki" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="memiliki" vertex="1">
+          <mxGeometry height="90" width="100" x="355" y="980" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_memiliki-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="180" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_memiliki-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="400" y="1139" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_memiliki-d-from" edge="1" parent="1" source="rel_memiliki" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_memiliki-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_memiliki-d-to" edge="1" parent="1" source="rel_memiliki" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_memiliki-card-to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_memiliki-to-entity-from" edge="1" parent="1" source="rel_memiliki-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;" target="surat_masuk">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="125" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_memiliki-to-entity-to" edge="1" parent="1" source="rel_memiliki-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmany;endFill=0;" target="disposisi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="1229" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_ditujukan" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" value="ditujukan" vertex="1">
+          <mxGeometry height="90" width="100" x="865" y="1184" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_ditujukan-card-from" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="1070.03" y="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_ditujukan-card-to" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Times New Roman;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="740" y="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_ditujukan-d-from" edge="1" parent="1" source="rel_ditujukan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_ditujukan-card-from">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_ditujukan-d-to" edge="1" parent="1" source="rel_ditujukan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=none;endFill=0;" target="rel_ditujukan-card-to">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_ditujukan-to-entity-from" edge="1" parent="1" source="rel_ditujukan-card-from" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmandOne;endFill=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180.01" y="1229" />
+            </Array>
+            <mxPoint x="1180" y="1230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_ditujukan-to-entity-to" edge="1" parent="1" source="rel_ditujukan-card-to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Times New Roman;fontSize=14;endArrow=ERmany;endFill=0;" target="disposisi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="1229" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

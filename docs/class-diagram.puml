@@ -1,0 +1,90 @@
+@startuml
+title Class Diagram — Entitas Database ArsipDesa
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam ClassFontSize 12
+skinparam ClassAttributeFontSize 11
+
+package "Entitas Database" {
+  class User << (T,#FF7700) Table: users >> {
+    id: bigint (PK)
+    name: string
+    username: string
+    email: string
+    email_verified_at: datetime
+    password: string
+    role: enum
+    remember_token: string
+    created_at: timestamp
+    updated_at: timestamp
+  }
+  class SuratMasuk << (T,#FF7700) Table: surat_masuk >> {
+    id: bigint (PK)
+    no_surat: string
+    tanggal_terima: date
+    tanggal_surat: date
+    pengirim: string
+    perihal: string
+    catatan: text
+    status: string
+    tingkat: string
+    tujuan: string
+    file: string
+    diarsipkan_at: datetime
+    verified_sekdes_at: datetime
+    verified_sekdes_by: bigint (FK)
+    verified_kades_at: datetime
+    verified_kades_by: bigint (FK)
+    created_at: timestamp
+    updated_at: timestamp
+  }
+  class SuratKeluar << (T,#FF7700) Table: surat_keluar >> {
+    id: bigint (PK)
+    surat_masuk_id: bigint (FK)
+    no_surat: string
+    tanggal_kirim: date
+    tujuan: string
+    perihal: string
+    catatan: text
+    status: enum
+    file: string
+    diarsipkan_at: datetime
+    created_at: timestamp
+    updated_at: timestamp
+  }
+  class Disposisi << (T,#FF7700) Table: disposisi >> {
+    id: bigint (PK)
+    surat_masuk_id: bigint (FK)
+    user_id: bigint (FK)
+    jabatan_tujuan_id: bigint (FK)
+    dari_jabatan: string
+    kepada: string
+    catatan: text
+    tanggal: date
+    created_at: timestamp
+    updated_at: timestamp
+  }
+  class JabatanTujuanDisposisi << (T,#FF7700) Table: jabatan_tujuan_disposisi >> {
+    id: bigint (PK)
+    nama_jabatan: string
+    is_active: boolean
+    sort_order: int
+    created_at: timestamp
+    updated_at: timestamp
+  }
+
+  User "1" -- "*" Disposisi : user_id
+  SuratMasuk "1" -- "*" Disposisi : surat_masuk_id
+  SuratMasuk "1" -- "0..*" SuratKeluar : surat_masuk_id
+  JabatanTujuanDisposisi "1" -- "*" Disposisi : jabatan_tujuan_id
+  User "1" ..> "0..*" SuratMasuk : verified_sekdes_by
+  User "1" ..> "0..*" SuratMasuk : verified_kades_by
+}
+
+note bottom of SuratMasuk
+  Arsip surat disimpan via kolom diarsipkan_at
+  pada tabel surat_masuk dan surat_keluar
+end note
+
+@enduml

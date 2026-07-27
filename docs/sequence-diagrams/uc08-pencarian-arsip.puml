@@ -1,0 +1,79 @@
+@startuml
+title Sequence Diagram Pencarian Arsip Surat
+
+skinparam defaultFontName "Garamond"
+skinparam defaultFontSize 12
+skinparam TitleFontSize 14
+skinparam SequenceMessageFontSize 11
+skinparam SequenceParticipantFontSize 12
+skinparam ActorFontSize 12
+
+actor "Pengguna\n(Admin / Sekdes / Kades)" as User
+boundary "View\n(Arsip Surat)" as View
+control "Controller\n(ArsipSuratController)" as Controller
+control "Service\n(ArsipSuratService)" as Service
+control "Service\n(SuratNomorSearchService)" as SearchService
+control "Service\n(BinarySearchService)" as BinarySearch
+entity "Model\n(SuratMasuk / SuratKeluar)" as Model
+database "Database" as DB
+
+User -> View : Mengakses menu Arsip Surat
+activate View
+View -> User : Menampilkan halaman arsip
+
+User -> View : Memasukkan prefix nomor surat & filter
+View -> Controller : GET arsip-surat?search=...
+activate Controller
+Controller -> Service : index(request)
+activate Service
+Service -> Model : Query arsip (diarsipkan_at NOT NULL)
+activate Model
+Model -> DB : SELECT arsip
+activate DB
+DB --> Model : Kandidat arsip
+deactivate DB
+deactivate Model
+
+Service -> SearchService : matchingIds(query, prefix)
+activate SearchService
+SearchService -> BinarySearch : findPrefixRange(no_surat)
+activate BinarySearch
+BinarySearch --> SearchService : Rentang indeks cocok
+deactivate BinarySearch
+SearchService --> Service : Daftar ID cocok
+deactivate SearchService
+
+alt Data ditemukan
+    Service -> Model : Filter whereIn(id)
+    activate Model
+    Model -> DB : SELECT hasil pencarian
+    activate DB
+    DB --> Model : Daftar arsip
+    deactivate DB
+    deactivate Model
+    Service --> Controller : letters + filters
+    deactivate Service
+    Controller -> View : Render arsip-surat/Index
+    View -> User : Menampilkan daftar hasil pencarian
+
+    User -> View : Membuka detail arsip
+    View -> Controller : GET arsip-surat/{jenis}/{id}
+    Controller -> Model : find arsip
+    activate Model
+    Model -> DB : SELECT detail arsip
+    activate DB
+    DB --> Model : Data arsip
+    deactivate DB
+    deactivate Model
+    Controller -> View : Render arsip-surat/Show
+    View -> User : Menampilkan detail arsip
+else Data tidak ditemukan
+    Service --> Controller : Daftar kosong
+    deactivate Service
+    Controller -> View : Render arsip-surat/Index (kosong)
+    View -> User : Menampilkan pesan tidak ditemukan
+end
+
+deactivate Controller
+deactivate View
+@enduml
