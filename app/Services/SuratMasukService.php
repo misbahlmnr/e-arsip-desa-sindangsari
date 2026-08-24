@@ -43,6 +43,8 @@ class SuratMasukService
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
             'status' => ['nullable', Rule::in(SuratMasuk::STATUSES)],
+            'tingkat' => ['nullable', Rule::in(SuratMasuk::TINGKAT_OPTIONS)],
+            'kades_aksi' => ['nullable', Rule::in(['menunggu_verifikasi', 'siap_disposisi'])],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
@@ -50,6 +52,8 @@ class SuratMasukService
         $sortBy = $validated['sort_by'] ?? 'tanggal_terima';
         $sortDir = $validated['sort_dir'] ?? 'desc';
         $status = $validated['status'] ?? null;
+        $tingkat = $validated['tingkat'] ?? null;
+        $kadesAksi = $validated['kades_aksi'] ?? null;
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal_terima';
@@ -57,8 +61,22 @@ class SuratMasukService
 
         $query = SuratMasuk::query()->whereNull('diarsipkan_at');
 
-        if ($status) {
-            $query->where('status', $status);
+        if ($kadesAksi === 'menunggu_verifikasi') {
+            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at');
+        } elseif ($kadesAksi === 'siap_disposisi') {
+            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNotNull('verified_kades_at');
+        } else {
+            if ($status) {
+                $query->where('status', $status);
+            }
+
+            if ($tingkat) {
+                $query->where('tingkat', $tingkat);
+            }
         }
 
         $matchingIds = $this->nomorSearch->matchingIds(clone $query, $search);
@@ -93,6 +111,8 @@ class SuratMasukService
                 'sort_dir' => $sortDir,
                 'per_page' => $perPage,
                 'status' => $status,
+                'tingkat' => $tingkat,
+                'kades_aksi' => $kadesAksi,
             ],
         ];
     }

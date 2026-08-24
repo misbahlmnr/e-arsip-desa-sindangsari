@@ -30,6 +30,16 @@ function mapDisposisiRows(items) {
     }));
 }
 
+function mapPendingSuratRows(items) {
+    return (items ?? []).map((row) => ({
+        id: row.id,
+        no_surat: row.no_surat ?? "—",
+        perihal: row.perihal ?? "—",
+        tanggal: row.tanggal,
+        status: row.status,
+    }));
+}
+
 export default function KadesDashboard({
     summary,
     attention,
@@ -62,7 +72,9 @@ export default function KadesDashboard({
             hint: "Surat penting perlu diverifikasi",
             icon: Clock,
             tone: "warning",
-            href: route("admin.disposisi.index"),
+            href: route("admin.surat-masuk.index", {
+                kades_aksi: "menunggu_verifikasi",
+            }),
         },
         {
             label: "Siap Disposisi",
@@ -70,7 +82,9 @@ export default function KadesDashboard({
             hint: "Sudah diverifikasi, menunggu disposisi",
             icon: Send,
             tone: "info",
-            href: route("admin.disposisi.index"),
+            href: route("admin.surat-masuk.index", {
+                kades_aksi: "siap_disposisi",
+            }),
         },
         {
             label: "Arsip",
@@ -212,19 +226,25 @@ export default function KadesDashboard({
                     />
                     <DataTable
                         title="Menunggu Arahan Anda"
-                        subtitle="Disposisi yang perlu ditindaklanjuti"
-                        viewAllRoute="admin.disposisi.index"
+                        subtitle="Surat penting yang perlu diverifikasi atau didisposisikan"
+                        viewAllRoute="admin.surat-masuk.index"
+                        viewAllParams={{
+                            tingkat: "penting",
+                            status: "terverifikasi",
+                        }}
                         emptyIcon={Clock}
-                        emptyTitle="Tidak ada disposisi menunggu"
-                        emptyHint="Semua disposisi sudah Anda tangani."
+                        emptyTitle="Tidak ada surat menunggu"
+                        emptyHint="Semua surat penting sudah Anda tangani."
                         columns={[
                             { key: "no_surat", label: "No. Surat" },
                             { key: "perihal", label: "Perihal" },
                             { key: "tanggal", label: "Tanggal" },
                         ]}
-                        rows={mapDisposisiRows(pending_disposisi)}
+                        rows={mapPendingSuratRows(pending_disposisi)}
                         detailRoute={(row) =>
-                            route("admin.disposisi.show", { disposisi: row.id })
+                            route("admin.surat-masuk.show", {
+                                surat_masuk: row.id,
+                            })
                         }
                         dateKey="tanggal"
                     />

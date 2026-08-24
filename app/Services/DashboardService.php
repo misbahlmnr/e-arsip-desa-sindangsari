@@ -240,7 +240,7 @@ class DashboardService
 
     /**
      * @param  array<string, int>  $summary
-     * @return list<array{key: string, label: string, description: string, count: int, route: string, severity: string}>
+     * @return list<array{key: string, label: string, description: string, count: int, route: string, params: array<string, string>, severity: string}>
      */
     private function buildKadesAttention(array $summary): array
     {
@@ -250,7 +250,8 @@ class DashboardService
                 'label' => 'Surat penting menunggu verifikasi',
                 'description' => 'Perlu verifikasi sebelum disposisi',
                 'count' => $summary['disposisi_menunggu'],
-                'route' => 'admin.disposisi.index',
+                'route' => 'admin.surat-masuk.index',
+                'params' => ['kades_aksi' => 'menunggu_verifikasi'],
                 'severity' => 'danger',
             ],
             [
@@ -258,7 +259,8 @@ class DashboardService
                 'label' => 'Surat penting siap disposisi',
                 'description' => 'Sudah diverifikasi, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
-                'route' => 'admin.disposisi.index',
+                'route' => 'admin.surat-masuk.index',
+                'params' => ['kades_aksi' => 'siap_disposisi'],
                 'severity' => 'warning',
             ],
         ];

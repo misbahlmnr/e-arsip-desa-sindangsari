@@ -82,7 +82,7 @@ export function AttentionPanel({ items }) {
                     {items.map((item) => (
                         <li key={item.key}>
                             <Link
-                                href={route(item.route)}
+                                href={route(item.route, item.params ?? {})}
                                 className={`flex items-center justify-between gap-4 rounded-xl border px-4 py-3.5 transition-colors hover:opacity-90 ${ATTENTION_STYLES[item.severity] ?? ATTENTION_STYLES.info}`}
                             >
                                 <div className="min-w-0">
@@ -204,6 +204,7 @@ export function DataTable({
     title,
     subtitle,
     viewAllRoute,
+    viewAllParams,
     viewAllLabel = "Lihat semua",
     emptyIcon: EmptyIcon,
     emptyTitle,
@@ -232,7 +233,7 @@ export function DataTable({
                         size="sm"
                         className="rounded-lg h-10 text-sm shrink-0"
                     >
-                        <Link href={route(viewAllRoute)}>
+                        <Link href={route(viewAllRoute, viewAllParams ?? {})}>
                             {viewAllLabel}
                             <ArrowRight className="size-4 ml-1" />
                         </Link>
