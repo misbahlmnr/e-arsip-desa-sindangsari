@@ -43,6 +43,49 @@ class SekdesKadesDashboardTest extends TestCase
                 ->has('recent_disposisi')
                 ->where('summary.surat_masuk', 1)
                 ->where('summary.surat_masuk_draft', 1)
+                ->has('attention', 1)
+                ->where('attention.0.key', 'menunggu_review')
+                ->where('attention.0.route', 'admin.surat-masuk.index')
+                ->where('attention.0.params.status', 'draft')
+            );
+    }
+
+    public function test_sekdes_dashboard_pending_lists_penting_menunggu_kades(): void
+    {
+        $sekdes = User::factory()->create(['role' => 'sekdes']);
+
+        SuratMasuk::query()->create([
+            'no_surat' => 'SM-030',
+            'tanggal_terima' => now()->toDateString(),
+            'pengirim' => 'Camat',
+            'perihal' => 'Penting menunggu',
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'tingkat' => SuratMasuk::TINGKAT_PENTING,
+            'verified_sekdes_at' => now(),
+            'verified_sekdes_by' => $sekdes->id,
+            'tujuan' => '-',
+        ]);
+
+        SuratMasuk::query()->create([
+            'no_surat' => 'SM-031',
+            'tanggal_terima' => now()->toDateString(),
+            'pengirim' => 'Dinas',
+            'perihal' => 'Biasa siap disposisi',
+            'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+            'tingkat' => SuratMasuk::TINGKAT_BIASA,
+            'verified_sekdes_at' => now(),
+            'verified_sekdes_by' => $sekdes->id,
+            'tujuan' => '-',
+        ]);
+
+        $this->actingAs($sekdes)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->where('summary.disposisi_ke_kades_menunggu', 1)
+                ->has('pending_disposisi', 1)
+                ->where('pending_disposisi.0.no_surat', 'SM-030')
+                ->where('pending_disposisi.0.status', 'menunggu_verifikasi_kades')
             );
     }
 

@@ -45,6 +45,7 @@ class SuratMasukService
             'status' => ['nullable', Rule::in(SuratMasuk::STATUSES)],
             'tingkat' => ['nullable', Rule::in(SuratMasuk::TINGKAT_OPTIONS)],
             'kades_aksi' => ['nullable', Rule::in(['menunggu_verifikasi', 'siap_disposisi'])],
+            'disposisi' => ['nullable', Rule::in(['belum', 'sudah'])],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
@@ -54,6 +55,7 @@ class SuratMasukService
         $status = $validated['status'] ?? null;
         $tingkat = $validated['tingkat'] ?? null;
         $kadesAksi = $validated['kades_aksi'] ?? null;
+        $disposisi = $validated['disposisi'] ?? null;
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal_terima';
@@ -76,6 +78,15 @@ class SuratMasukService
 
             if ($tingkat) {
                 $query->where('tingkat', $tingkat);
+            }
+
+            if ($disposisi === 'belum') {
+                $query->whereDoesntHave('disposisi');
+                if (! $status) {
+                    $query->where('status', '!=', SuratMasuk::STATUS_DRAFT);
+                }
+            } elseif ($disposisi === 'sudah') {
+                $query->whereHas('disposisi');
             }
         }
 
@@ -113,6 +124,7 @@ class SuratMasukService
                 'status' => $status,
                 'tingkat' => $tingkat,
                 'kades_aksi' => $kadesAksi,
+                'disposisi' => $disposisi,
             ],
         ];
     }

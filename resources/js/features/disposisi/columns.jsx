@@ -2,7 +2,8 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import {
     badgeLabel,
-    SURAT_MASUK_STATUS_LABELS,
+    resolveSuratMasukAlurStatus,
+    SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Eye } from "lucide-react";
@@ -81,15 +82,22 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
         {
             accessorKey: "surat_status",
             header: "Status Surat",
-            cell: ({ row }) => (
-                <StatusBadge
-                    value={row.original.surat_status}
-                    label={badgeLabel(
-                        SURAT_MASUK_STATUS_LABELS,
-                        row.original.surat_status,
-                    )}
-                />
-            ),
+            cell: ({ row }) => {
+                const alur =
+                    row.original.surat_status_tampil ??
+                    resolveSuratMasukAlurStatus({
+                        status: row.original.surat_status,
+                        tingkat: row.original.surat_tingkat,
+                        verified_kades_at: row.original.surat_verified_kades_at,
+                        status_tampil: row.original.surat_status_tampil,
+                    });
+                return (
+                    <StatusBadge
+                        value={alur}
+                        label={badgeLabel(SURAT_MASUK_ALUR_LABELS, alur)}
+                    />
+                );
+            },
         },
         {
             id: "actions",

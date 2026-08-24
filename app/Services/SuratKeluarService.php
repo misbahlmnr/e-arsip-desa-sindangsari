@@ -37,18 +37,24 @@ class SuratKeluarService
             'sort_by' => ['nullable', 'string', 'max:64'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
+            'status' => ['nullable', 'in:draft,terkirim'],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
         $perPage = (int) ($validated['per_page'] ?? 10);
         $sortBy = $validated['sort_by'] ?? 'tanggal_kirim';
         $sortDir = $validated['sort_dir'] ?? 'desc';
+        $status = $validated['status'] ?? null;
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal_kirim';
         }
 
         $query = SuratKeluar::query()->whereNull('diarsipkan_at');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
 
         $matchingIds = $this->nomorSearch->matchingIds(clone $query, $search);
 
@@ -71,6 +77,7 @@ class SuratKeluarService
                 'sort_by' => $sortBy,
                 'sort_dir' => $sortDir,
                 'per_page' => $perPage,
+                'status' => $status,
             ],
         ];
     }

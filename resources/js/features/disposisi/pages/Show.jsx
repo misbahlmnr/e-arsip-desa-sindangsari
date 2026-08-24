@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import {
     badgeLabel,
-    SURAT_MASUK_STATUS_LABELS,
+    resolveSuratMasukAlurStatus,
+    SURAT_MASUK_ALUR_LABELS,
     TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
@@ -101,10 +102,10 @@ export default function ShowDisposisi({ disposisi }) {
                                 </dt>
                                 <dd className="mt-2">
                                     <StatusBadge
-                                        value={surat.status}
+                                        value={resolveSuratMasukAlurStatus(surat)}
                                         label={badgeLabel(
-                                            SURAT_MASUK_STATUS_LABELS,
-                                            surat.status,
+                                            SURAT_MASUK_ALUR_LABELS,
+                                            resolveSuratMasukAlurStatus(surat),
                                         )}
                                     />
                                 </dd>

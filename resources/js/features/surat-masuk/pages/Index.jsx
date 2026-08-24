@@ -13,7 +13,7 @@ export default function SuratMasuk({ letters, filters }) {
         routeName: "admin.surat-masuk.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status", "tingkat", "kades_aksi"],
+        preserveQueryKeys: ["status", "tingkat", "kades_aksi", "disposisi"],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);

@@ -17,7 +17,8 @@ import { FilePreview } from "@/components/FilePreview";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
     badgeLabel,
-    SURAT_MASUK_STATUS_LABELS,
+    resolveSuratMasukAlurStatus,
+    SURAT_MASUK_ALUR_LABELS,
     TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import CreateDisposisiModal from "../components/CreateDisposisiModal";
@@ -108,10 +109,10 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
                                 <StatusBadge
-                                    value={letter.status}
+                                    value={resolveSuratMasukAlurStatus(letter)}
                                     label={badgeLabel(
-                                        SURAT_MASUK_STATUS_LABELS,
-                                        letter.status,
+                                        SURAT_MASUK_ALUR_LABELS,
+                                        resolveSuratMasukAlurStatus(letter),
                                     )}
                                 />
                                 {letter.tingkat && (

@@ -9,6 +9,13 @@ const STATUS_STYLES = {
     terkirim: "bg-success-soft text-success border-success/20",
     biasa: "bg-muted text-muted-foreground border-border",
     penting: "bg-destructive/10 text-destructive border-destructive/20",
+    menunggu_review_sekdes: "bg-muted text-muted-foreground border-border",
+    direview_sekdes: "bg-info-soft text-info border-info/20",
+    menunggu_verifikasi_kades:
+        "bg-warning-soft text-warning border-warning/20",
+    siap_disposisi_kades: "bg-info-soft text-info border-info/20",
+    menunggu_verifikasi: "bg-warning-soft text-warning border-warning/20",
+    siap_disposisi: "bg-info-soft text-info border-info/20",
 };
 
 /** Semua style badge disposisi: flag (belum/sudah) + status alur */

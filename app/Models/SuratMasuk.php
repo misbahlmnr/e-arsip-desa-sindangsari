@@ -36,6 +36,38 @@ class SuratMasuk extends Model
         self::TINGKAT_PENTING,
     ];
 
+    public const STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES = 'menunggu_review_sekdes';
+
+    public const STATUS_TAMPIL_DIREVIEW_SEKDES = 'direview_sekdes';
+
+    public const STATUS_TAMPIL_MENUNGGU_VERIFIKASI_KADES = 'menunggu_verifikasi_kades';
+
+    public const STATUS_TAMPIL_SIAP_DISPOSISI_KADES = 'siap_disposisi_kades';
+
+    public const STATUS_TAMPIL_DIDISPOSISIKAN = 'didisposisikan';
+
+    public const STATUS_TAMPIL_DIARSIPKAN = 'diarsipkan';
+
+    /** @var list<string> */
+    public const STATUS_TAMPIL_OPTIONS = [
+        self::STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES,
+        self::STATUS_TAMPIL_DIREVIEW_SEKDES,
+        self::STATUS_TAMPIL_MENUNGGU_VERIFIKASI_KADES,
+        self::STATUS_TAMPIL_SIAP_DISPOSISI_KADES,
+        self::STATUS_TAMPIL_DIDISPOSISIKAN,
+        self::STATUS_TAMPIL_DIARSIPKAN,
+    ];
+
+    /** @var array<string, string> */
+    public const STATUS_TAMPIL_LABELS = [
+        self::STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES => 'Menunggu review Sekdes',
+        self::STATUS_TAMPIL_DIREVIEW_SEKDES => 'Direview Sekdes',
+        self::STATUS_TAMPIL_MENUNGGU_VERIFIKASI_KADES => 'Menunggu verifikasi Kades',
+        self::STATUS_TAMPIL_SIAP_DISPOSISI_KADES => 'Siap disposisi Kades',
+        self::STATUS_TAMPIL_DIDISPOSISIKAN => 'Didisposisikan',
+        self::STATUS_TAMPIL_DIARSIPKAN => 'Diarsipkan',
+    ];
+
     protected $table = 'surat_masuk';
 
     protected $fillable = [
@@ -75,6 +107,7 @@ class SuratMasuk extends Model
      */
     protected $appends = [
         'file_url',
+        'status_tampil',
     ];
 
     public function getFileUrlAttribute(): ?string
@@ -84,6 +117,34 @@ class SuratMasuk extends Model
         }
 
         return Storage::disk('public')->url($this->file);
+    }
+
+    public function getStatusTampilAttribute(): string
+    {
+        return $this->statusTampil();
+    }
+
+    /**
+     * Status tampilan alur (UI) — tidak mengubah nilai kolom status DB.
+     */
+    public function statusTampil(): string
+    {
+        if ($this->isArchived() || $this->status === self::STATUS_DIARSIPKAN) {
+            return self::STATUS_TAMPIL_DIARSIPKAN;
+        }
+
+        return match ($this->status) {
+            self::STATUS_DRAFT => self::STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES,
+            self::STATUS_DIDISPOSISIKAN => self::STATUS_TAMPIL_DIDISPOSISIKAN,
+            self::STATUS_TERVERIFIKASI => match (true) {
+                $this->tingkat === self::TINGKAT_PENTING && $this->verified_kades_at === null
+                    => self::STATUS_TAMPIL_MENUNGGU_VERIFIKASI_KADES,
+                $this->tingkat === self::TINGKAT_PENTING && $this->verified_kades_at !== null
+                    => self::STATUS_TAMPIL_SIAP_DISPOSISI_KADES,
+                default => self::STATUS_TAMPIL_DIREVIEW_SEKDES,
+            },
+            default => (string) $this->status,
+        };
     }
 
     public function disposisi(): HasMany

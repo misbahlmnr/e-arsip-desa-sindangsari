@@ -3,7 +3,8 @@ import { DisposisiBadge, StatusBadge } from "@/components/StatusBadge";
 import {
     badgeLabel,
     DISPOSISI_FLAG_LABELS,
-    SURAT_MASUK_STATUS_LABELS,
+    resolveSuratMasukAlurStatus,
+    SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Eye, Pencil, Trash2 } from "lucide-react";
@@ -81,15 +82,15 @@ export function getColumns({
         {
             accessorKey: "status",
             header: "Status",
-            cell: ({ row }) => (
-                <StatusBadge
-                    value={row.original.status}
-                    label={badgeLabel(
-                        SURAT_MASUK_STATUS_LABELS,
-                        row.original.status,
-                    )}
-                />
-            ),
+            cell: ({ row }) => {
+                const alur = resolveSuratMasukAlurStatus(row.original);
+                return (
+                    <StatusBadge
+                        value={alur}
+                        label={badgeLabel(SURAT_MASUK_ALUR_LABELS, alur)}
+                    />
+                );
+            },
         },
         {
             accessorKey: "disposisi",

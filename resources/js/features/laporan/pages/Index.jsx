@@ -10,7 +10,7 @@ import {
 import {
     badgeLabel,
     SURAT_KELUAR_STATUS_LABELS,
-    SURAT_MASUK_STATUS_LABELS,
+    SURAT_MASUK_ALUR_LABELS,
     TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { Head, router, usePage } from "@inertiajs/react";
@@ -125,7 +125,7 @@ export default function LaporanIndex({
     ];
 
     const masukChartData = (surat_masuk_status ?? []).map((row) => ({
-        name: badgeLabel(SURAT_MASUK_STATUS_LABELS, row.status),
+        name: badgeLabel(SURAT_MASUK_ALUR_LABELS, row.status),
         value: row.total,
         key: row.status,
     }));

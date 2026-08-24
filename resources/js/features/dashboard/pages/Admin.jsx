@@ -4,7 +4,7 @@ import AppLayout from "@/layouts/AppLayout";
 import {
     badgeLabel,
     SURAT_KELUAR_STATUS_LABELS,
-    SURAT_MASUK_STATUS_LABELS,
+    SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link, usePage } from "@inertiajs/react";
@@ -74,10 +74,10 @@ export default function AdminDashboard({
         {
             label: "Menunggu Review",
             value: summary?.surat_masuk_belum_diproses ?? 0,
-            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} tanpa disposisi`,
+            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} biasa tanpa disposisi`,
             icon: Clock,
             tone: "warning",
-            href: route("admin.surat-masuk.index"),
+            href: route("admin.surat-masuk.index", { status: "draft" }),
         },
         {
             label: "Surat Keluar",
@@ -90,10 +90,12 @@ export default function AdminDashboard({
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.disposisi_menunggu ?? 0} menunggu Kades`,
+            hint: `${summary?.disposisi_menunggu ?? 0} penting menunggu Kades`,
             icon: Send,
             tone: "disposisi",
-            href: route("admin.laporan.index"),
+            href: route("admin.surat-masuk.index", {
+                kades_aksi: "menunggu_verifikasi",
+            }),
         },
         {
             label: "Arsip",
@@ -214,7 +216,7 @@ export default function AdminDashboard({
                                 {(attention ?? []).map((item) => (
                                     <li key={item.key}>
                                         <Link
-                                            href={route(item.route)}
+                                            href={route(item.route, item.params ?? {})}
                                             className={`flex items-center justify-between gap-4 rounded-xl border px-4 py-3.5 transition-colors hover:opacity-90 ${ATTENTION_STYLES[item.severity] ?? ATTENTION_STYLES.info}`}
                                         >
                                             <div className="min-w-0">
@@ -389,7 +391,7 @@ export default function AdminDashboard({
                                 surat_masuk: row.id,
                             })
                         }
-                        statusLabels={SURAT_MASUK_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_ALUR_LABELS}
                         dateKey="tanggal_terima"
                     />
                     <RecentTable

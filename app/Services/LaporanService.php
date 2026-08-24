@@ -18,14 +18,6 @@ class LaporanService
     private const RANGES = ['all', '7d', '30d', '90d', '1y'];
 
     /** @var array<string, string> */
-    private const SURAT_MASUK_STATUS_LABELS = [
-        'draft' => 'Draft',
-        'terverifikasi' => 'Terverifikasi',
-        'didisposisikan' => 'Didisposisikan',
-        'diarsipkan' => 'Diarsipkan',
-    ];
-
-    /** @var array<string, string> */
     private const TINGKAT_SURAT_LABELS = [
         'biasa' => 'Biasa',
         'penting' => 'Penting',
@@ -58,7 +50,7 @@ class LaporanService
             'generated_by' => $req->user()->name,
             'surat_masuk_status' => $this->withStatusLabels(
                 $report['surat_masuk_status'],
-                self::SURAT_MASUK_STATUS_LABELS,
+                SuratMasuk::STATUS_TAMPIL_LABELS,
             ),
             'surat_keluar_status' => $this->withStatusLabels(
                 $report['surat_keluar_status'],
@@ -189,13 +181,25 @@ class LaporanService
      */
     private function countSuratMasukByStatus(?Carbon $dateFrom): array
     {
-        $statuses = SuratMasuk::STATUSES;
+        $letters = $this->applyDateFilter(
+            SuratMasuk::query()->whereNull('diarsipkan_at'),
+            $dateFrom,
+            'tanggal_terima',
+        )->get(['status', 'tingkat', 'verified_kades_at', 'diarsipkan_at']);
 
-        return $this->countByStatuses(
-            $this->applyDateFilter(SuratMasuk::query()->whereNull('diarsipkan_at'), $dateFrom, 'tanggal_terima'),
-            'status',
-            $statuses,
-        );
+        $counts = [];
+        foreach ($letters as $letter) {
+            $key = $letter->statusTampil();
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+
+        return collect(SuratMasuk::STATUS_TAMPIL_OPTIONS)
+            ->map(fn (string $status) => [
+                'status' => $status,
+                'total' => (int) ($counts[$status] ?? 0),
+            ])
+            ->values()
+            ->all();
     }
 
     /**

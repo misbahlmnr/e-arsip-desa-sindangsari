@@ -13,6 +13,7 @@ export default function SuratKeluar({ letters, filters }) {
         routeName: "admin.surat-keluar.index",
         filters,
         searchDebounceMs: 400,
+        preserveQueryKeys: ["status"],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);

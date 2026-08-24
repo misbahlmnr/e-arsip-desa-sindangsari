@@ -39,8 +39,8 @@ class DashboardService
                 ->where('status', SuratMasuk::STATUS_DIDISPOSISIKAN)
                 ->count(),
             'surat_masuk_tanpa_disposisi' => (clone $suratMasukAktif)
-                ->whereDoesntHave('disposisi')
-                ->where('status', '!=', SuratMasuk::STATUS_DRAFT)
+                ->where('tingkat', SuratMasuk::TINGKAT_BIASA)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
                 ->count(),
             'surat_masuk_bulan_ini' => SuratMasuk::query()
                 ->whereMonth('tanggal_terima', now()->month)
@@ -201,17 +201,21 @@ class DashboardService
 
     /**
      * @param  array<string, int>  $summary
-     * @return list<array{key: string, label: string, description: string, count: int, route: string, severity: string}>
+     * @return list<array{key: string, label: string, description: string, count: int, route: string, params: array<string, string>, severity: string}>
      */
     private function buildSekdesAttention(array $summary): array
     {
         $items = [
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat tanpa disposisi',
+                'label' => 'Surat biasa tanpa disposisi',
                 'description' => 'Perlu dibuatkan instruksi disposisi',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
+                'params' => [
+                    'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+                    'tingkat' => SuratMasuk::TINGKAT_BIASA,
+                ],
                 'severity' => 'warning',
             ],
             [
@@ -219,7 +223,8 @@ class DashboardService
                 'label' => 'Surat penting menunggu Kades',
                 'description' => 'Perlu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_ke_kades_menunggu'],
-                'route' => 'admin.disposisi.index',
+                'route' => 'admin.surat-masuk.index',
+                'params' => ['kades_aksi' => 'menunggu_verifikasi'],
                 'severity' => 'danger',
             ],
             [
@@ -228,6 +233,7 @@ class DashboardService
                 'description' => 'Perlu ditelaah dan ditetapkan tingkatnya',
                 'count' => $summary['surat_masuk_draft'] ?? $summary['surat_masuk_belum_diproses'],
                 'route' => 'admin.surat-masuk.index',
+                'params' => ['status' => SuratMasuk::STATUS_DRAFT],
                 'severity' => 'info',
             ],
         ];
@@ -273,7 +279,7 @@ class DashboardService
 
     /**
      * @param  array<string, int>  $summary
-     * @return list<array{key: string, label: string, description: string, count: int, route: string, severity: string}>
+     * @return list<array{key: string, label: string, description: string, count: int, route: string, params: array<string, string>, severity: string}>
      */
     private function buildAttention(array $summary): array
     {
@@ -284,14 +290,19 @@ class DashboardService
                 'description' => 'Surat masuk baru belum ditelaah',
                 'count' => $summary['surat_masuk_draft'] ?? $summary['surat_masuk_belum_diproses'],
                 'route' => 'admin.surat-masuk.index',
+                'params' => ['status' => SuratMasuk::STATUS_DRAFT],
                 'severity' => 'warning',
             ],
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat tanpa disposisi',
-                'description' => 'Belum ada instruksi disposisi',
+                'label' => 'Surat biasa tanpa disposisi',
+                'description' => 'Menunggu disposisi Sekretaris Desa',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
+                'params' => [
+                    'status' => SuratMasuk::STATUS_TERVERIFIKASI,
+                    'tingkat' => SuratMasuk::TINGKAT_BIASA,
+                ],
                 'severity' => 'warning',
             ],
             [
@@ -299,8 +310,18 @@ class DashboardService
                 'label' => 'Surat penting menunggu Kades',
                 'description' => 'Menunggu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_menunggu'],
-                'route' => 'admin.laporan.index',
+                'route' => 'admin.surat-masuk.index',
+                'params' => ['kades_aksi' => 'menunggu_verifikasi'],
                 'severity' => 'danger',
+            ],
+            [
+                'key' => 'penting_siap_disposisi',
+                'label' => 'Surat penting siap disposisi',
+                'description' => 'Sudah diverifikasi Kades, menunggu disposisi',
+                'count' => $summary['disposisi_diproses'],
+                'route' => 'admin.surat-masuk.index',
+                'params' => ['kades_aksi' => 'siap_disposisi'],
+                'severity' => 'warning',
             ],
             [
                 'key' => 'siap_arsip',
@@ -308,6 +329,7 @@ class DashboardService
                 'description' => 'Sudah didisposisikan, belum masuk arsip',
                 'count' => $summary['siap_arsip'],
                 'route' => 'admin.surat-masuk.index',
+                'params' => ['status' => SuratMasuk::STATUS_DIDISPOSISIKAN],
                 'severity' => 'info',
             ],
             [
@@ -316,6 +338,7 @@ class DashboardService
                 'description' => 'Belum dikirim atau difinalisasi',
                 'count' => $summary['surat_keluar_draft'],
                 'route' => 'admin.surat-keluar.index',
+                'params' => ['status' => 'draft'],
                 'severity' => 'info',
             ],
         ];
@@ -388,29 +411,27 @@ class DashboardService
     }
 
     /**
+     * Surat penting yang menunggu verifikasi Kepala Desa (tampilan dashboard Sekdes).
+     *
      * @return list<array<string, mixed>>
      */
     private function pendingSuratForSekdes(): array
     {
         return SuratMasuk::query()
             ->whereNull('diarsipkan_at')
-            ->where(function (Builder $q) {
-                $q->where('status', SuratMasuk::STATUS_DRAFT)
-                    ->orWhere(function (Builder $q) {
-                        $q->where('tingkat', SuratMasuk::TINGKAT_BIASA)
-                            ->where('status', SuratMasuk::STATUS_TERVERIFIKASI);
-                    });
-            })
+            ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+            ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+            ->whereNull('verified_kades_at')
             ->orderByDesc('tanggal_terima')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat'])
+            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
-                'status' => $s->status,
+                'status' => $s->status_tampil,
                 'tingkat' => $s->tingkat,
             ])
             ->values()
@@ -435,7 +456,7 @@ class DashboardService
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
-                'status' => $s->verified_kades_at ? 'siap_disposisi' : 'menunggu_verifikasi',
+                'status' => $s->status_tampil,
                 'tingkat' => $s->tingkat,
             ])
             ->values()
@@ -452,14 +473,14 @@ class DashboardService
             ->orderByDesc('tanggal_terima')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status'])
+            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal_terima' => $s->tanggal_terima?->format('Y-m-d'),
-                'status' => $s->status,
+                'status' => $s->status_tampil,
             ])
             ->values()
             ->all();
@@ -495,7 +516,7 @@ class DashboardService
     private function recentDisposisi(?callable $scope = null): array
     {
         $query = Disposisi::query()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim')
+            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -518,7 +539,7 @@ class DashboardService
     private function pendingDisposisi(?callable $scope = null): array
     {
         $query = Disposisi::query()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim')
+            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -544,7 +565,7 @@ class DashboardService
             'kepada' => $d->kepada,
             'dari_jabatan' => $d->dari_jabatan,
             'tanggal' => $d->tanggal?->format('Y-m-d'),
-            'surat_status' => $d->suratMasuk?->status,
+            'surat_status' => $d->suratMasuk?->status_tampil,
             'surat_masuk' => $d->suratMasuk ? [
                 'id' => $d->suratMasuk->id,
                 'no_surat' => $d->suratMasuk->no_surat,

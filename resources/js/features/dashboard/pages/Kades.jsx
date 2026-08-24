@@ -7,7 +7,7 @@ import {
     TrendChart,
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
-import { SURAT_MASUK_STATUS_LABELS } from "@/shared/constants/badgeLabels";
+import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
@@ -221,7 +221,7 @@ export default function KadesDashboard({
                                 disposisi: row.id,
                             })
                         }
-                        statusLabels={SURAT_MASUK_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_ALUR_LABELS}
                         dateKey="tanggal"
                     />
                     <DataTable

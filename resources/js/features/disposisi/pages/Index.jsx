@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -57,24 +56,8 @@ export default function DisposisiIndex({ disposisi, filters }) {
 
             <div className="space-y-8">
                 <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-end"
-                >
-                    <Button
-                        size="lg"
-                        onClick={() =>
-                            router.visit(route("admin.disposisi.create"))
-                        }
-                    >
-                        Buat Disposisi
-                    </Button>
-                </motion.div>
-
-                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15 }}
                 >
                     <DataTable
                         columns={columns}
@@ -85,7 +68,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
                         onSearchInputChange={setSearchInput}
                         loading={loading}
                         searchPlaceholder="Cari nomor surat, pengirim, penerima, atau catatan…"
-                        emptyMessage="Belum ada disposisi. Buat disposisi baru untuk memulai."
+                        emptyMessage="Belum ada disposisi. Buat disposisi dari halaman detail surat masuk."
                         serverSortClearDefaults={{
                             sort_by: "tanggal",
                             sort_dir: "desc",

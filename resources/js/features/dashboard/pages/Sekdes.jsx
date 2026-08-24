@@ -7,7 +7,7 @@ import {
     TrendChart,
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
-import { SURAT_MASUK_STATUS_LABELS } from "@/shared/constants/badgeLabels";
+import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
 import { Head, Link, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
@@ -15,7 +15,6 @@ import {
     BarChart3,
     Clock,
     FileInput,
-    Plus,
     Send,
 } from "lucide-react";
 
@@ -28,6 +27,17 @@ function mapDisposisiRows(items) {
         kepada: row.kepada,
         tanggal: row.tanggal,
         status: row.surat_status ?? row.status,
+    }));
+}
+
+function mapPendingSuratRows(items) {
+    return (items ?? []).map((row) => ({
+        id: row.id,
+        no_surat: row.no_surat ?? "—",
+        pengirim: row.pengirim ?? "—",
+        perihal: row.perihal ?? "—",
+        tanggal: row.tanggal,
+        status: row.status,
     }));
 }
 
@@ -61,10 +71,13 @@ export default function SekdesDashboard({
         {
             label: "Tanpa Disposisi",
             value: summary?.surat_masuk_tanpa_disposisi ?? 0,
-            hint: "Perlu instruksi disposisi",
+            hint: "Surat biasa perlu disposisi Sekdes",
             icon: Clock,
             tone: "warning",
-            href: route("admin.surat-masuk.index"),
+            href: route("admin.surat-masuk.index", {
+                status: "terverifikasi",
+                tingkat: "biasa",
+            }),
         },
         {
             label: "Disposisi",
@@ -80,7 +93,9 @@ export default function SekdesDashboard({
             hint: "Belum ditindaklanjuti",
             icon: Send,
             tone: "info",
-            href: route("admin.disposisi.index"),
+            href: route("admin.surat-masuk.index", {
+                kades_aksi: "menunggu_verifikasi",
+            }),
         },
         {
             label: "Arsip",
@@ -106,15 +121,15 @@ export default function SekdesDashboard({
                 >
                     <div className="flex flex-wrap gap-3">
                         <Button asChild className="rounded-xl">
-                            <Link href={route("admin.disposisi.create")}>
-                                <Plus className="size-4" />
-                                Buat Disposisi
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
                             <Link href={route("admin.surat-masuk.index")}>
                                 <FileInput className="size-4" />
                                 Surat Masuk
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" className="rounded-xl">
+                            <Link href={route("admin.disposisi.index")}>
+                                <Send className="size-4" />
+                                Disposisi
                             </Link>
                         </Button>
                         <Button asChild variant="outline" className="rounded-xl">
@@ -229,7 +244,7 @@ export default function SekdesDashboard({
                                 surat_masuk: row.id,
                             })
                         }
-                        statusLabels={SURAT_MASUK_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_ALUR_LABELS}
                         dateKey="tanggal_terima"
                     />
                     <DataTable
@@ -251,27 +266,30 @@ export default function SekdesDashboard({
                                 disposisi: row.id,
                             })
                         }
-                        statusLabels={SURAT_MASUK_STATUS_LABELS}
+                        statusLabels={SURAT_MASUK_ALUR_LABELS}
                         dateKey="tanggal"
                     />
                 </div>
 
                 <DataTable
-                    title="Disposisi Menunggu Kepala Desa"
-                    subtitle="Instruksi yang belum ditindaklanjuti Kepala Desa"
-                    viewAllRoute="admin.disposisi.index"
+                    title="Surat Menunggu Kepala Desa"
+                    subtitle="Surat penting yang belum diverifikasi Kepala Desa"
+                    viewAllRoute="admin.surat-masuk.index"
+                    viewAllParams={{ kades_aksi: "menunggu_verifikasi" }}
                     emptyIcon={Send}
-                    emptyTitle="Tidak ada disposisi menunggu"
-                    emptyHint="Semua disposisi ke Kepala Desa sudah ditangani."
+                    emptyTitle="Tidak ada surat menunggu"
+                    emptyHint="Semua surat penting sudah diverifikasi Kepala Desa."
                     columns={[
                         { key: "no_surat", label: "No. Surat" },
                         { key: "pengirim", label: "Pengirim" },
-                        { key: "kepada", label: "Kepada" },
+                        { key: "perihal", label: "Perihal" },
                         { key: "tanggal", label: "Tanggal" },
                     ]}
-                    rows={mapDisposisiRows(pending_disposisi)}
+                    rows={mapPendingSuratRows(pending_disposisi)}
                     detailRoute={(row) =>
-                        route("admin.disposisi.show", { disposisi: row.id })
+                        route("admin.surat-masuk.show", {
+                            surat_masuk: row.id,
+                        })
                     }
                     dateKey="tanggal"
                 />
