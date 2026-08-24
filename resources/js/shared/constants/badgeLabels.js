@@ -8,8 +8,8 @@ export const SURAT_MASUK_STATUS_LABELS = {
 
 /** Label status alur surat masuk (UI) — bedakan review Sekdes vs verifikasi Kades */
 export const SURAT_MASUK_ALUR_LABELS = {
-    menunggu_review_sekdes: "Menunggu review Sekdes",
-    direview_sekdes: "Direview Sekdes",
+    menunggu_review_sekdes: "Draft",
+    direview_sekdes: "Review Sekdes",
     menunggu_verifikasi_kades: "Menunggu verifikasi Kades",
     siap_disposisi_kades: "Siap disposisi Kades",
     didisposisikan: "Didisposisikan",

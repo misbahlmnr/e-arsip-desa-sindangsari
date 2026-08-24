@@ -60,8 +60,8 @@ class SuratMasuk extends Model
 
     /** @var array<string, string> */
     public const STATUS_TAMPIL_LABELS = [
-        self::STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES => 'Menunggu review Sekdes',
-        self::STATUS_TAMPIL_DIREVIEW_SEKDES => 'Direview Sekdes',
+        self::STATUS_TAMPIL_MENUNGGU_REVIEW_SEKDES => 'Draft',
+        self::STATUS_TAMPIL_DIREVIEW_SEKDES => 'Review Sekdes',
         self::STATUS_TAMPIL_MENUNGGU_VERIFIKASI_KADES => 'Menunggu verifikasi Kades',
         self::STATUS_TAMPIL_SIAP_DISPOSISI_KADES => 'Siap disposisi Kades',
         self::STATUS_TAMPIL_DIDISPOSISIKAN => 'Didisposisikan',
