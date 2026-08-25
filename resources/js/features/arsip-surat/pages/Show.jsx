@@ -68,22 +68,12 @@ export default function ArsipSuratShow({ jenis, letter }) {
                 route("admin.surat-masuk.unarchive", {
                     surat_masuk: letter.id,
                 }),
-                {},
-                {
-                    onSuccess: () =>
-                        router.visit(route("admin.surat-masuk.index")),
-                },
             );
         } else {
             router.patch(
                 route("admin.surat-keluar.unarchive", {
                     surat_keluar: letter.id,
                 }),
-                {},
-                {
-                    onSuccess: () =>
-                        router.visit(route("admin.surat-keluar.index")),
-                },
             );
         }
     };

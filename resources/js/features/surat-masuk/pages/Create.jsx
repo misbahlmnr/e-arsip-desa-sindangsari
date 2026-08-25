@@ -41,7 +41,7 @@ export default function CreateSuratMasuk() {
                         <FormField
                             label="Nomor Surat"
                             required
-                            error={errors.no_surat}
+                            error={errors.no_surat ?? errors.nomor_surat}
                         >
                             <Input
                                 value={data.nomor_surat}

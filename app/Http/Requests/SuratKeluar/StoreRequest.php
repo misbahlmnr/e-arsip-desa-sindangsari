@@ -38,4 +38,20 @@ class StoreRequest extends FormRequest
             'file' => 'required|file|mimes:pdf,doc,docx',
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'no_surat' => 'nomor surat',
+            'tanggal_kirim' => 'tanggal kirim',
+            'tujuan' => 'tujuan',
+            'perihal' => 'perihal',
+            'catatan' => 'catatan',
+            'status' => 'status',
+            'file' => 'lampiran',
+        ];
+    }
 }

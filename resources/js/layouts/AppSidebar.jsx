@@ -2,6 +2,7 @@
 import { NAVBAR_ITEMS } from "@/shared/config/navigation";
 import { cn } from "@/shared/lib/utils";
 import { usePage } from "@inertiajs/react";
+import { FileText } from "lucide-react";
 
 const Sidebar = ({ collapsed = false }) => {
     const user = usePage().props.auth.user;
@@ -22,13 +23,13 @@ const Sidebar = ({ collapsed = false }) => {
                     collapsed && "justify-center px-3",
                 )}
             >
-                <div className="size-11 rounded-xl bg-gradient-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-soft shrink-0">
-                    AD
+                <div className="size-11 rounded-xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-soft shrink-0">
+                    <FileText className="size-5" strokeWidth={2.2} />
                 </div>
                 {!collapsed && (
                     <div className="min-w-0">
                         <h1 className="font-bold text-sidebar-foreground tracking-tight text-base leading-none">
-                            ArsipDesa
+                            E-Arsip
                         </h1>
                         <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-widest font-medium">
                             Sistem Arsip Desa

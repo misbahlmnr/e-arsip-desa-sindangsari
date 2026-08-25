@@ -62,6 +62,26 @@ class SuratMasukStatusTest extends TestCase
         $this->assertSame(SuratMasuk::STATUS_DIARSIPKAN, $fresh->status);
     }
 
+    public function test_admin_unarchive_redirects_to_surat_show_not_arsip(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $surat = $this->createDidisposisikanSurat();
+        $surat->update([
+            'status' => SuratMasuk::STATUS_DIARSIPKAN,
+            'diarsipkan_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->from(route('admin.arsip-surat.show', ['jenis' => 'masuk', 'id' => $surat->id]))
+            ->patch(route('admin.surat-masuk.unarchive', ['surat_masuk' => $surat->id]))
+            ->assertRedirect(route('admin.surat-masuk.show', $surat))
+            ->assertSessionHas('success');
+
+        $fresh = $surat->fresh();
+        $this->assertNull($fresh->diarsipkan_at);
+        $this->assertSame(SuratMasuk::STATUS_DIDISPOSISIKAN, $fresh->status);
+    }
+
     public function test_sekdes_can_review_surat_and_set_tingkat(): void
     {
         $sekdes = User::factory()->create(['role' => 'sekdes']);

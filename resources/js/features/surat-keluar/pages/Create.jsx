@@ -48,7 +48,7 @@ export default function CreateSuratKeluar() {
                         <FormField
                             label="Nomor Surat"
                             required
-                            error={errors.nomor_surat}
+                            error={errors.no_surat ?? errors.nomor_surat}
                         >
                             <Input
                                 value={data.nomor_surat}

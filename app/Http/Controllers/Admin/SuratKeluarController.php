@@ -96,11 +96,15 @@ class SuratKeluarController extends Controller
         $this->authorizeSuratManagement();
 
         if (! $surat_keluar->diarsipkan_at) {
-            return back()->with('info', 'Surat ini tidak dalam arsip.');
+            return redirect()
+                ->route('admin.surat-keluar.show', $surat_keluar)
+                ->with('info', 'Surat ini tidak dalam arsip.');
         }
 
         $this->services->unarchive($surat_keluar);
 
-        return back()->with('success', 'Surat keluar dikembalikan ke daftar aktif.');
+        return redirect()
+            ->route('admin.surat-keluar.show', $surat_keluar)
+            ->with('success', 'Surat keluar dikembalikan ke daftar aktif.');
     }
 }
