@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -31,6 +32,20 @@ class Disposisi extends Model
         return [
             'tanggal' => 'date:Y-m-d',
         ];
+    }
+
+    /**
+     * Disposisi surat yang masih aktif (belum diarsipkan).
+     *
+     * @param  Builder<self>  $query
+     * @return Builder<self>
+     */
+    public function scopeForActiveSurat(Builder $query): Builder
+    {
+        return $query->whereHas('suratMasuk', function (Builder $q) {
+            $q->whereNull('diarsipkan_at')
+                ->where('status', '!=', SuratMasuk::STATUS_DIARSIPKAN);
+        });
     }
 
     public function suratMasuk(): BelongsTo

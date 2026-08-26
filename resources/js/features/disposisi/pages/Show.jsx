@@ -1,3 +1,4 @@
+import BackLink from "@/components/BackLink";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
@@ -10,12 +11,11 @@ import {
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link } from "@inertiajs/react";
 import { FileInput } from "lucide-react";
-import BackLink from "@/components/BackLink";
 
 function Field({ label, value, className }) {
     return (
         <div className={className}>
-            <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <dt className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 {label}
             </dt>
             <dd className="text-sm font-medium text-foreground mt-1 leading-relaxed">
@@ -27,6 +27,7 @@ function Field({ label, value, className }) {
 
 export default function ShowDisposisi({ disposisi }) {
     const surat = disposisi.surat_masuk;
+    const alur = surat ? resolveSuratMasukAlurStatus(surat) : null;
 
     return (
         <AppLayout
@@ -41,13 +42,25 @@ export default function ShowDisposisi({ disposisi }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 surface-card p-6 md:p-8">
+                    <div className="flex flex-wrap items-start justify-between gap-4 mb-6 pb-5 border-b border-border">
+                        <div>
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                Arahan
+                            </p>
+                            <p className="text-lg font-semibold mt-1">
+                                {disposisi.dari_jabatan}{" "}
+                                <span className="text-muted-foreground font-normal">
+                                    →
+                                </span>{" "}
+                                {disposisi.kepada}
+                            </p>
+                        </div>
+                    </div>
+
                     <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
                         <Field label="Dari" value={disposisi.dari_jabatan} />
                         <Field label="Kepada" value={disposisi.kepada} />
-                        <Field
-                            label="Dibuat oleh"
-                            value={disposisi.dari}
-                        />
+                        <Field label="Dibuat oleh" value={disposisi.dari} />
                         <Field
                             label="Tanggal"
                             value={
@@ -67,14 +80,14 @@ export default function ShowDisposisi({ disposisi }) {
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">
-                    <h3 className="font-bold text-base">Surat Terkait</h3>
+                    <h3 className="font-semibold text-base">Surat Terkait</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
-                        Informasi surat masuk yang didisposisikan
+                        Surat masuk yang didisposisikan
                     </p>
                     {surat ? (
                         <dl className="space-y-4 text-sm">
                             <div>
-                                <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                <dt className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                     Nomor Surat
                                 </dt>
                                 <dd className="font-mono font-semibold text-primary mt-1">
@@ -87,22 +100,22 @@ export default function ShowDisposisi({ disposisi }) {
                             />
                             <Field label="Perihal" value={surat.perihal} />
                             <div>
-                                <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                <dt className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                     Status Surat
                                 </dt>
                                 <dd className="mt-2">
                                     <StatusBadge
-                                        value={resolveSuratMasukAlurStatus(surat)}
+                                        value={alur}
                                         label={badgeLabel(
                                             SURAT_MASUK_ALUR_LABELS,
-                                            resolveSuratMasukAlurStatus(surat),
+                                            alur,
                                         )}
                                     />
                                 </dd>
                             </div>
                             {surat.tingkat && (
                                 <div>
-                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    <dt className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                         Tingkat
                                     </dt>
                                     <dd className="mt-2">
@@ -116,11 +129,7 @@ export default function ShowDisposisi({ disposisi }) {
                                     </dd>
                                 </div>
                             )}
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="w-full rounded-xl mt-2"
-                            >
+                            <Button asChild variant="outline" className="w-full mt-2">
                                 <Link
                                     href={route("admin.surat-masuk.show", {
                                         surat_masuk: surat.id,

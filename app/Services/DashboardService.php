@@ -57,7 +57,7 @@ class DashboardService
                 ->whereMonth('tanggal_kirim', now()->month)
                 ->whereYear('tanggal_kirim', now()->year)
                 ->count(),
-            'disposisi' => Disposisi::query()->count(),
+            'disposisi' => Disposisi::query()->forActiveSurat()->count(),
             'disposisi_menunggu' => (clone $suratMasukAktif)
                 ->where('tingkat', SuratMasuk::TINGKAT_PENTING)
                 ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
@@ -100,7 +100,9 @@ class DashboardService
     public function sekdes(): array
     {
         $suratMasukAktif = SuratMasuk::query()->whereNull('diarsipkan_at');
-        $disposisiQuery = Disposisi::query()->where('dari_jabatan', Disposisi::DARI_SEKDES);
+        $disposisiQuery = Disposisi::query()
+            ->forActiveSurat()
+            ->where('dari_jabatan', Disposisi::DARI_SEKDES);
 
         $summary = [
             'surat_masuk' => (clone $suratMasukAktif)->count(),
@@ -407,7 +409,9 @@ class DashboardService
      */
     private function kadesDisposisiQuery(): Builder
     {
-        return Disposisi::query()->where('dari_jabatan', Disposisi::DARI_KADES);
+        return Disposisi::query()
+            ->forActiveSurat()
+            ->where('dari_jabatan', Disposisi::DARI_KADES);
     }
 
     /**
@@ -516,6 +520,7 @@ class DashboardService
     private function recentDisposisi(?callable $scope = null): array
     {
         $query = Disposisi::query()
+            ->forActiveSurat()
             ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
@@ -539,6 +544,7 @@ class DashboardService
     private function pendingDisposisi(?callable $scope = null): array
     {
         $query = Disposisi::query()
+            ->forActiveSurat()
             ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')

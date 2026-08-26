@@ -323,13 +323,13 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">
-                    <h3 className="font-bold text-base">Riwayat Disposisi</h3>
+                    <h3 className="font-semibold text-base">Riwayat Disposisi</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
                         {disposisi.length} entri
                     </p>
 
                     {disposisi.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                        <div className="border border-dashed border-border p-6 text-center">
                             <p className="text-sm text-muted-foreground">
                                 Belum ada disposisi.
                             </p>

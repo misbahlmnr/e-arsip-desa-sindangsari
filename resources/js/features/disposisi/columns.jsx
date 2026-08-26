@@ -108,7 +108,7 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="size-9 rounded-lg"
+                        className="size-9"
                         aria-label="Lihat detail"
                         onClick={() => onDetail?.(row.original)}
                     >

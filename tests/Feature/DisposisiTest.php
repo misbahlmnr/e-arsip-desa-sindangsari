@@ -101,6 +101,42 @@ class DisposisiTest extends TestCase
         $this->assertSame(SuratMasuk::STATUS_DIDISPOSISIKAN, $surat->fresh()->status);
     }
 
+    public function test_disposisi_index_hides_archived_surat(): void
+    {
+        $sekdes = User::factory()->create(['role' => 'sekdes']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $surat = $this->createDraftSurat();
+        $this->reviewAsBiasa($surat, $sekdes);
+
+        $this->actingAs($sekdes)
+            ->post(route('admin.disposisi.store'), [
+                'surat_masuk_id' => $surat->id,
+                'jabatan_tujuan_id' => $this->jabatanId(),
+                'catatan' => 'Mohon ditindaklanjuti segera.',
+                'tanggal' => now()->toDateString(),
+            ])
+            ->assertRedirect();
+
+        $this->actingAs($sekdes)
+            ->get(route('admin.disposisi.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->has('disposisi.data', 1)
+                ->where('disposisi.data.0.no_surat', $surat->no_surat)
+            );
+
+        $this->actingAs($admin)
+            ->patch(route('admin.surat-masuk.archive', ['surat_masuk' => $surat->id]))
+            ->assertRedirect();
+
+        $this->actingAs($sekdes)
+            ->get(route('admin.disposisi.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->has('disposisi.data', 0)
+            );
+    }
+
     public function test_sekdes_cannot_create_disposisi_before_review(): void
     {
         $sekdes = User::factory()->create(['role' => 'sekdes']);

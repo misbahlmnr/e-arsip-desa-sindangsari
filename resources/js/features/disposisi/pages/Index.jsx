@@ -5,20 +5,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable/Index";
 import AppLayout from "@/layouts/AppLayout";
 import { useServerTable } from "@/shared/hooks/useServerTable";
 import { Head, router } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import { useMemo } from "react";
 import { getColumns } from "../columns";
 
 const STATUS_FILTER_OPTIONS = [
     { value: "all", label: "Semua status surat" },
-    { value: "draft", label: "Draft" },
-    { value: "terverifikasi", label: "Terverifikasi" },
     { value: "didisposisikan", label: "Didisposisikan" },
-    { value: "diarsipkan", label: "Diarsipkan" },
+    { value: "terverifikasi", label: "Terverifikasi" },
 ];
 
 export default function DisposisiIndex({ disposisi, filters }) {
@@ -50,14 +50,31 @@ export default function DisposisiIndex({ disposisi, filters }) {
     return (
         <AppLayout
             title="Disposisi"
-            subtitle="Kelola instruksi dan arahan antar pejabat desa."
+            subtitle="Instruksi surat yang sudah didisposisikan dan belum diarsipkan."
         >
             <Head title="Disposisi" />
 
-            <div className="space-y-8">
+            <div className="space-y-6">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: -12 }}
                     animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-end"
+                >
+                    <Button
+                        size="lg"
+                        onClick={() =>
+                            router.visit(route("admin.disposisi.create"))
+                        }
+                    >
+                        <Plus className="size-4" />
+                        Buat Disposisi
+                    </Button>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.08 }}
                 >
                     <DataTable
                         columns={columns}
@@ -68,7 +85,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
                         onSearchInputChange={setSearchInput}
                         loading={loading}
                         searchPlaceholder="Cari nomor surat, pengirim, penerima, atau catatan…"
-                        emptyMessage="Belum ada disposisi. Buat disposisi dari halaman detail surat masuk."
+                        emptyMessage="Belum ada disposisi aktif. Buat disposisi dari surat masuk, atau cek arsip untuk riwayat lama."
                         serverSortClearDefaults={{
                             sort_by: "tanggal",
                             sort_dir: "desc",
@@ -87,7 +104,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
                                     })
                                 }
                             >
-                                <SelectTrigger className="w-full sm:w-52 h-11 rounded-xl">
+                                <SelectTrigger className="w-full sm:w-52 h-11">
                                     <SelectValue placeholder="Filter status" />
                                 </SelectTrigger>
                                 <SelectContent>
