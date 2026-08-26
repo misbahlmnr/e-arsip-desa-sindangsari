@@ -35,14 +35,14 @@ export function StatCard({ label, value, hint, icon: Icon, tone, href }) {
     const content = (
         <div className="surface-card surface-card-hover p-6 h-full">
             <div
-                className={`size-11 rounded-xl ${toneClasses} flex items-center justify-center`}
+                className={`size-10 ${toneClasses} flex items-center justify-center`}
             >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-5" strokeWidth={2} />
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-4">
                 {label}
             </p>
-            <p className="text-3xl font-extrabold tracking-tight tabular-nums mt-1">
+            <p className="text-2xl font-semibold tracking-tight tabular-nums mt-1">
                 {value}
             </p>
             {hint && (
@@ -154,8 +154,8 @@ export function TrendChart({
     subtitle,
     data,
     bars = [
-        { key: "masuk", name: "Masuk", color: "hsl(188, 45%, 38%)" },
-        { key: "keluar", name: "Keluar", color: "hsl(38, 92%, 50%)" },
+        { key: "masuk", name: "Masuk", color: "hsl(215, 55%, 22%)" },
+        { key: "keluar", name: "Keluar", color: "hsl(38, 72%, 48%)" },
     ],
 }) {
     return (
@@ -178,7 +178,7 @@ export function TrendChart({
                         <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                         <Tooltip
                             contentStyle={{
-                                borderRadius: "12px",
+                                borderRadius: "2px",
                                 border: "1px solid hsl(var(--border))",
                                 background: "hsl(var(--card))",
                             }}

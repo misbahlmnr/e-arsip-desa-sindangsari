@@ -169,7 +169,7 @@ export default function KadesDashboard({
                                 {
                                     key: "total",
                                     name: "Disposisi",
-                                    color: "hsl(188, 45%, 38%)",
+                                    color: "hsl(215, 55%, 22%)",
                                 },
                             ]}
                         />

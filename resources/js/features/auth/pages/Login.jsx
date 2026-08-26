@@ -26,89 +26,87 @@ export default function Login({ status, canResetPassword }) {
         <>
             <Head title="Login" />
 
-            <div className="min-h-screen w-full grid lg:grid-cols-2 bg-white">
-                {/* Left: brand panel */}
+            <div className="min-h-screen w-full grid lg:grid-cols-2 bg-card">
                 <aside className="hidden lg:flex flex-col justify-between bg-gradient-primary text-white p-12 relative overflow-hidden">
                     <div
-                        className="absolute -top-32 -right-32 size-96 rounded-full bg-white/5"
+                        className="absolute top-0 right-0 w-72 h-full bg-white/5"
                         aria-hidden
                     />
                     <div
-                        className="absolute -bottom-40 -left-20 size-[500px] rounded-full bg-white/5"
+                        className="absolute bottom-0 left-0 w-full h-1 bg-sidebar-primary"
                         aria-hidden
                     />
 
                     <div className="relative flex items-center gap-3">
-                        <div className="size-12 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center">
-                            <FileText className="size-6" />
+                        <div className="size-10 bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
+                            <FileText className="size-5" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold tracking-tight leading-none">
+                            <h1 className="text-lg font-semibold tracking-tight leading-none">
                                 Desa Sindangsari
                             </h1>
-                            <p className="text-xs uppercase tracking-widest opacity-75 mt-1.5">
+                            <p className="text-[11px] uppercase tracking-[0.16em] opacity-70 mt-1.5">
                                 Sistem Arsip Surat
                             </p>
                         </div>
                     </div>
 
                     <div className="relative max-w-md">
-                        <h2 className="text-3xl font-bold leading-tight tracking-tight">
-                            Kelola surat desa dengan rapi, tanpa ribet.
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-sidebar-primary font-semibold mb-3">
+                            E-Arsip Desa
+                        </p>
+                        <h2 className="text-3xl font-semibold leading-tight tracking-tight">
+                            Kelola surat desa dengan rapi dan terstruktur.
                         </h2>
-                        <p className="mt-4 text-base opacity-85 leading-relaxed">
+                        <p className="mt-4 text-sm opacity-80 leading-relaxed">
                             Pencatatan surat masuk, surat keluar, disposisi, dan
-                            arsip dalam satu tempat. Dibuat sederhana untuk
-                            pegawai kantor desa.
+                            arsip dalam satu sistem. Dirancang untuk administrasi
+                            kantor desa.
                         </p>
                     </div>
 
-                    <div className="relative text-xs opacity-70">
+                    <div className="relative text-xs opacity-60">
                         © {new Date().getFullYear()} Kantor Desa Sindangsari —
                         Kec. Cimerak, Kab. Pangandaran
                     </div>
                 </aside>
 
-                {/* Right: form */}
-                <main className="flex items-center justify-center p-6 md:p-10">
-                    <div className="w-full max-w-md">
-                        {/* Mobile logo */}
+                <main className="flex items-center justify-center p-6 md:p-10 bg-background">
+                    <div className="w-full max-w-md bg-card border border-border p-8">
                         <div className="mb-8 lg:hidden flex items-center gap-3">
-                            <div className="size-11 rounded-xl bg-primary text-white flex items-center justify-center">
+                            <div className="size-10 bg-primary text-white flex items-center justify-center">
                                 <FileText className="size-5" />
                             </div>
                             <div>
-                                <h1 className="text-lg font-bold tracking-tight leading-none">
+                                <h1 className="text-base font-semibold tracking-tight leading-none">
                                     Desa Sindangsari
                                 </h1>
-                                <p className="text-xs text-gray-500 mt-1">
+                                <p className="text-xs text-muted-foreground mt-1">
                                     Sistem Arsip Surat
                                 </p>
                             </div>
                         </div>
 
-                        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                            Selamat datang kembali
+                        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+                            Masuk ke sistem
                         </h2>
-                        <p className="text-gray-500 mt-1.5 text-sm">
-                            Masuk untuk mengakses sistem arsip surat desa.
+                        <p className="text-muted-foreground mt-1.5 text-sm">
+                            Gunakan akun petugas untuk mengakses e-arsip desa.
                         </p>
 
-                        {/* Status message (e.g. after password reset) */}
                         {status && (
-                            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                                <p className="text-sm font-medium text-green-800">
+                            <div className="mt-4 p-3 bg-success-soft border border-success/20">
+                                <p className="text-sm font-medium text-success">
                                     {status}
                                 </p>
                             </div>
                         )}
 
                         <form onSubmit={submit} className="mt-8 space-y-5">
-                            {/* Username */}
                             <div className="space-y-2">
                                 <label
                                     htmlFor="username"
-                                    className="block text-sm font-medium text-gray-700"
+                                    className="block text-sm font-medium text-foreground"
                                 >
                                     Username
                                 </label>
@@ -130,11 +128,10 @@ export default function Login({ status, canResetPassword }) {
                                 />
                             </div>
 
-                            {/* Password */}
                             <div className="space-y-2">
                                 <label
                                     htmlFor="password"
-                                    className="block text-sm font-medium text-gray-700"
+                                    className="block text-sm font-medium text-foreground"
                                 >
                                     Password
                                 </label>
@@ -159,7 +156,7 @@ export default function Login({ status, canResetPassword }) {
                                                 ? "Sembunyikan password"
                                                 : "Tampilkan password"
                                         }
-                                        className="absolute inset-y-0 right-0 px-4 text-gray-400 hover:text-gray-600 transition-colors"
+                                        className="absolute inset-y-0 right-0 px-4 text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         {showPw ? (
                                             <EyeOff className="size-5" />
@@ -174,7 +171,6 @@ export default function Login({ status, canResetPassword }) {
                                 />
                             </div>
 
-                            {/* Remember + Forgot */}
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Checkbox
@@ -190,7 +186,7 @@ export default function Login({ status, canResetPassword }) {
                                     />
                                     <label
                                         htmlFor="remember"
-                                        className="text-sm font-medium text-gray-700 cursor-pointer select-none"
+                                        className="text-sm font-medium text-foreground cursor-pointer select-none"
                                     >
                                         Ingat saya di perangkat ini
                                     </label>
@@ -206,11 +202,10 @@ export default function Login({ status, canResetPassword }) {
                                 )}
                             </div>
 
-                            {/* General error alert */}
                             {(errors.username || errors.password) && (
                                 <div
                                     role="alert"
-                                    className="flex items-start gap-2.5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+                                    className="flex items-start gap-2.5 bg-destructive-soft border border-destructive/20 px-4 py-3 text-sm text-destructive"
                                 >
                                     <AlertCircle className="size-4 mt-0.5 shrink-0" />
                                     <span>
@@ -220,11 +215,10 @@ export default function Login({ status, canResetPassword }) {
                                 </div>
                             )}
 
-                            {/* Submit */}
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full h-12 flex items-center justify-center gap-2 text-base font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full h-11 flex items-center justify-center gap-2 text-sm font-semibold"
                             >
                                 {processing ? (
                                     <>
@@ -237,7 +231,7 @@ export default function Login({ status, canResetPassword }) {
                             </Button>
                         </form>
 
-                        <p className="text-xs text-gray-400 text-center mt-6">
+                        <p className="text-xs text-muted-foreground text-center mt-6">
                             Sistem ini dilindungi dan hanya dapat diakses oleh
                             petugas berwenang.
                         </p>

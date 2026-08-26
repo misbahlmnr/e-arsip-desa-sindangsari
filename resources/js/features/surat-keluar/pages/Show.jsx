@@ -84,7 +84,7 @@ export default function ShowSuratKeluar({ letter }) {
                             <div className="flex flex-wrap items-center gap-2 justify-end">
                                 <span
                                     className={cn(
-                                        "inline-flex px-2.5 py-1 rounded-full text-xs font-semibold",
+                                        "inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold",
                                         statusCfg?.className ??
                                             "bg-gray-100 text-gray-700",
                                     )}
@@ -92,7 +92,7 @@ export default function ShowSuratKeluar({ letter }) {
                                     {statusCfg?.label ?? letter.status ?? "—"}
                                 </span>
                                 {letter.diarsipkan_at && (
-                                    <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
+                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
                                         Diarsip
                                     </span>
                                 )}

@@ -23,7 +23,7 @@ export default function ResetPassword({ token, email }) {
 
     return (
         <GuestLayout>
-            <Head title="Reset Password" />
+            <Head title="Atur Ulang Password" />
 
             <form onSubmit={submit}>
                 <div>
@@ -85,7 +85,7 @@ export default function ResetPassword({ token, email }) {
 
                 <div className="mt-4 flex items-center justify-end">
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Reset Password
+                        Simpan password baru
                     </PrimaryButton>
                 </div>
             </form>

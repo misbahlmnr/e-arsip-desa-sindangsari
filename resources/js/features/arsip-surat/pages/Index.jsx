@@ -33,7 +33,7 @@ function JenisBadge({ jenis }) {
         <Badge
             variant="outline"
             className={cn(
-                "font-semibold rounded-full px-2.5 py-0.5 border",
+                "font-semibold rounded-sm px-2.5 py-0.5 border",
                 cls,
             )}
         >
@@ -361,7 +361,7 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                             <td className="px-4 py-4">
                                                 <Badge
                                                     variant="outline"
-                                                    className="font-semibold rounded-full px-2.5 py-0.5 border bg-success-soft text-success border-success/20"
+                                                    className="font-semibold rounded-sm px-2.5 py-0.5 border bg-success-soft text-success border-success/20"
                                                 >
                                                     Diarsipkan
                                                 </Badge>

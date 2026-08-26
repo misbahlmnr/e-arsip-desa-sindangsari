@@ -49,16 +49,16 @@ const RANGE_OPTIONS = [
 ];
 
 const CHART_COLORS = {
-    masuk: "hsl(188, 45%, 38%)",
-    keluar: "hsl(38, 92%, 50%)",
-    arsip: "hsl(24, 95%, 53%)",
-    disposisi: "hsl(262, 52%, 47%)",
+    masuk: "hsl(215, 55%, 22%)",
+    keluar: "hsl(38, 72%, 48%)",
+    arsip: "hsl(152, 48%, 30%)",
+    disposisi: "hsl(215, 35%, 40%)",
     status: [
-        "hsl(188, 45%, 38%)",
-        "hsl(38, 92%, 50%)",
-        "hsl(142, 71%, 45%)",
-        "hsl(262, 52%, 47%)",
-        "hsl(0, 84%, 60%)",
+        "hsl(215, 55%, 22%)",
+        "hsl(38, 72%, 48%)",
+        "hsl(152, 48%, 30%)",
+        "hsl(215, 35%, 40%)",
+        "hsl(0, 72%, 44%)",
     ],
 };
 
@@ -156,7 +156,7 @@ export default function LaporanIndex({
                     className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                 >
                     <div className="flex items-center gap-3 text-muted-foreground">
-                        <div className="size-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+                        <div className="size-9 bg-primary-soft text-primary flex items-center justify-center">
                             <BarChart3 className="size-5" />
                         </div>
                         <p className="text-sm">
@@ -260,7 +260,7 @@ export default function LaporanIndex({
                                 />
                                 <Tooltip
                                     contentStyle={{
-                                        borderRadius: "12px",
+                                        borderRadius: "2px",
                                         border: "1px solid hsl(var(--border))",
                                         background: "hsl(var(--card))",
                                     }}
@@ -343,14 +343,14 @@ function StatCard({ label, value, hint, icon: Icon, tone }) {
     return (
         <div className="surface-card surface-card-hover p-6">
             <div
-                className={`size-11 rounded-xl ${toneClasses} flex items-center justify-center`}
+                className={`size-10 ${toneClasses} flex items-center justify-center`}
             >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-5" strokeWidth={2} />
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-4">
                 {label}
             </p>
-            <p className="text-3xl font-extrabold tracking-tight tabular-nums mt-1">
+            <p className="text-2xl font-semibold tracking-tight tabular-nums mt-1">
                 {value}
             </p>
             {hint && (
@@ -367,7 +367,7 @@ function StatusPieCard({ title, subtitle, data, icon: Icon }) {
     return (
         <div className="surface-card p-6 md:p-7">
             <div className="flex items-start gap-3 mb-4">
-                <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <div className="size-9 bg-muted flex items-center justify-center shrink-0">
                     <Icon className="size-5 text-muted-foreground" />
                 </div>
                 <div>
@@ -410,7 +410,7 @@ function StatusPieCard({ title, subtitle, data, icon: Icon }) {
                                 </Pie>
                                 <Tooltip
                                     contentStyle={{
-                                        borderRadius: "12px",
+                                        borderRadius: "2px",
                                         border: "1px solid hsl(var(--border))",
                                         background: "hsl(var(--card))",
                                     }}
@@ -460,7 +460,7 @@ function RankListCard({ title, subtitle, icon: Icon, rows, emptyMessage }) {
     return (
         <div className="surface-card overflow-hidden">
             <div className="flex items-start gap-3 px-6 md:px-8 py-5 border-b border-border">
-                <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <div className="size-9 bg-muted flex items-center justify-center shrink-0">
                     <Icon className="size-5 text-muted-foreground" />
                 </div>
                 <div>
@@ -492,9 +492,9 @@ function RankListCard({ title, subtitle, icon: Icon, rows, emptyMessage }) {
                                     {row.value}
                                 </span>
                             </div>
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
+                            <div className="h-1.5 bg-muted overflow-hidden">
                                 <div
-                                    className="h-full rounded-full bg-primary transition-all"
+                                    className="h-full bg-primary transition-all"
                                     style={{
                                         width: `${max ? (row.value / max) * 100 : 0}%`,
                                     }}

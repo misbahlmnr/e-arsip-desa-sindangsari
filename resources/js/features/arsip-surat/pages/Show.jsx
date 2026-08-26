@@ -109,7 +109,7 @@ export default function ArsipSuratShow({ jenis, letter }) {
                                 <Badge
                                     variant="outline"
                                     className={cn(
-                                        "font-semibold rounded-full px-2.5 py-0.5 border",
+                                        "font-semibold rounded-sm px-2.5 py-0.5 border",
                                         isMasuk
                                             ? "bg-info-soft text-info border-info/20"
                                             : "bg-warning-soft text-warning border-warning/20",
@@ -119,7 +119,7 @@ export default function ArsipSuratShow({ jenis, letter }) {
                                 </Badge>
                                 <Badge
                                     variant="outline"
-                                    className="font-semibold rounded-full px-2.5 py-0.5 border bg-success-soft text-success border-success/20"
+                                    className="font-semibold rounded-sm px-2.5 py-0.5 border bg-success-soft text-success border-success/20"
                                 >
                                     Diarsipkan
                                 </Badge>

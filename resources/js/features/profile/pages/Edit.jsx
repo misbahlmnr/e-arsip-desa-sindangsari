@@ -6,26 +6,24 @@ import AppLayout from "@/layouts/AppLayout";
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
-        <AppLayout>
-            <Head title="Profile" />
+        <AppLayout title="Profil" subtitle="Kelola informasi akun Anda.">
+            <Head title="Profil" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
+            <div className="space-y-6 max-w-3xl">
+                <div className="surface-card p-6 md:p-8">
+                    <UpdateProfileInformationForm
+                        mustVerifyEmail={mustVerifyEmail}
+                        status={status}
+                        className="max-w-xl"
+                    />
+                </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
+                <div className="surface-card p-6 md:p-8">
+                    <UpdatePasswordForm className="max-w-xl" />
+                </div>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
-                    </div>
+                <div className="surface-card p-6 md:p-8">
+                    <DeleteUserForm className="max-w-xl" />
                 </div>
             </div>
         </AppLayout>

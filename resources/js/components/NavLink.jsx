@@ -11,10 +11,10 @@ export default function NavLink({
         <Link
             {...props}
             className={cn(
-                "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
+                "flex items-center gap-3 px-4 py-2.5 text-sm font-medium border-l-[3px] transition-colors",
                 active
-                    ? "!bg-primary-soft !text-primary font-semibold shadow-soft"
-                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700",
+                    ? "bg-sidebar-accent text-white border-l-sidebar-primary"
+                    : "border-l-transparent text-sidebar-foreground/70 hover:text-white hover:bg-sidebar-accent/70",
                 className,
             )}
         >

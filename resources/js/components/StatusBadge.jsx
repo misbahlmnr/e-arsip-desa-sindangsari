@@ -40,7 +40,7 @@ function OutlineBadge({ value, label, styleMap, className }) {
         <Badge
             variant="outline"
             className={cn(
-                "font-medium rounded-full px-2.5 py-0.5",
+                "font-medium rounded-sm px-2 py-0.5",
                 styleMap[value] ?? FALLBACK_STYLE,
                 className,
             )}
