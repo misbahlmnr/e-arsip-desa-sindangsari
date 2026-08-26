@@ -18,7 +18,6 @@ const STATUS_FILTER_OPTIONS = [
     { value: "draft", label: "Draft" },
     { value: "terverifikasi", label: "Terverifikasi" },
     { value: "didisposisikan", label: "Didisposisikan" },
-    { value: "diarsipkan", label: "Diarsipkan" },
 ];
 
 export default function DisposisiIndex({ disposisi, filters }) {
@@ -50,7 +49,7 @@ export default function DisposisiIndex({ disposisi, filters }) {
     return (
         <AppLayout
             title="Disposisi"
-            subtitle="Kelola instruksi dan arahan antar pejabat desa."
+            subtitle="Instruksi surat yang sudah didisposisikan dan belum diarsipkan."
         >
             <Head title="Disposisi" />
 

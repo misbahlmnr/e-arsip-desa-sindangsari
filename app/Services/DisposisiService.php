@@ -37,7 +37,10 @@ class DisposisiService
             'sort_by' => ['nullable', 'string', 'max:64'],
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'in:10,20,50,100'],
-            'surat_status' => ['nullable', 'in:'.implode(',', SuratMasuk::STATUSES)],
+            'surat_status' => ['nullable', 'in:'.implode(',', array_values(array_filter(
+                SuratMasuk::STATUSES,
+                fn (string $status) => $status !== SuratMasuk::STATUS_DIARSIPKAN,
+            )))],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
@@ -55,6 +58,7 @@ class DisposisiService
         $dariJabatan = $user->isKades() ? Disposisi::DARI_KADES : Disposisi::DARI_SEKDES;
 
         $query = Disposisi::query()
+            ->forActiveSurat()
             ->with([
                 'suratMasuk:id,no_surat,pengirim,perihal,status,tingkat,verified_kades_at,diarsipkan_at',
                 'user:id,name,role',
