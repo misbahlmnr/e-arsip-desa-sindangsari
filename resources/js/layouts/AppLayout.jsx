@@ -13,7 +13,7 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 
-export default function AppLayout({ title, subtitle, actions, children }) {
+export default function AppLayout({ title, subtitle, children }) {
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const user = usePage().props.auth.user;
@@ -29,7 +29,6 @@ export default function AppLayout({ title, subtitle, actions, children }) {
                 <AppHeader
                     title={title}
                     subtitle={subtitle}
-                    actions={actions}
                     onToggleSidebar={() => setCollapsed((c) => !c)}
                     onOpenMobile={() => setMobileOpen(true)}
                 />

@@ -14,6 +14,7 @@ import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { Save } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
 export default function CreateSuratKeluar() {
     const { data, setData, post, processing, errors } = useForm({
@@ -37,6 +38,8 @@ export default function CreateSuratKeluar() {
             subtitle="Catat surat baru yang dikirim oleh kantor desa."
         >
             <Head title="Tambah Surat Keluar" />
+
+            <BackLink href={route("admin.surat-keluar.index")} />
 
             <form
                 onSubmit={handleSubmit}

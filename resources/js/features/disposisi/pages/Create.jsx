@@ -11,7 +11,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { ArrowLeft, Send } from "lucide-react";
+import { Send } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
 function FormField({ label, required, error, children }) {
     return (
@@ -57,18 +58,7 @@ export default function CreateDisposisi({
         >
             <Head title="Buat Disposisi" />
 
-            <div className="mb-6">
-                <Button
-                    variant="ghost"
-                    asChild
-                    className="rounded-xl -ml-2 text-muted-foreground"
-                >
-                    <Link href={route("admin.disposisi.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali ke daftar
-                    </Link>
-                </Button>
-            </div>
+            <BackLink href={route("admin.disposisi.index")} />
 
             <form
                 onSubmit={handleSubmit}

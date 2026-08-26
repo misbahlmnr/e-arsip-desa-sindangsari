@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { FilePreview } from "@/components/FilePreview";
 import { cn } from "@/shared/lib/utils";
+import BackLink from "@/components/BackLink";
 
 function tanggalToInput(value) {
     if (!value) return "";
@@ -91,6 +92,8 @@ export default function EditSuratMasuk({ letter }) {
             subtitle="Perbarui data surat yang sudah tercatat."
         >
             <Head title={`Edit — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.surat-masuk.index")} />
 
             <form
                 onSubmit={handleSubmit}

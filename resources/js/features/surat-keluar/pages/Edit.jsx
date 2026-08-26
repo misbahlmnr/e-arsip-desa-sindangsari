@@ -16,6 +16,7 @@ import { cn } from "@/shared/lib/utils";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
+import BackLink from "@/components/BackLink";
 
 const STATUS_OPTIONS = [
     { value: "draft", label: "Draft" },
@@ -100,6 +101,8 @@ export default function EditSuratKeluar({ letter }) {
             subtitle="Perbarui data surat keluar yang sudah tercatat."
         >
             <Head title={`Edit — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.surat-keluar.index")} />
 
             <form
                 onSubmit={handleSubmit}

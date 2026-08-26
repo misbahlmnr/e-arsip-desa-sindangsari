@@ -3,7 +3,6 @@ import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Archive,
-    ArrowLeft,
     ClipboardCheck,
     FileText,
     Pencil,
@@ -15,6 +14,7 @@ import { useState } from "react";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
 import { StatusBadge } from "@/components/StatusBadge";
+import BackLink from "@/components/BackLink";
 import {
     badgeLabel,
     resolveSuratMasukAlurStatus,
@@ -84,16 +84,10 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
         <AppLayout
             title="Detail Surat Masuk"
             subtitle={letter.no_surat}
-            actions={
-                <Button asChild variant="outline" className="rounded-xl h-10">
-                    <Link href={route("admin.surat-masuk.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali
-                    </Link>
-                </Button>
-            }
         >
             <Head title={`Surat — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.surat-masuk.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">

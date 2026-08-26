@@ -18,7 +18,7 @@ const ROLE_LABEL = {
     kades: "Kepala Desa",
 };
 
-const AppHeader = ({ title, subtitle, actions, onToggleSidebar, onOpenMobile }) => {
+const AppHeader = ({ title, subtitle, onToggleSidebar, onOpenMobile }) => {
     const user = usePage().props.auth.user;
 
     const initials = user?.name
@@ -65,11 +65,6 @@ const AppHeader = ({ title, subtitle, actions, onToggleSidebar, onOpenMobile }) 
             </div>
 
             <div className="flex items-center gap-3 shrink-0">
-                {actions ? (
-                    <div className="hidden sm:flex items-center gap-2">
-                        {actions}
-                    </div>
-                ) : null}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button className="flex items-center gap-3 px-2 py-1.5 hover:bg-muted transition-colors border border-transparent hover:border-border">

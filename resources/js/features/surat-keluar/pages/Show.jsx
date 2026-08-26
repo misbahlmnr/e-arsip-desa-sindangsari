@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { Archive, ArrowLeft, FileText, Pencil, Trash2 } from "lucide-react";
+import { Archive, FileText, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
+import BackLink from "@/components/BackLink";
 
 function Field({ label, value, className }) {
     return (
@@ -55,16 +56,10 @@ export default function ShowSuratKeluar({ letter }) {
         <AppLayout
             title="Detail Surat Keluar"
             subtitle={letter.no_surat}
-            actions={
-                <Button asChild variant="outline" className="rounded-xl h-10">
-                    <Link href={route("admin.surat-keluar.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali
-                    </Link>
-                </Button>
-            }
         >
             <Head title={`Surat — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.surat-keluar.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/*  Kolom utama  */}

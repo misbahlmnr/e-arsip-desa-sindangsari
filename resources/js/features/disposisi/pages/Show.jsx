@@ -9,7 +9,8 @@ import {
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link } from "@inertiajs/react";
-import { ArrowLeft, FileInput } from "lucide-react";
+import { FileInput } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
 function Field({ label, value, className }) {
     return (
@@ -36,18 +37,7 @@ export default function ShowDisposisi({ disposisi }) {
         >
             <Head title="Detail Disposisi" />
 
-            <div className="mb-6">
-                <Button
-                    variant="ghost"
-                    asChild
-                    className="rounded-xl -ml-2 text-muted-foreground"
-                >
-                    <Link href={route("admin.disposisi.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali ke daftar
-                    </Link>
-                </Button>
-            </div>
+            <BackLink href={route("admin.disposisi.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 surface-card p-6 md:p-8">

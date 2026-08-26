@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { Save } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
 export default function CreateSuratMasuk() {
     const { data, setData, post, processing, errors } = useForm({
@@ -30,6 +31,8 @@ export default function CreateSuratMasuk() {
             subtitle="Catat surat baru yang diterima oleh kantor desa."
         >
             <Head title="Tambah Surat Masuk" />
+
+            <BackLink href={route("admin.surat-masuk.index")} />
 
             <form
                 onSubmit={handleSubmit}

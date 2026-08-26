@@ -14,8 +14,9 @@ import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { ArrowLeft, Download, FileText, RotateCcw } from "lucide-react";
+import { Download, FileText, RotateCcw } from "lucide-react";
 import { useState } from "react";
+import BackLink from "@/components/BackLink";
 
 function formatDateTime(iso) {
     if (!iso) return "—";
@@ -82,16 +83,10 @@ export default function ArsipSuratShow({ jenis, letter }) {
         <AppLayout
             title="Detail Arsip"
             subtitle={letter.no_surat}
-            actions={
-                <Button asChild variant="outline" className="rounded-xl h-10">
-                    <Link href={route("admin.arsip-surat.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali
-                    </Link>
-                </Button>
-            }
         >
             <Head title={`Arsip — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.arsip-surat.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">

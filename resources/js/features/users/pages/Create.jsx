@@ -12,6 +12,7 @@ import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { Save } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
 const ROLE_OPTIONS = [
     { value: "admin", label: "Admin" },
@@ -40,6 +41,8 @@ export default function UsersCreate() {
             subtitle="Buat akun baru untuk mengakses sistem sesuai perannya."
         >
             <Head title="Tambah Pengguna" />
+
+            <BackLink href={route("admin.users.index")} />
 
             <form
                 onSubmit={handleSubmit}
