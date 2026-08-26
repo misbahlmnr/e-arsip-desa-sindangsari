@@ -49,16 +49,16 @@ const RANGE_OPTIONS = [
 ];
 
 const CHART_COLORS = {
-    masuk: "hsl(215, 55%, 22%)",
-    keluar: "hsl(38, 72%, 48%)",
-    arsip: "hsl(152, 48%, 30%)",
-    disposisi: "hsl(215, 35%, 40%)",
+    masuk: "hsl(196, 92%, 36%)",
+    keluar: "hsl(48, 88%, 44%)",
+    arsip: "hsl(147, 62%, 32%)",
+    disposisi: "hsl(196, 70%, 28%)",
     status: [
-        "hsl(215, 55%, 22%)",
-        "hsl(38, 72%, 48%)",
-        "hsl(152, 48%, 30%)",
-        "hsl(215, 35%, 40%)",
-        "hsl(0, 72%, 44%)",
+        "hsl(196, 92%, 36%)",
+        "hsl(48, 88%, 44%)",
+        "hsl(147, 62%, 32%)",
+        "hsl(196, 70%, 28%)",
+        "hsl(357, 82%, 48%)",
     ],
 };
 
@@ -337,7 +337,7 @@ function StatCard({ label, value, hint, icon: Icon, tone }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
     }[tone];
 
     return (

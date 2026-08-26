@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import { Link } from "@inertiajs/react";
 
 export default function GuestLayout({ children }) {
@@ -7,9 +7,7 @@ export default function GuestLayout({ children }) {
             <div className="w-full max-w-md border border-border bg-card">
                 <div className="flex items-center gap-3 bg-primary px-6 py-4 text-primary-foreground">
                     <Link href="/" className="flex items-center gap-3">
-                        <div className="size-9 bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
-                            <FileText className="size-4" />
-                        </div>
+                        <BrandLogo className="size-11 shrink-0" />
                         <div>
                             <p className="text-sm font-semibold leading-none">
                                 E-Arsip Desa

@@ -22,7 +22,7 @@ const STATUS_STYLES = {
 const DISPOSISI_STYLES = {
     belum: "bg-muted text-muted-foreground border-border",
     sudah: "bg-success-soft text-success border-success/20",
-    menunggu: "bg-orange-100 text-orange-800 border-orange-200",
+    menunggu: "bg-warning-soft text-warning border-warning/20",
     diproses: "bg-warning-soft text-warning border-warning/20",
     selesai: "bg-success-soft text-success border-success/20",
 };

@@ -4,8 +4,8 @@ import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
 import FlashMessage from "@/components/FlashMessage";
 import NavLink from "@/components/NavLink";
+import BrandLogo from "@/components/BrandLogo";
 import { NAVBAR_ITEMS } from "@/shared/config/navigation";
-import { FileText } from "lucide-react";
 import {
     Sheet,
     SheetContent,
@@ -48,9 +48,7 @@ export default function AppLayout({ title, subtitle, children }) {
                         <SheetTitle>Menu</SheetTitle>
                     </SheetHeader>
                     <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border pr-12">
-                        <div className="size-9 bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center shrink-0">
-                            <FileText className="size-4" strokeWidth={2.2} />
-                        </div>
+                        <BrandLogo className="size-12 shrink-0" />
                         <div className="min-w-0">
                             <p className="font-semibold text-white tracking-tight text-sm leading-none">
                                 E-Arsip
@@ -59,6 +57,11 @@ export default function AppLayout({ title, subtitle, children }) {
                                 Desa Sindangsari
                             </p>
                         </div>
+                    </div>
+                    <div className="h-1 flex shrink-0" aria-hidden>
+                        <span className="flex-[3] bg-sidebar-primary" />
+                        <span className="flex-1 bg-warning" />
+                        <span className="w-8 bg-destructive" />
                     </div>
                     <nav className="py-4">
                         {menuItems.map((item) => (

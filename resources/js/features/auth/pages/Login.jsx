@@ -1,9 +1,10 @@
 import Checkbox from "@/components/Checkbox";
 import InputError from "@/components/InputError";
+import BrandLogo from "@/components/BrandLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { AlertCircle, Eye, EyeOff, FileText, Loader2 } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export default function Login({ status, canResetPassword }) {
@@ -33,14 +34,16 @@ export default function Login({ status, canResetPassword }) {
                         aria-hidden
                     />
                     <div
-                        className="absolute bottom-0 left-0 w-full h-1 bg-sidebar-primary"
+                        className="absolute bottom-0 left-0 w-full h-1.5 flex"
                         aria-hidden
-                    />
+                    >
+                        <span className="flex-[3] bg-sidebar-primary" />
+                        <span className="flex-1 bg-warning" />
+                        <span className="w-10 bg-destructive" />
+                    </div>
 
                     <div className="relative flex items-center gap-3">
-                        <div className="size-10 bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center">
-                            <FileText className="size-5" />
-                        </div>
+                        <BrandLogo className="size-16 shrink-0" />
                         <div>
                             <h1 className="text-lg font-semibold tracking-tight leading-none">
                                 Desa Sindangsari
@@ -74,9 +77,7 @@ export default function Login({ status, canResetPassword }) {
                 <main className="flex items-center justify-center p-6 md:p-10 bg-background">
                     <div className="w-full max-w-md bg-card border border-border p-8">
                         <div className="mb-8 lg:hidden flex items-center gap-3">
-                            <div className="size-10 bg-primary text-white flex items-center justify-center">
-                                <FileText className="size-5" />
-                            </div>
+                            <BrandLogo className="size-12 shrink-0" />
                             <div>
                                 <h1 className="text-base font-semibold tracking-tight leading-none">
                                     Desa Sindangsari

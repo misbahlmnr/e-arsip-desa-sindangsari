@@ -34,8 +34,8 @@ import {
 } from "recharts";
 
 const CHART_COLORS = {
-    masuk: "hsl(215, 55%, 22%)",
-    keluar: "hsl(38, 72%, 48%)",
+    masuk: "hsl(196, 92%, 36%)",
+    keluar: "hsl(48, 88%, 44%)",
 };
 
 const ATTENTION_STYLES = {
@@ -460,8 +460,7 @@ function StatCard({ label, value, hint, icon: Icon, tone, href }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi:
-            "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
         muted: "bg-muted text-muted-foreground",
     }[tone];
 

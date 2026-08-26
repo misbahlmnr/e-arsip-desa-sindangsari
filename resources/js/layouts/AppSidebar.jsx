@@ -1,8 +1,8 @@
 ﻿import NavLink from "@/components/NavLink";
+import BrandLogo from "@/components/BrandLogo";
 import { NAVBAR_ITEMS } from "@/shared/config/navigation";
 import { cn } from "@/shared/lib/utils";
 import { usePage } from "@inertiajs/react";
-import { FileText } from "lucide-react";
 
 const Sidebar = ({ collapsed = false }) => {
     const user = usePage().props.auth.user;
@@ -23,9 +23,12 @@ const Sidebar = ({ collapsed = false }) => {
                     collapsed && "justify-center px-2",
                 )}
             >
-                <div className="size-9 bg-sidebar-primary text-sidebar-primary-foreground flex items-center justify-center shrink-0">
-                    <FileText className="size-4" strokeWidth={2.2} />
-                </div>
+                <BrandLogo
+                    className={cn(
+                        "shrink-0",
+                        collapsed ? "size-10" : "size-12",
+                    )}
+                />
                 {!collapsed && (
                     <div className="min-w-0">
                         <h1 className="font-semibold text-white tracking-tight text-sm leading-none">
@@ -36,6 +39,11 @@ const Sidebar = ({ collapsed = false }) => {
                         </p>
                     </div>
                 )}
+            </div>
+            <div className="h-1 flex shrink-0" aria-hidden>
+                <span className="flex-[3] bg-sidebar-primary" />
+                <span className="flex-1 bg-warning" />
+                <span className="w-8 bg-destructive" />
             </div>
 
             <nav className="flex-1 py-4 space-y-0.5 overflow-y-auto min-h-0">

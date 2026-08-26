@@ -27,8 +27,7 @@ export function StatCard({ label, value, hint, icon: Icon, tone, href }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi:
-            "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
         muted: "bg-muted text-muted-foreground",
     }[tone];
 
@@ -154,8 +153,8 @@ export function TrendChart({
     subtitle,
     data,
     bars = [
-        { key: "masuk", name: "Masuk", color: "hsl(215, 55%, 22%)" },
-        { key: "keluar", name: "Keluar", color: "hsl(38, 72%, 48%)" },
+        { key: "masuk", name: "Masuk", color: "hsl(196, 92%, 36%)" },
+        { key: "keluar", name: "Keluar", color: "hsl(48, 88%, 44%)" },
     ],
 }) {
     return (

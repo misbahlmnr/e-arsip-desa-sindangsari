@@ -6,116 +6,119 @@
 
 @layer base {
     :root {
-        --background: 210 16% 96%;
-        --foreground: 215 32% 14%;
+        /* Palet lambang Kab. Pangandaran:
+           biru langit #00AEEF, hijau bukit #00A651,
+           merah #ED1C24, emas pita #F5D000 */
+        --background: 196 28% 97%;
+        --foreground: 196 35% 14%;
 
         --card: 0 0% 100%;
-        --card-foreground: 215 32% 14%;
+        --card-foreground: 196 35% 14%;
 
         --popover: 0 0% 100%;
-        --popover-foreground: 215 32% 14%;
+        --popover-foreground: 196 35% 14%;
 
-        --primary: 215 55% 22%;
+        --primary: 196 92% 36%;
         --primary-foreground: 0 0% 100%;
-        --primary-soft: 215 40% 94%;
-        --primary-hover: 215 55% 16%;
+        --primary-soft: 196 70% 94%;
+        --primary-hover: 196 92% 28%;
 
-        --secondary: 210 12% 93%;
-        --secondary-foreground: 215 32% 18%;
+        --secondary: 196 18% 94%;
+        --secondary-foreground: 196 32% 18%;
 
-        --muted: 210 12% 93%;
-        --muted-foreground: 215 10% 40%;
+        --muted: 196 16% 94%;
+        --muted-foreground: 196 12% 40%;
 
-        --accent: 215 32% 93%;
-        --accent-foreground: 215 55% 18%;
+        --accent: 196 40% 93%;
+        --accent-foreground: 196 80% 24%;
 
-        --success: 152 48% 30%;
+        --success: 147 62% 32%;
         --success-foreground: 0 0% 100%;
-        --success-soft: 152 32% 94%;
+        --success-soft: 147 40% 94%;
 
-        --warning: 36 80% 44%;
-        --warning-foreground: 0 0% 100%;
-        --warning-soft: 36 78% 94%;
+        --warning: 48 88% 44%;
+        --warning-foreground: 48 80% 12%;
+        --warning-soft: 48 90% 93%;
 
-        --info: 210 68% 38%;
+        --info: 196 88% 40%;
         --info-foreground: 0 0% 100%;
-        --info-soft: 210 55% 95%;
+        --info-soft: 196 70% 95%;
 
-        --destructive: 0 72% 44%;
+        --destructive: 357 82% 48%;
         --destructive-foreground: 0 0% 100%;
-        --destructive-soft: 0 70% 96%;
+        --destructive-soft: 357 80% 96%;
 
-        --border: 214 14% 84%;
-        --input: 214 14% 84%;
-        --ring: 215 55% 22%;
+        --border: 196 16% 84%;
+        --input: 196 16% 84%;
+        --ring: 196 92% 36%;
 
         --radius: 0.125rem;
 
-        --sidebar-background: 215 42% 13%;
-        --sidebar-foreground: 210 18% 90%;
-        --sidebar-primary: 38 72% 50%;
-        --sidebar-primary-foreground: 215 42% 13%;
-        --sidebar-accent: 215 38% 19%;
+        --sidebar-background: 196 58% 16%;
+        --sidebar-foreground: 196 20% 92%;
+        --sidebar-primary: 196 100% 47%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 196 50% 22%;
         --sidebar-accent-foreground: 0 0% 100%;
-        --sidebar-border: 215 32% 18%;
-        --sidebar-ring: 38 72% 50%;
+        --sidebar-border: 196 45% 22%;
+        --sidebar-ring: 196 100% 47%;
 
-        --shadow-soft: 0 1px 0 hsl(215 32% 14% / 0.05);
-        --shadow-medium: 0 1px 2px hsl(215 32% 14% / 0.08);
-        --shadow-elevated: 0 8px 24px hsl(215 32% 14% / 0.12);
+        --shadow-soft: 0 1px 0 hsl(196 35% 14% / 0.05);
+        --shadow-medium: 0 1px 2px hsl(196 35% 14% / 0.08);
+        --shadow-elevated: 0 8px 24px hsl(196 35% 14% / 0.12);
 
         --gradient-subtle: linear-gradient(
             180deg,
-            hsl(210 16% 97%) 0%,
-            hsl(210 16% 94%) 100%
+            hsl(196 28% 98%) 0%,
+            hsl(196 24% 94%) 100%
         );
         --gradient-primary: linear-gradient(
             180deg,
-            hsl(215 55% 24%) 0%,
-            hsl(215 50% 16%) 100%
+            hsl(196 88% 38%) 0%,
+            hsl(196 70% 22%) 100%
         );
     }
 
     .dark {
-        --background: 215 28% 9%;
-        --foreground: 210 16% 94%;
-        --card: 215 26% 12%;
-        --card-foreground: 210 16% 94%;
-        --popover: 215 26% 12%;
-        --popover-foreground: 210 16% 94%;
-        --primary: 215 50% 62%;
-        --primary-foreground: 215 40% 12%;
-        --primary-soft: 215 30% 18%;
-        --primary-hover: 215 50% 68%;
-        --secondary: 215 20% 16%;
-        --secondary-foreground: 210 16% 94%;
-        --muted: 215 20% 16%;
-        --muted-foreground: 210 10% 62%;
-        --accent: 215 20% 16%;
-        --accent-foreground: 210 16% 94%;
-        --success: 152 40% 48%;
+        --background: 196 30% 8%;
+        --foreground: 196 16% 94%;
+        --card: 196 28% 11%;
+        --card-foreground: 196 16% 94%;
+        --popover: 196 28% 11%;
+        --popover-foreground: 196 16% 94%;
+        --primary: 196 90% 52%;
+        --primary-foreground: 196 50% 10%;
+        --primary-soft: 196 40% 16%;
+        --primary-hover: 196 90% 58%;
+        --secondary: 196 22% 16%;
+        --secondary-foreground: 196 16% 94%;
+        --muted: 196 22% 16%;
+        --muted-foreground: 196 12% 62%;
+        --accent: 196 22% 16%;
+        --accent-foreground: 196 16% 94%;
+        --success: 147 50% 46%;
         --success-foreground: 0 0% 100%;
-        --success-soft: 152 28% 16%;
-        --warning: 36 75% 52%;
-        --warning-foreground: 215 40% 12%;
-        --warning-soft: 36 35% 18%;
-        --info: 210 60% 58%;
-        --info-foreground: 215 40% 12%;
-        --info-soft: 210 35% 18%;
-        --destructive: 0 65% 52%;
+        --success-soft: 147 30% 16%;
+        --warning: 48 80% 52%;
+        --warning-foreground: 48 80% 10%;
+        --warning-soft: 48 40% 16%;
+        --info: 196 80% 56%;
+        --info-foreground: 196 50% 10%;
+        --info-soft: 196 35% 16%;
+        --destructive: 357 72% 54%;
         --destructive-foreground: 0 0% 100%;
-        --destructive-soft: 0 35% 18%;
-        --border: 215 18% 20%;
-        --input: 215 18% 20%;
-        --ring: 215 50% 62%;
-        --sidebar-background: 215 32% 8%;
-        --sidebar-foreground: 210 16% 90%;
-        --sidebar-primary: 38 72% 50%;
-        --sidebar-primary-foreground: 215 32% 8%;
-        --sidebar-accent: 215 28% 14%;
+        --destructive-soft: 357 40% 16%;
+        --border: 196 20% 20%;
+        --input: 196 20% 20%;
+        --ring: 196 90% 52%;
+        --sidebar-background: 196 40% 8%;
+        --sidebar-foreground: 196 16% 90%;
+        --sidebar-primary: 196 100% 50%;
+        --sidebar-primary-foreground: 196 50% 10%;
+        --sidebar-accent: 196 35% 14%;
         --sidebar-accent-foreground: 0 0% 100%;
-        --sidebar-border: 215 24% 14%;
-        --sidebar-ring: 38 72% 50%;
+        --sidebar-border: 196 30% 14%;
+        --sidebar-ring: 196 100% 50%;
     }
 }
 
@@ -125,7 +128,13 @@
     }
 
     html,
-    body {
+    body,
+    #app {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+        height: 100%;
         @apply bg-background text-foreground;
         font-family:
             Inter,

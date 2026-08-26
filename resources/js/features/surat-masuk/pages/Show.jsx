@@ -119,7 +119,7 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                     />
                                 )}
                                 {letter.diarsipkan_at && (
-                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
+                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
                                         Diarsip
                                     </span>
                                 )}

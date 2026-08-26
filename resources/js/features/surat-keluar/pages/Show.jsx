@@ -43,10 +43,10 @@ export default function ShowSuratKeluar({ letter }) {
     };
 
     const STATUS_CONFIG = {
-        draft: { label: "Draft", className: "bg-yellow-100 text-yellow-800" },
+        draft: { label: "Draft", className: "bg-muted text-muted-foreground" },
         terkirim: {
             label: "Terkirim",
-            className: "bg-blue-100 text-blue-800",
+            className: "bg-success-soft text-success",
         },
     };
 
@@ -87,7 +87,7 @@ export default function ShowSuratKeluar({ letter }) {
                                     {statusCfg?.label ?? letter.status ?? "—"}
                                 </span>
                                 {letter.diarsipkan_at && (
-                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
+                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
                                         Diarsip
                                     </span>
                                 )}
