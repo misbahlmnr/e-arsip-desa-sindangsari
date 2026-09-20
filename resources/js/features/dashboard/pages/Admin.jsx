@@ -13,14 +13,11 @@ import {
     AlertCircle,
     Archive,
     ArrowRight,
-    BarChart3,
     CheckCircle2,
     Clock,
     FileInput,
     FileOutput,
-    Plus,
     Send,
-    Users,
 } from "lucide-react";
 import {
     Bar,
@@ -115,64 +112,6 @@ export default function AdminDashboard({
             <Head title="Dashboard Admin" />
 
             <div className="space-y-8">
-                <motion.section
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    aria-labelledby="akses-cepat"
-                >
-                    <h2 id="akses-cepat" className="sr-only">
-                        Akses cepat
-                    </h2>
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild className="rounded-xl">
-                            <Link href={route("admin.surat-masuk.create")}>
-                                <Plus className="size-4" />
-                                Tambah Surat Masuk
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.surat-keluar.create")}>
-                                <FileOutput className="size-4" />
-                                Tambah Surat Keluar
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.arsip-surat.index")}>
-                                <Archive className="size-4" />
-                                Arsip Surat
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.laporan.index")}>
-                                <BarChart3 className="size-4" />
-                                Laporan
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.users.index")}>
-                                <Users className="size-4" />
-                                Manajemen User
-                            </Link>
-                        </Button>
-                    </div>
-                </motion.section>
-
                 <section aria-labelledby="ringkasan">
                     <h2 id="ringkasan" className="sr-only">
                         Ringkasan modul

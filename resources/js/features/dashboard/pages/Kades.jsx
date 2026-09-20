@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     AttentionPanel,
     DataTable,
@@ -8,13 +7,11 @@ import {
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
 import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
     Archive,
-    BarChart3,
     Clock,
-    FileInput,
     Send,
 } from "lucide-react";
 
@@ -104,38 +101,6 @@ export default function KadesDashboard({
             <Head title="Beranda Kepala Desa" />
 
             <div className="space-y-8">
-                <motion.section
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild className="rounded-xl">
-                            <Link href={route("admin.disposisi.index")}>
-                                <Send className="size-4" />
-                                Lihat Disposisi
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.surat-masuk.index")}>
-                                <FileInput className="size-4" />
-                                Surat Masuk
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.arsip-surat.index")}>
-                                <Archive className="size-4" />
-                                Arsip Surat
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.laporan.index")}>
-                                <BarChart3 className="size-4" />
-                                Laporan
-                            </Link>
-                        </Button>
-                    </div>
-                </motion.section>
-
                 <section>
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                         {statCards.map((card, i) => (

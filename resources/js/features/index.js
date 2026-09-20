@@ -10,4 +10,4 @@ export * as profile from "./profile";
 export * as suratKeluar from "./surat-keluar";
 export * as suratMasuk from "./surat-masuk";
 export * as users from "./users";
-export * as welcome from "./welcome";
+export * as landing from "./landing";
