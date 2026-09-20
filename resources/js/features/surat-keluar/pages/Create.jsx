@@ -58,7 +58,7 @@ export default function CreateSuratKeluar() {
                                 onChange={(e) =>
                                     setData("nomor_surat", e.target.value)
                                 }
-                                placeholder="Contoh: 474.1/22/V/2024"
+                                placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
                         </FormField>

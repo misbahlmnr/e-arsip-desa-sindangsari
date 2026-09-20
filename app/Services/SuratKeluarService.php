@@ -95,11 +95,7 @@ class SuratKeluarService
     {
         try {
             $data = $req->validated();
-            $filePath = $this->handleFile($req);
-
-            if ($filePath) {
-                $data['file'] = $filePath;
-            }
+            $data['file'] = $this->handleFile($req);
 
             return SuratKeluar::create($data);
         } catch (\Exception $e) {

@@ -35,7 +35,7 @@ class StoreRequest extends FormRequest
             'perihal' => 'required|string',
             'catatan' => 'nullable|string',
             'status' => 'required|in:draft,terkirim',
-            'file' => 'required|file|mimes:pdf,doc,docx',
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
         ];
     }
 

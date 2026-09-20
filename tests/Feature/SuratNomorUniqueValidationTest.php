@@ -14,6 +14,27 @@ class SuratNomorUniqueValidationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_surat_keluar_store_allows_missing_file(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.surat-keluar.store'), [
+                'nomor_surat' => '145/099/IX/2026',
+                'tanggal_kirim' => now()->toDateString(),
+                'tujuan' => 'Kecamatan Cimerak',
+                'perihal' => 'Surat tanpa lampiran',
+                'status' => 'draft',
+            ])
+            ->assertRedirect(route('admin.surat-keluar.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('surat_keluar', [
+            'no_surat' => '145/099/IX/2026',
+            'file' => null,
+        ]);
+    }
+
     public function test_surat_keluar_store_rejects_duplicate_no_surat_with_error(): void
     {
         Storage::fake('public');
