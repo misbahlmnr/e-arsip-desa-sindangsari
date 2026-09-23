@@ -11,11 +11,10 @@ use App\Http\Controllers\Kades\DashboardController as KadesDashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sekdes\DashboardController as SekdesDashboardController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('landing/Index');
-})->name('home');
+    return redirect()->route('login');
+});
 
 Route::get('/dashboard', function () {
     if (auth()->user()->isAdmin()) {
