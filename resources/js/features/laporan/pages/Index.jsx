@@ -88,14 +88,13 @@ export default function LaporanIndex({
         {
             label: "Surat Masuk",
             value: summary?.surat_masuk ?? 0,
-            hint: `${summary?.surat_masuk_aktif ?? 0} aktif`,
+            hint: `${summary?.surat_masuk_aktif ?? 0} Surat Aktif`,
             icon: FileInput,
             tone: "primary",
         },
         {
-            label: "Menunggu Review",
+            label: "Menunggu Review Sekdes",
             value: summary?.surat_masuk_belum_diproses ?? 0,
-            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} tanpa disposisi`,
             icon: Clock,
             tone: "warning",
         },
@@ -108,14 +107,14 @@ export default function LaporanIndex({
         {
             label: "Arsip",
             value: summary?.arsip ?? 0,
-            hint: "Surat masuk & keluar",
+            hint: "Surat telah diarsipkan",
             icon: Archive,
             tone: "success",
         },
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.surat_penting_menunggu_kades ?? 0} penting menunggu Kades`,
+            hint: `${summary?.surat_penting_menunggu_kades ?? 0} menunggu tindak lanjut`,
             icon: Send,
             tone: "disposisi",
         },

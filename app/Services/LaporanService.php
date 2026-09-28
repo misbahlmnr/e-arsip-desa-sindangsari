@@ -51,6 +51,7 @@ class LaporanService
                 self::TINGKAT_SURAT_LABELS,
             ),
         ])
+            ->setOption('isPhpEnabled', true)
             ->setPaper('a4', 'portrait')
             ->download('laporan-surat-'.now()->format('Y-m-d-His').'.pdf');
     }

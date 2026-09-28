@@ -148,12 +148,11 @@
             <td>
                 <div class="label">Surat Masuk</div>
                 <div class="value">{{ $summary['surat_masuk'] }}</div>
-                <div class="hint">{{ $summary['surat_masuk_aktif'] }} aktif</div>
+                <div class="hint">{{ $summary['surat_masuk_aktif'] }} Surat Aktif</div>
             </td>
             <td>
-                <div class="label">Menunggu Review</div>
+                <div class="label">Menunggu Review Sekdes</div>
                 <div class="value">{{ $summary['surat_masuk_belum_diproses'] }}</div>
-                <div class="hint">{{ $summary['surat_masuk_tanpa_disposisi'] }} tanpa disposisi</div>
             </td>
             <td>
                 <div class="label">Surat Keluar</div>
@@ -162,12 +161,12 @@
             <td>
                 <div class="label">Arsip</div>
                 <div class="value">{{ $summary['arsip'] }}</div>
-                <div class="hint">Masuk &amp; keluar</div>
+                <div class="hint">Surat telah diarsipkan</div>
             </td>
             <td>
                 <div class="label">Disposisi</div>
                 <div class="value">{{ $summary['disposisi'] }}</div>
-                <div class="hint">{{ $summary['surat_penting_menunggu_kades'] ?? 0 }} penting menunggu Kades</div>
+                <div class="hint">{{ $summary['surat_penting_menunggu_kades'] ?? 0 }} menunggu tindak lanjut</div>
             </td>
         </tr>
     </table>
@@ -280,7 +279,25 @@
     </table>
 
     <div class="footer">
-        Dokumen ini digenerate otomatis oleh Sistem E-Arsip Desa.
+        Dicetak oleh: {{ $generated_by }} • Dicetak pada: {{ $generated_at }} • Sistem E-Arsip Desa
     </div>
+    <script type="text/php">
+        if (isset($pdf)) {
+            $pdf->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
+                $text = "Halaman {$pageNumber} dari {$pageCount}";
+                $font = $fontMetrics->getFont('DejaVu Sans');
+                $size = 9;
+                $width = $fontMetrics->getTextWidth($text, $font, $size);
+                $canvas->text(
+                    $canvas->get_width() - $width - 24,
+                    $canvas->get_height() - 24,
+                    $text,
+                    $font,
+                    $size,
+                    [0.61, 0.64, 0.69]
+                );
+            });
+        }
+    </script>
 </body>
 </html>
