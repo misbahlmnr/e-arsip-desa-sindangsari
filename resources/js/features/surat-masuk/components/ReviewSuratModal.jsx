@@ -67,7 +67,7 @@ export default function ReviewSuratModal({ letter, open, onOpenChange }) {
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground">
-                            Surat Biasa: disposisi oleh Sekdes. Surat Penting:
+                            Surat prioritas normal: disposisi oleh Sekdes. Surat prioritas tinggi:
                             verifikasi Kades lalu disposisi Kades.
                         </p>
                     </div>

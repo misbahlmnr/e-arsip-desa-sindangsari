@@ -71,7 +71,7 @@ export default function SekdesDashboard({
         {
             label: "Tanpa Disposisi",
             value: summary?.surat_masuk_tanpa_disposisi ?? 0,
-            hint: "Surat biasa perlu disposisi Sekdes",
+            hint: "Surat prioritas normal perlu disposisi Sekdes",
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", {
@@ -172,14 +172,14 @@ export default function SekdesDashboard({
                                 ]}
                             />
                             <StatusGroup
-                                title="Surat Penting"
+                                title="Surat prioritas tinggi"
                                 items={[
                                     {
                                         label: "Menunggu Kades",
                                         value: summary?.disposisi_ke_kades_menunggu,
                                     },
                                     {
-                                        label: "Tanpa disposisi (biasa)",
+                                        label: "Tanpa disposisi (surat prioritas normal)",
                                         value: summary?.surat_masuk_tanpa_disposisi,
                                     },
                                     {
@@ -241,12 +241,12 @@ export default function SekdesDashboard({
 
                 <DataTable
                     title="Surat Menunggu Kepala Desa"
-                    subtitle="Surat penting yang belum diverifikasi Kepala Desa"
+                    subtitle="Surat prioritas tinggi yang belum diverifikasi Kepala Desa"
                     viewAllRoute="admin.surat-masuk.index"
                     viewAllParams={{ kades_aksi: "menunggu_verifikasi" }}
                     emptyIcon={Send}
                     emptyTitle="Tidak ada surat menunggu"
-                    emptyHint="Semua surat penting sudah diverifikasi Kepala Desa."
+                    emptyHint="Semua surat prioritas tinggi sudah diverifikasi Kepala Desa."
                     columns={[
                         { key: "nomor_agenda", label: "Nomor Agenda" },
                         { key: "pengirim", label: "Pengirim" },

@@ -68,7 +68,7 @@ export default function KadesDashboard({
         {
             label: "Menunggu Verifikasi",
             value: summary?.disposisi_menunggu ?? 0,
-            hint: "Surat penting perlu diverifikasi",
+            hint: "Surat prioritas tinggi perlu diverifikasi",
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", {
@@ -193,7 +193,7 @@ export default function KadesDashboard({
                     />
                     <DataTable
                         title="Menunggu Arahan Anda"
-                        subtitle="Surat penting yang perlu diverifikasi atau didisposisikan"
+                        subtitle="Surat prioritas tinggi yang perlu diverifikasi atau didisposisikan"
                         viewAllRoute="admin.surat-masuk.index"
                         viewAllParams={{
                             tingkat: "penting",
@@ -201,7 +201,7 @@ export default function KadesDashboard({
                         }}
                         emptyIcon={Clock}
                         emptyTitle="Tidak ada surat menunggu"
-                        emptyHint="Semua surat penting sudah Anda tangani."
+                        emptyHint="Semua surat prioritas tinggi sudah Anda tangani."
                         columns={[
                             { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "perihal", label: "Perihal" },

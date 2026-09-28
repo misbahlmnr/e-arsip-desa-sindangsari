@@ -204,7 +204,7 @@ class DashboardService
         $items = [
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat biasa tanpa disposisi',
+                'label' => 'Surat prioritas normal tanpa disposisi',
                 'description' => 'Perlu dibuatkan instruksi disposisi',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
@@ -216,7 +216,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_menunggu_kades',
-                'label' => 'Surat penting menunggu Kades',
+                'label' => 'Surat prioritas tinggi menunggu Kades',
                 'description' => 'Perlu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_ke_kades_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -249,7 +249,7 @@ class DashboardService
         $items = [
             [
                 'key' => 'verifikasi_penting',
-                'label' => 'Surat penting menunggu verifikasi',
+                'label' => 'Surat prioritas tinggi menunggu verifikasi',
                 'description' => 'Perlu verifikasi sebelum disposisi',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -258,7 +258,7 @@ class DashboardService
             ],
             [
                 'key' => 'siap_disposisi',
-                'label' => 'Surat penting siap disposisi',
+                'label' => 'Surat prioritas tinggi siap disposisi',
                 'description' => 'Sudah diverifikasi, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
                 'route' => 'admin.surat-masuk.index',
@@ -291,7 +291,7 @@ class DashboardService
             ],
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat biasa tanpa disposisi',
+                'label' => 'Surat prioritas normal tanpa disposisi',
                 'description' => 'Menunggu disposisi Sekretaris Desa',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
@@ -303,7 +303,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_menunggu_kades',
-                'label' => 'Surat penting menunggu Kades',
+                'label' => 'Surat prioritas tinggi menunggu Kades',
                 'description' => 'Menunggu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -312,7 +312,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_siap_disposisi',
-                'label' => 'Surat penting siap disposisi',
+                'label' => 'Surat prioritas tinggi siap disposisi',
                 'description' => 'Sudah diverifikasi Kades, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
                 'route' => 'admin.surat-masuk.index',

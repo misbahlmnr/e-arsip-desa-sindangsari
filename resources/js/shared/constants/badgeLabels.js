@@ -21,8 +21,8 @@ export const SURAT_MASUK_ALUR_LABELS = {
 
 /** Tingkat surat setelah review Sekdes */
 export const TINGKAT_SURAT_LABELS = {
-    biasa: "Prioritas Normal",
-    penting: "Prioritas Tinggi",
+    biasa: "Surat prioritas normal",
+    penting: "Surat prioritas tinggi",
 };
 
 /** Indikator sudah/belum ada disposisi di tabel surat masuk */

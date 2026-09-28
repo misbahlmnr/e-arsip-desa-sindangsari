@@ -129,7 +129,7 @@ class SuratMasukController extends Controller
     {
         $this->services->verifyByKades($surat_masuk, $request->user());
 
-        return back()->with('success', 'Surat penting berhasil diverifikasi.');
+        return back()->with('success', 'Surat prioritas tinggi berhasil diverifikasi.');
     }
 
     public function archive(SuratMasuk $surat_masuk)

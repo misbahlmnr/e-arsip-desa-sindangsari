@@ -70,7 +70,7 @@ export default function AdminDashboard({
         {
             label: "Menunggu Review",
             value: summary?.surat_masuk_belum_diproses ?? 0,
-            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} biasa tanpa disposisi`,
+            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} surat prioritas normal tanpa disposisi`,
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", { status: "draft" }),
@@ -86,7 +86,7 @@ export default function AdminDashboard({
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.disposisi_menunggu ?? 0} penting menunggu Kades`,
+            hint: `${summary?.disposisi_menunggu ?? 0} surat prioritas tinggi menunggu Kades`,
             icon: Send,
             tone: "disposisi",
             href: route("admin.surat-masuk.index", {

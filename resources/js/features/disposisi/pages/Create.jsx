@@ -177,8 +177,8 @@ export default function CreateDisposisi({
                         disposisi tidak lagi tampil di menu ini.
                     </p>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Surat biasa didisposisi oleh Sekretaris Desa. Surat
-                        penting didisposisi oleh Kepala Desa setelah
+                        Surat prioritas normal didisposisi oleh Sekretaris Desa. Surat
+                        prioritas tinggi didisposisi oleh Kepala Desa setelah
                         verifikasi.
                     </p>
                 </div>
