@@ -99,7 +99,13 @@ class SuratKeluarService
         }
 
         if ($search !== '') {
-            $query->where('no_surat', 'like', NomorAgendaService::contains($search));
+            $like = NomorAgendaService::contains($search);
+            $query->where(function ($inner) use ($like) {
+                $inner->where('nomor_agenda', 'like', $like)
+                    ->orWhere('no_surat', 'like', $like)
+                    ->orWhere('perihal', 'like', $like)
+                    ->orWhere('tujuan', 'like', $like);
+            });
         }
 
         $query->orderBy($sortBy, $sortDir);

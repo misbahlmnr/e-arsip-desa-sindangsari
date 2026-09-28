@@ -33,22 +33,18 @@ export function getColumns({
             accessorKey: "nomor_agenda",
             header: "Nomor Agenda",
             cell: ({ row }) => (
-                <span className="font-mono text-sm font-semibold">
-                    {row.original.nomor_agenda ?? "—"}
-                </span>
-            ),
-        },
-        {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
-            cell: ({ row }) => (
-                <button
-                    type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
-                    onClick={() => onDetail?.(row.original)}
-                >
-                    {row.original.no_surat}
-                </button>
+                <div>
+                    <button
+                        type="button"
+                        className="font-mono text-sm font-semibold text-primary hover:underline"
+                        onClick={() => onDetail?.(row.original)}
+                    >
+                        {row.original.nomor_agenda ?? "—"}
+                    </button>
+                    <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                        {row.original.no_surat}
+                    </p>
+                </div>
             ),
         },
         {
@@ -77,8 +73,8 @@ export function getColumns({
             header: "Perihal",
             cell: ({ row }) => (
                 <span
+                    className="text-sm max-w-[280px] truncate inline-block"
                     title={row.original.perihal}
-                    className="truncate text-sm font-medium inline-block"
                 >
                     {row.original.perihal}
                 </span>

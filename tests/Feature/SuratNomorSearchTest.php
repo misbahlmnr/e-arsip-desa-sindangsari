@@ -132,6 +132,38 @@ class SuratNomorSearchTest extends TestCase
             );
     }
 
+    public function test_surat_keluar_search_matches_agenda_nomor_perihal_and_tujuan(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        SuratKeluar::query()->create([
+            'no_surat' => '145/010/I/2026',
+            'nomor_agenda' => 'SK/2026/09/0007',
+            'tanggal_kirim' => '2026-09-01',
+            'tujuan' => 'BPD Desa Sindangsari',
+            'perihal' => 'Laporan keuangan desa',
+            'file' => 'surat-keluar/test.pdf',
+        ]);
+
+        SuratKeluar::query()->create([
+            'no_surat' => '200/001/II/2026',
+            'tanggal_kirim' => '2026-09-02',
+            'tujuan' => 'Camat',
+            'perihal' => 'Surat tugas',
+            'file' => 'surat-keluar/test2.pdf',
+        ]);
+
+        foreach (['SK/2026/09/0007', '145/010/I/2026', 'Laporan keuangan desa', 'BPD Desa Sindangsari'] as $term) {
+            $this->actingAs($admin)
+                ->get(route('admin.surat-keluar.index', ['search' => $term]))
+                ->assertOk()
+                ->assertInertia(fn ($page) => $page
+                    ->has('letters.data', 1)
+                    ->where('letters.data.0.no_surat', '145/010/I/2026')
+                );
+        }
+    }
+
     public function test_arsip_search_matches_archived_no_surat(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

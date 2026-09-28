@@ -57,30 +57,38 @@ export default function ShowSuratKeluar({ letter }) {
                 <div className="lg:col-span-2 space-y-6">
                     {/* Info card */}
                     <div className="surface-card p-6 md:p-8">
-                        {/* Header: nomor + badge */}
-                        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-                            <div>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                    Nomor Agenda
-                                </p>
-                                <p className="font-mono text-xl font-bold mt-1">
-                                    {letter.nomor_agenda ?? "—"}
-                                </p>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-4">
-                                    Nomor Surat
-                                </p>
-                                <p className="font-mono text-xl font-bold mt-1">
-                                    {letter.no_surat}
-                                </p>
+                        <div className="mb-6 space-y-5">
+                            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                                <h2 className="text-xl font-semibold leading-tight text-foreground min-w-0 flex-1">
+                                    {letter.perihal || "—"}
+                                </h2>
+                                {letter.diarsipkan_at && (
+                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
+                                        Diarsip
+                                    </span>
+                                )}
                             </div>
-                            {letter.diarsipkan_at && (
-                                <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
-                                    Diarsip
-                                </span>
-                            )}
+
+                            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                                <div>
+                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        Nomor Agenda
+                                    </dt>
+                                    <dd className="font-mono text-base font-semibold text-foreground mt-1">
+                                        {letter.nomor_agenda ?? "—"}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        Nomor Surat
+                                    </dt>
+                                    <dd className="font-mono text-sm font-medium text-foreground mt-1">
+                                        {letter.no_surat}
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
 
-                        {/* Fields */}
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
                             <Field
                                 label="Tanggal Surat"
@@ -93,11 +101,6 @@ export default function ShowSuratKeluar({ letter }) {
                                 }
                             />
                             <Field label="Tujuan" value={letter.tujuan} />
-                            <Field
-                                label="Perihal"
-                                value={letter.perihal}
-                                className="sm:col-span-2"
-                            />
                             {letter.catatan?.trim() && (
                                 <Field
                                     label="Catatan"
@@ -232,31 +235,17 @@ export default function ShowSuratKeluar({ letter }) {
 
                 {/* ── Sidebar disposisi ────────────────────────────────── */}
                 <aside className="surface-card p-6 md:p-8 self-start">
-                    <h3 className="font-bold text-base">Informasi Surat</h3>
+                    <h3 className="font-semibold text-base">Lampiran</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
-                        Ringkasan metadata surat keluar.
+                        Berkas utama surat keluar.
                     </p>
-                    <div className="space-y-3 text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                            <span className="text-muted-foreground">
-                                Tanggal Kirim
-                            </span>
-                            <span className="font-medium tabular-nums">
-                                {letter.tanggal_kirim
-                                    ? formatTanggalKalenderWib(
-                                          letter.tanggal_kirim,
-                                      )
-                                    : "—"}
-                            </span>
-                        </div>
-                        <div className="flex items-center justify-between gap-3">
-                            <span className="text-muted-foreground">
-                                Lampiran
-                            </span>
-                            <span className="font-medium">
-                                {letter.file_url ? "Tersedia" : "Tidak ada"}
-                            </span>
-                        </div>
+                    <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="text-muted-foreground">
+                            File surat
+                        </span>
+                        <span className="font-medium">
+                            {letter.file_url ? "Tersedia" : "Tidak ada"}
+                        </span>
                     </div>
                 </aside>
             </div>

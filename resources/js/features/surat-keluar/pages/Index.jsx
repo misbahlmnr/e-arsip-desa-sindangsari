@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable/Index";
-import { AgendaSearchFields } from "@/components/AgendaSearchFields";
 import { useServerTable } from "@/shared/hooks/useServerTable";
 import { getColumns } from "../columns";
 
@@ -86,16 +85,8 @@ export default function SuratKeluar({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
-                        searchPlaceholder="Cari nomor surat…"
+                        searchPlaceholder="Cari nomor agenda, nomor surat, perihal, atau tujuan..."
                         emptyMessage="Coba ubah kata kunci pencarian."
-                        toolbarFilters={
-                            <AgendaSearchFields
-                                filters={filters}
-                                visit={visit}
-                                partyKey="tujuan"
-                                partyLabel="Tujuan"
-                            />
-                        }
                     />
                 </motion.div>
             </div>

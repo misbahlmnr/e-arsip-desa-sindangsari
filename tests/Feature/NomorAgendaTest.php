@@ -272,6 +272,109 @@ class NomorAgendaTest extends TestCase
         $this->assertSame('SK/2026/03/0001', SuratKeluar::query()->value('nomor_agenda'));
     }
 
+    public function test_surat_keluar_create_page_previews_next_agenda_number_without_inserting(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $prefix = now()->format('Y/m');
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.create'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/0001"));
+
+        $this->assertSame(0, SuratKeluar::query()->count());
+
+        SuratKeluar::query()->create([
+            'no_surat' => 'PREVIEW/1',
+            'tanggal_kirim' => now()->toDateString(),
+            'tujuan' => 'Camat',
+            'perihal' => 'Pertama',
+            'file' => 'surat-keluar/test.pdf',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.create'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/0002"));
+
+        $this->assertSame(1, SuratKeluar::query()->count());
+    }
+
+    public function test_surat_keluar_create_preview_follows_the_selected_send_month(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        SuratKeluar::query()->create([
+            'no_surat' => 'JAN/1',
+            'tanggal_kirim' => '2026-01-10',
+            'tujuan' => 'Camat',
+            'perihal' => 'Januari',
+            'file' => 'surat-keluar/test.pdf',
+        ]);
+
+        $before = SuratKeluar::query()->count();
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-01-20']))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/01/0002'));
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-03-02']))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/03/0001'));
+
+        $this->assertSame($before, SuratKeluar::query()->count());
+    }
+
+    public function test_surat_keluar_store_uses_next_when_preview_is_already_taken(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-09-01']))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/09/0001'));
+
+        SuratKeluar::query()->create([
+            'no_surat' => 'LAIN/1',
+            'tanggal_kirim' => '2026-09-02',
+            'tujuan' => 'Dinas',
+            'perihal' => 'Lebih dulu',
+            'file' => 'surat-keluar/lain.pdf',
+        ]);
+
+        $this->actingAs($admin)->post(route('admin.surat-keluar.store'), [
+            'nomor_surat' => 'BARU/1',
+            'tanggal_kirim' => '2026-09-10',
+            'tujuan' => 'Camat',
+            'perihal' => 'Setelah preview',
+        ])->assertRedirect();
+
+        $this->assertSame(
+            'SK/2026/09/0002',
+            SuratKeluar::query()->where('no_surat', 'BARU/1')->value('nomor_agenda'),
+        );
+    }
+
+    public function test_surat_keluar_edit_page_returns_stored_agenda_number(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $letter = SuratKeluar::query()->create([
+            'no_surat' => 'EDIT/1',
+            'nomor_agenda' => 'SK/2026/09/0004',
+            'tanggal_kirim' => '2026-09-04',
+            'tujuan' => 'BPD',
+            'perihal' => 'Tersimpan',
+            'file' => 'surat-keluar/edit.pdf',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.surat-keluar.edit', $letter))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->where('letter.nomor_agenda', 'SK/2026/09/0004'));
+    }
+
     public function test_update_does_not_change_agenda_number_when_date_changes(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

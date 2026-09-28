@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import { Save } from "lucide-react";
+import { Lock, Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import BackLink from "@/components/BackLink";
 
@@ -123,11 +123,16 @@ export default function EditSuratKeluar({ letter }) {
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <FormField label="Nomor Agenda">
-                            <Input
-                                value={letter.nomor_agenda ?? ""}
-                                readOnly
-                                className="h-11 rounded-xl bg-muted"
-                            />
+                            <div className="relative">
+                                <Input
+                                    value={letter.nomor_agenda ?? ""}
+                                    readOnly
+                                    tabIndex={-1}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    className="h-11 rounded-xl cursor-not-allowed border-muted-foreground/30 bg-muted pr-10 text-foreground/70 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                />
+                                <Lock className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                         </FormField>
                         <FormField
                             label="Nomor Surat"

@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { Save } from "lucide-react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Lock, Save } from "lucide-react";
 import BackLink from "@/components/BackLink";
 
-export default function CreateSuratKeluar() {
+export default function CreateSuratKeluar({ nomorAgendaPreview = "" }) {
     const { data, setData, post, processing, errors } = useForm({
         nomor_surat: "",
         tanggal_kirim: new Date().toISOString().slice(0, 10),
@@ -20,6 +20,23 @@ export default function CreateSuratKeluar() {
         file: null,
         supporting_files: [],
     });
+
+    const refreshAgendaPreview = (tanggalKirim) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(tanggalKirim)) {
+            return;
+        }
+
+        router.get(
+            route("admin.surat-keluar.create"),
+            { tanggal_kirim: tanggalKirim },
+            {
+                only: ["nomorAgendaPreview"],
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,6 +59,9 @@ export default function CreateSuratKeluar() {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5 flex flex-col justify-between">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <ReadonlyAgendaInput value={nomorAgendaPreview} />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -82,9 +102,10 @@ export default function CreateSuratKeluar() {
                             <Input
                                 type="date"
                                 value={data.tanggal_kirim}
-                                onChange={(e) =>
-                                    setData("tanggal_kirim", e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setData("tanggal_kirim", e.target.value);
+                                    refreshAgendaPreview(e.target.value);
+                                }}
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
@@ -163,6 +184,21 @@ export default function CreateSuratKeluar() {
                 </div>
             </form>
         </AppLayout>
+    );
+}
+
+function ReadonlyAgendaInput({ value }) {
+    return (
+        <div className="relative">
+            <Input
+                value={value}
+                readOnly
+                tabIndex={-1}
+                onMouseDown={(e) => e.preventDefault()}
+                className="h-11 rounded-xl cursor-not-allowed border-muted-foreground/30 bg-muted pr-10 text-foreground/70 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+            <Lock className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        </div>
     );
 }
 

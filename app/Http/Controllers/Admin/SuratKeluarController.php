@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SuratKeluar\StoreRequest;
 use App\Http\Requests\SuratKeluar\UpdateRequest;
 use App\Models\SuratKeluar;
+use App\Services\NomorAgendaService;
 use App\Services\SuratKeluarService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class SuratKeluarController extends Controller
 {
@@ -28,11 +30,32 @@ class SuratKeluarController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request, NomorAgendaService $nomorAgenda)
     {
         $this->authorizeSuratManagement();
 
-        return inertia('surat-keluar/Create');
+        return inertia('surat-keluar/Create', [
+            'nomorAgendaPreview' => $nomorAgenda->preview(
+                NomorAgendaService::KODE_KELUAR,
+                $this->agendaPreviewDate($request),
+                SuratKeluar::class,
+            ),
+        ]);
+    }
+
+    private function agendaPreviewDate(Request $request): string
+    {
+        $tanggal = $request->query('tanggal_kirim');
+
+        if (is_string($tanggal) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal) === 1) {
+            $parsed = Carbon::createFromFormat('Y-m-d', $tanggal);
+
+            if ($parsed instanceof Carbon && $parsed->format('Y-m-d') === $tanggal) {
+                return $tanggal;
+            }
+        }
+
+        return now()->toDateString();
     }
 
     public function show(SuratKeluar $surat_keluar)
