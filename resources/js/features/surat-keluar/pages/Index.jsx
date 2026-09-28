@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable/Index";
+import { AgendaSearchFields } from "@/components/AgendaSearchFields";
 import { useServerTable } from "@/shared/hooks/useServerTable";
 import { getColumns } from "../columns";
 
@@ -13,7 +14,13 @@ export default function SuratKeluar({ letters, filters }) {
         routeName: "admin.surat-keluar.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status"],
+        preserveQueryKeys: [
+            "tahun",
+            "bulan",
+            "tanggal",
+            "perihal",
+            "tujuan",
+        ],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
@@ -81,6 +88,14 @@ export default function SuratKeluar({ letters, filters }) {
                         loading={loading}
                         searchPlaceholder="Cari nomor surat…"
                         emptyMessage="Coba ubah kata kunci pencarian."
+                        toolbarFilters={
+                            <AgendaSearchFields
+                                filters={filters}
+                                visit={visit}
+                                partyKey="tujuan"
+                                partyLabel="Tujuan"
+                            />
+                        }
                     />
                 </motion.div>
             </div>

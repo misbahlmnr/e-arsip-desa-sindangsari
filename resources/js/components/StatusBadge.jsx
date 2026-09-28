@@ -6,7 +6,6 @@ const STATUS_STYLES = {
     terverifikasi: "bg-info-soft text-info border-info/20",
     didisposisikan: "bg-success-soft text-success border-success/20",
     diarsipkan: "bg-success-soft text-success border-success/20",
-    terkirim: "bg-success-soft text-success border-success/20",
     biasa: "bg-muted text-muted-foreground border-border",
     penting: "bg-destructive/10 text-destructive border-destructive/20",
     menunggu_review_sekdes: "bg-muted text-muted-foreground border-border",

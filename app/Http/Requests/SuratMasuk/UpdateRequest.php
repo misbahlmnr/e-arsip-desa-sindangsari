@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests\SuratMasuk;
 
+use App\Http\Requests\ValidatesSupportingDocuments;
+use App\Models\SuratMasuk;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
     use NormalizesSuratMasukInput;
+    use ValidatesSupportingDocuments;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -43,7 +46,17 @@ class UpdateRequest extends FormRequest
             'catatan' => ['nullable', 'string', 'max:5000'],
             'tujuan' => ['nullable', 'string', 'max:191'],
             'file' => ['nullable', 'file', 'mimes:pdf,jpeg,jpg,png,doc,docx', 'max:5120'],
+            ...$this->supportingDocumentRules(withRemoval: true),
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $letter = $this->route('surat_masuk');
+
+        if ($letter instanceof SuratMasuk) {
+            $this->assertSupportingDocumentLimits($validator, $letter);
+        }
     }
 
     /**

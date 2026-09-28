@@ -24,7 +24,6 @@ class SuratNomorUniqueValidationTest extends TestCase
                 'tanggal_kirim' => now()->toDateString(),
                 'tujuan' => 'Kecamatan Cimerak',
                 'perihal' => 'Surat tanpa lampiran',
-                'status' => 'draft',
             ])
             ->assertRedirect(route('admin.surat-keluar.index'))
             ->assertSessionHas('success');
@@ -45,7 +44,6 @@ class SuratNomorUniqueValidationTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'Camat',
             'perihal' => 'Sudah ada',
-            'status' => 'draft',
             'file' => 'surat-keluar/existing.pdf',
         ]);
 
@@ -55,7 +53,6 @@ class SuratNomorUniqueValidationTest extends TestCase
                 'tanggal_kirim' => now()->toDateString(),
                 'tujuan' => 'BPD',
                 'perihal' => 'Duplikat',
-                'status' => 'draft',
                 'file' => UploadedFile::fake()->create('baru.pdf', 100, 'application/pdf'),
             ])
             ->assertSessionHasErrors('no_surat');
@@ -96,7 +93,6 @@ class SuratNomorUniqueValidationTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'Camat',
             'perihal' => 'Arsip',
-            'status' => 'terkirim',
             'file' => 'surat-keluar/arsip.pdf',
             'diarsipkan_at' => now(),
         ]);

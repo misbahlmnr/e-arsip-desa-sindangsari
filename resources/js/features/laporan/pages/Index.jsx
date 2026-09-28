@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/select";
 import {
     badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
     SURAT_MASUK_ALUR_LABELS,
     TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
@@ -65,7 +64,6 @@ const CHART_COLORS = {
 export default function LaporanIndex({
     summary,
     surat_masuk_status,
-    surat_keluar_status,
     tingkat_surat,
     monthly_trend,
     top_pengirim,
@@ -104,7 +102,6 @@ export default function LaporanIndex({
         {
             label: "Surat Keluar",
             value: summary?.surat_keluar ?? 0,
-            hint: `${summary?.surat_keluar_draft ?? 0} masih draft`,
             icon: FileOutput,
             tone: "info",
         },
@@ -126,12 +123,6 @@ export default function LaporanIndex({
 
     const masukChartData = (surat_masuk_status ?? []).map((row) => ({
         name: badgeLabel(SURAT_MASUK_ALUR_LABELS, row.status),
-        value: row.total,
-        key: row.status,
-    }));
-
-    const keluarChartData = (surat_keluar_status ?? []).map((row) => ({
-        name: badgeLabel(SURAT_KELUAR_STATUS_LABELS, row.status),
         value: row.total,
         key: row.status,
     }));
@@ -283,18 +274,12 @@ export default function LaporanIndex({
                     </div>
                 </motion.section>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <StatusPieCard
                         title="Status Surat Masuk"
                         subtitle="Surat aktif (belum diarsipkan)"
                         data={masukChartData}
                         icon={Inbox}
-                    />
-                    <StatusPieCard
-                        title="Status Surat Keluar"
-                        subtitle="Surat aktif (belum diarsipkan)"
-                        data={keluarChartData}
-                        icon={FileOutput}
                     />
                     <StatusPieCard
                         title="Tingkat Surat"

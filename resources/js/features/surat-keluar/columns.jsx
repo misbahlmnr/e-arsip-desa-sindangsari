@@ -1,9 +1,4 @@
-﻿import { StatusBadge } from "@/components/StatusBadge";
-import { Button } from "@/components/ui/button";
-import {
-    badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
-} from "@/shared/constants/badgeLabels";
+﻿import { Button } from "@/components/ui/button";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
@@ -31,6 +26,15 @@ export function getColumns({
             cell: ({ row }) => (
                 <span className="text-sm text-muted-foreground tabular-nums">
                     {startIndex + row.index + 1}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
+            cell: ({ row }) => (
+                <span className="font-mono text-sm font-semibold">
+                    {row.original.nomor_agenda ?? "—"}
                 </span>
             ),
         },
@@ -78,21 +82,6 @@ export function getColumns({
                 >
                     {row.original.perihal}
                 </span>
-            ),
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => (
-                <StatusBadge
-                    value={row.original.status}
-                    label={
-                        badgeLabel(
-                            SURAT_KELUAR_STATUS_LABELS,
-                            row.original.status,
-                        )
-                    }
-                />
             ),
         },
         {

@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import {
     badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
     SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
@@ -277,19 +276,6 @@ export default function AdminDashboard({
                                 ]}
                             />
                             <StatusGroup
-                                title="Surat Keluar"
-                                items={[
-                                    {
-                                        label: "Draft",
-                                        value: summary?.surat_keluar_draft,
-                                    },
-                                    {
-                                        label: "Terkirim",
-                                        value: summary?.surat_keluar_terkirim,
-                                    },
-                                ]}
-                            />
-                            <StatusGroup
                                 title="Disposisi"
                                 items={[
                                     {
@@ -344,7 +330,6 @@ export default function AdminDashboard({
                             { key: "no_surat", label: "No. Surat" },
                             { key: "tujuan", label: "Tujuan" },
                             { key: "tanggal_kirim", label: "Tanggal" },
-                            { key: "status", label: "Status" },
                         ]}
                         rows={recent_surat_keluar ?? []}
                         detailRoute={(row) =>
@@ -352,7 +337,6 @@ export default function AdminDashboard({
                                 surat_keluar: row.id,
                             })
                         }
-                        statusLabels={SURAT_KELUAR_STATUS_LABELS}
                         dateKey="tanggal_kirim"
                     />
                 </div>

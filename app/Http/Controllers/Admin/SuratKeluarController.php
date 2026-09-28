@@ -37,6 +37,8 @@ class SuratKeluarController extends Controller
 
     public function show(SuratKeluar $surat_keluar)
     {
+        $surat_keluar->load('supportingDocuments');
+
         return inertia('surat-keluar/Show', [
             'letter' => $surat_keluar,
         ]);
@@ -47,7 +49,7 @@ class SuratKeluarController extends Controller
         $this->authorizeSuratManagement();
 
         return inertia('surat-keluar/Edit', [
-            'letter' => $surat_keluar,
+            'letter' => $surat_keluar->load('supportingDocuments'),
         ]);
     }
 

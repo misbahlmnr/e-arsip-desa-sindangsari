@@ -13,7 +13,17 @@ export default function SuratMasuk({ letters, filters }) {
         routeName: "admin.surat-masuk.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status", "tingkat", "kades_aksi", "disposisi"],
+        preserveQueryKeys: [
+            "status",
+            "tingkat",
+            "kades_aksi",
+            "disposisi",
+            "tahun",
+            "bulan",
+            "tanggal",
+            "perihal",
+            "pengirim",
+        ],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
@@ -77,7 +87,7 @@ export default function SuratMasuk({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
-                        searchPlaceholder="Cari nomor surat…"
+                        searchPlaceholder="Cari nomor agenda, nomor surat, perihal, pengirim, atau tujuan..."
                         emptyMessage="Coba ubah kata kunci pencarian."
                     />
                 </motion.div>

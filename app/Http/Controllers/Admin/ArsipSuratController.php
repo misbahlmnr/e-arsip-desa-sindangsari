@@ -38,6 +38,8 @@ class ArsipSuratController extends Controller
                 ->findOrFail($id);
         }
 
+        $letter->load('supportingDocuments');
+
         return inertia('arsip-surat/Show', [
             'jenis' => $jenis,
             'letter' => $letter,

@@ -1,14 +1,15 @@
 import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { Save } from "lucide-react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Lock, Save } from "lucide-react";
 import BackLink from "@/components/BackLink";
 
-export default function CreateSuratMasuk() {
+export default function CreateSuratMasuk({ nomorAgendaPreview = "" }) {
     const { data, setData, post, processing, errors } = useForm({
         nomor_surat: "",
         tanggal_surat: new Date().toISOString().slice(0, 10),
@@ -18,7 +19,25 @@ export default function CreateSuratMasuk() {
         tujuan: "-",
         catatan: "",
         file: null,
+        supporting_files: [],
     });
+
+    const refreshAgendaPreview = (tanggalDiterima) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(tanggalDiterima)) {
+            return;
+        }
+
+        router.get(
+            route("admin.surat-masuk.create"),
+            { tanggal_terima: tanggalDiterima },
+            {
+                only: ["nomorAgendaPreview"],
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -41,6 +60,9 @@ export default function CreateSuratMasuk() {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <ReadonlyAgendaInput value={nomorAgendaPreview} />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -54,6 +76,9 @@ export default function CreateSuratMasuk() {
                                 placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
+                            <p className="text-xs text-muted-foreground">
+                                Nomor Agenda akan dibuat otomatis oleh sistem setelah surat berhasil diregistrasi.
+                            </p>
                         </FormField>
 
                         <FormField
@@ -78,9 +103,10 @@ export default function CreateSuratMasuk() {
                             <Input
                                 type="date"
                                 value={data.tanggal_diterima}
-                                onChange={(e) =>
-                                    setData("tanggal_diterima", e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setData("tanggal_diterima", e.target.value);
+                                    refreshAgendaPreview(e.target.value);
+                                }}
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
@@ -174,9 +200,33 @@ export default function CreateSuratMasuk() {
                             {errors.file}
                         </p>
                     ) : null}
+                    <div className="border-t border-border pt-4">
+                        <SupportingDocumentsField
+                            files={data.supporting_files}
+                            onFilesChange={(files) =>
+                                setData("supporting_files", files)
+                            }
+                            error={errors.supporting_files}
+                        />
+                    </div>
                 </div>
             </form>
         </AppLayout>
+    );
+}
+
+function ReadonlyAgendaInput({ value }) {
+    return (
+        <div className="relative">
+            <Input
+                value={value}
+                readOnly
+                tabIndex={-1}
+                onMouseDown={(e) => e.preventDefault()}
+                className="h-11 rounded-xl cursor-not-allowed border-muted-foreground/30 bg-muted pr-10 text-foreground/70 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+            <Lock className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        </div>
     );
 }
 

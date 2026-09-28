@@ -37,16 +37,21 @@ export function getColumns({
             ),
         },
         {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
             cell: ({ row }) => (
-                <button
-                    type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
-                    onClick={() => onDetail?.(row.original)}
-                >
-                    {row.original.no_surat}
-                </button>
+                <div>
+                    <button
+                        type="button"
+                        className="font-mono text-sm font-semibold text-primary hover:underline"
+                        onClick={() => onDetail?.(row.original)}
+                    >
+                        {row.original.nomor_agenda ?? "—"}
+                    </button>
+                    <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                        {row.original.no_surat}
+                    </p>
+                </div>
             ),
         },
         {

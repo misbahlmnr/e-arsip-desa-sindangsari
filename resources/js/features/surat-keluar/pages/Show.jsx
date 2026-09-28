@@ -13,8 +13,9 @@ import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Archive, FileText, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
+import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
+import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
 import BackLink from "@/components/BackLink";
 
 function Field({ label, value, className }) {
@@ -42,16 +43,6 @@ export default function ShowSuratKeluar({ letter }) {
         );
     };
 
-    const STATUS_CONFIG = {
-        draft: { label: "Draft", className: "bg-muted text-muted-foreground" },
-        terkirim: {
-            label: "Terkirim",
-            className: "bg-success-soft text-success",
-        },
-    };
-
-    const statusCfg = STATUS_CONFIG[letter.status];
-
     return (
         <AppLayout
             title="Detail Surat Keluar"
@@ -70,28 +61,23 @@ export default function ShowSuratKeluar({ letter }) {
                         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                             <div>
                                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                    Nomor Agenda
+                                </p>
+                                <p className="font-mono text-xl font-bold mt-1">
+                                    {letter.nomor_agenda ?? "—"}
+                                </p>
+                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-4">
                                     Nomor Surat
                                 </p>
                                 <p className="font-mono text-xl font-bold mt-1">
                                     {letter.no_surat}
                                 </p>
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 justify-end">
-                                <span
-                                    className={cn(
-                                        "inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold",
-                                        statusCfg?.className ??
-                                            "bg-gray-100 text-gray-700",
-                                    )}
-                                >
-                                    {statusCfg?.label ?? letter.status ?? "—"}
+                            {letter.diarsipkan_at && (
+                                <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
+                                    Diarsip
                                 </span>
-                                {letter.diarsipkan_at && (
-                                    <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
-                                        Diarsip
-                                    </span>
-                                )}
-                            </div>
+                            )}
                         </div>
 
                         {/* Fields */}
@@ -239,6 +225,9 @@ export default function ShowSuratKeluar({ letter }) {
                             )}
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 {/* ── Sidebar disposisi ────────────────────────────────── */}
@@ -248,14 +237,6 @@ export default function ShowSuratKeluar({ letter }) {
                         Ringkasan metadata surat keluar.
                     </p>
                     <div className="space-y-3 text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                            <span className="text-muted-foreground">
-                                Status
-                            </span>
-                            <span className="font-medium">
-                                {statusCfg?.label ?? letter.status ?? "—"}
-                            </span>
-                        </div>
                         <div className="flex items-center justify-between gap-3">
                             <span className="text-muted-foreground">
                                 Tanggal Kirim

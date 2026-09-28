@@ -31,7 +31,6 @@ class AdminDashboardTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'BPD',
             'perihal' => 'Laporan',
-            'status' => 'draft',
             'file' => 'surat-keluar/test.pdf',
         ]);
 
@@ -205,35 +204,32 @@ class AdminDashboardTest extends TestCase
             );
     }
 
-    public function test_surat_keluar_index_filters_by_status_draft(): void
+    public function test_surat_keluar_index_lists_registered_letters(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $draft = SuratKeluar::query()->create([
+        SuratKeluar::query()->create([
             'no_surat' => 'SK-010',
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'BPD',
-            'perihal' => 'Draft',
-            'status' => 'draft',
-            'file' => 'surat-keluar/draft.pdf',
+            'perihal' => 'Undangan',
+            'file' => 'surat-keluar/undangan.pdf',
         ]);
 
         SuratKeluar::query()->create([
             'no_surat' => 'SK-011',
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'Camat',
-            'perihal' => 'Terkirim',
-            'status' => 'terkirim',
-            'file' => 'surat-keluar/terkirim.pdf',
+            'perihal' => 'Balasan',
+            'file' => 'surat-keluar/balasan.pdf',
         ]);
 
         $this->actingAs($admin)
-            ->get(route('admin.surat-keluar.index', ['status' => 'draft']))
+            ->get(route('admin.surat-keluar.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->where('filters.status', 'draft')
-                ->has('letters.data', 1)
-                ->where('letters.data.0.id', $draft->id)
+                ->has('letters.data', 2)
+                ->missing('filters.status')
             );
     }
 }

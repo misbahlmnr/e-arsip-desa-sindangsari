@@ -6,15 +6,21 @@ use App\Http\Requests\SuratMasuk\StoreRequest;
 use App\Http\Requests\SuratMasuk\UpdateRequest;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\NomorAgendaService;
 use App\Services\Search\SuratNomorSearchService;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
 
 class SuratMasukService
 {
-    public function __construct(private SuratNomorSearchService $nomorSearch) {}
+    public function __construct(
+        private SuratNomorSearchService $nomorSearch,
+        private SupportingDocumentService $supportingDocuments,
+        private NomorAgendaService $nomorAgenda,
+    ) {}
 
     /**
      * @var list<string>
@@ -23,6 +29,7 @@ class SuratMasukService
         'id',
         'nomor_registrasi',
         'no_surat',
+        'nomor_agenda',
         'tanggal_terima',
         'tanggal_surat',
         'pengirim',
@@ -46,6 +53,11 @@ class SuratMasukService
             'tingkat' => ['nullable', Rule::in(SuratMasuk::TINGKAT_OPTIONS)],
             'kades_aksi' => ['nullable', Rule::in(['menunggu_verifikasi', 'siap_disposisi'])],
             'disposisi' => ['nullable', Rule::in(['belum', 'sudah'])],
+            'tahun' => ['nullable', 'integer', 'min:2000', 'max:2100'],
+            'bulan' => ['nullable', 'integer', 'min:1', 'max:12'],
+            'tanggal' => ['nullable', 'date'],
+            'perihal' => ['nullable', 'string', 'max:250'],
+            'pengirim' => ['nullable', 'string', 'max:120'],
         ]);
 
         $search = isset($validated['search']) ? trim($validated['search']) : '';
@@ -56,6 +68,11 @@ class SuratMasukService
         $tingkat = $validated['tingkat'] ?? null;
         $kadesAksi = $validated['kades_aksi'] ?? null;
         $disposisi = $validated['disposisi'] ?? null;
+        $tahun = isset($validated['tahun']) ? (int) $validated['tahun'] : null;
+        $bulan = isset($validated['bulan']) ? (int) $validated['bulan'] : null;
+        $tanggal = $validated['tanggal'] ?? null;
+        $perihal = isset($validated['perihal']) ? trim($validated['perihal']) : '';
+        $pengirim = isset($validated['pengirim']) ? trim($validated['pengirim']) : '';
 
         if (! in_array($sortBy, self::SORTABLE, true)) {
             $sortBy = 'tanggal_terima';
@@ -63,41 +80,48 @@ class SuratMasukService
 
         $query = SuratMasuk::query()->whereNull('diarsipkan_at');
 
-        if ($kadesAksi === 'menunggu_verifikasi') {
-            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
-                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
-                ->whereNull('verified_kades_at');
-        } elseif ($kadesAksi === 'siap_disposisi') {
-            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
-                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
-                ->whereNotNull('verified_kades_at');
-        } else {
-            if ($status) {
-                $query->where('status', $status);
+        if ($tahun !== null) {
+            $this->nomorAgenda->restrictToYearPrefix(
+                $query,
+                NomorAgendaService::KODE_MASUK,
+                $tahun,
+                $this->nomorSearch,
+            );
+        }
+
+        $this->applyWorkflowFilters($query, $status, $tingkat, $kadesAksi, $disposisi);
+
+        if ($tahun !== null) {
+            if ($bulan !== null) {
+                $query->where(
+                    'nomor_agenda',
+                    'like',
+                    sprintf('%s/%d/%02d/%%', NomorAgendaService::KODE_MASUK, $tahun, $bulan),
+                );
             }
 
-            if ($tingkat) {
-                $query->where('tingkat', $tingkat);
+            if ($tanggal) {
+                $query->whereDate('tanggal_terima', $tanggal);
             }
 
-            if ($disposisi === 'belum') {
-                $query->whereDoesntHave('disposisi');
-                if (! $status) {
-                    $query->where('status', '!=', SuratMasuk::STATUS_DRAFT);
-                }
-            } elseif ($disposisi === 'sudah') {
-                $query->whereHas('disposisi');
+            if ($perihal !== '') {
+                $query->where('perihal', 'like', NomorAgendaService::contains($perihal));
+            }
+
+            if ($pengirim !== '') {
+                $query->where('pengirim', 'like', NomorAgendaService::contains($pengirim));
             }
         }
 
-        $matchingIds = $this->nomorSearch->matchingIds(clone $query, $search);
-
-        if ($matchingIds !== null) {
-            if ($matchingIds === []) {
-                $query->whereRaw('0 = 1');
-            } else {
-                $query->whereIn('id', $matchingIds);
-            }
+        if ($search !== '') {
+            $like = NomorAgendaService::contains($search);
+            $query->where(function ($inner) use ($like) {
+                $inner->where('nomor_agenda', 'like', $like)
+                    ->orWhere('no_surat', 'like', $like)
+                    ->orWhere('perihal', 'like', $like)
+                    ->orWhere('pengirim', 'like', $like)
+                    ->orWhere('tujuan', 'like', $like);
+            });
         }
 
         $query->orderBy($sortBy, $sortDir);
@@ -125,8 +149,49 @@ class SuratMasukService
                 'tingkat' => $tingkat,
                 'kades_aksi' => $kadesAksi,
                 'disposisi' => $disposisi,
+                'tahun' => $tahun,
+                'bulan' => $bulan,
+                'tanggal' => $tanggal,
+                'perihal' => $perihal !== '' ? $perihal : null,
+                'pengirim' => $pengirim !== '' ? $pengirim : null,
             ],
         ];
+    }
+
+    private function applyWorkflowFilters($query, ?string $status, ?string $tingkat, ?string $kadesAksi, ?string $disposisi): void
+    {
+        if ($kadesAksi === 'menunggu_verifikasi') {
+            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNull('verified_kades_at');
+
+            return;
+        }
+
+        if ($kadesAksi === 'siap_disposisi') {
+            $query->where('tingkat', SuratMasuk::TINGKAT_PENTING)
+                ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
+                ->whereNotNull('verified_kades_at');
+
+            return;
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($tingkat) {
+            $query->where('tingkat', $tingkat);
+        }
+
+        if ($disposisi === 'belum') {
+            $query->whereDoesntHave('disposisi');
+            if (! $status) {
+                $query->where('status', '!=', SuratMasuk::STATUS_DRAFT);
+            }
+        } elseif ($disposisi === 'sudah') {
+            $query->whereHas('disposisi');
+        }
     }
 
     private function handleFile(Request $req)
@@ -138,23 +203,50 @@ class SuratMasukService
         return null;
     }
 
+    /**
+     * @return list<UploadedFile>
+     */
+    private function supportingUploads(Request $req): array
+    {
+        $files = $req->file('supporting_files', []);
+
+        if ($files instanceof UploadedFile) {
+            return [$files];
+        }
+
+        return is_array($files) ? array_values(array_filter($files)) : [];
+    }
+
     public function store(StoreRequest $req)
     {
+        $newMainPath = null;
+        $supportingPaths = [];
+
         try {
-            $data = $req->validated();
-            $data['tujuan'] = $data['tujuan'] ?? '-';
-            $data['status'] = SuratMasuk::STATUS_DRAFT;
-            unset($data['tingkat']);
-            $filePath = $this->handleFile($req);
-
-            if ($filePath) {
+            return DB::transaction(function () use ($req, &$newMainPath, &$supportingPaths) {
+                $data = $req->validated();
+                unset($data['supporting_files'], $data['remove_supporting_ids']);
+                $data['tujuan'] = $data['tujuan'] ?? '-';
+                $data['status'] = SuratMasuk::STATUS_DRAFT;
+                unset($data['tingkat']);
+                $filePath = $this->handleFile($req);
+                $newMainPath = $filePath;
                 $data['file'] = $filePath;
-            } else {
-                $data['file'] = null;
-            }
 
-            return SuratMasuk::create($data);
+                $letter = SuratMasuk::create($data);
+                $supportingPaths = $this->supportingDocuments->storeMany(
+                    $letter,
+                    $this->supportingUploads($req),
+                    $req->user()?->id,
+                );
+
+                return $letter;
+            });
         } catch (\Exception $e) {
+            $this->supportingDocuments->deleteStoredPaths(array_filter([
+                $newMainPath,
+                ...$supportingPaths,
+            ]));
             Log::error('Error storing surat masuk: '.$e->getMessage());
             throw $e;
         }
@@ -162,40 +254,86 @@ class SuratMasukService
 
     public function update(UpdateRequest $req, SuratMasuk $surat_masuk)
     {
+        $newMainPath = null;
+        $supportingPaths = [];
+        $pathsToDeleteAfterCommit = [];
+
         try {
-            $data = $req->validated();
-            $data['tujuan'] = $data['tujuan'] ?? '-';
-            unset($data['status'], $data['tingkat']);
-            $filePath = $this->handleFile($req);
+            $updated = DB::transaction(function () use (
+                $req,
+                $surat_masuk,
+                &$newMainPath,
+                &$supportingPaths,
+                &$pathsToDeleteAfterCommit,
+            ) {
+                $data = $req->validated();
+                unset($data['supporting_files'], $data['remove_supporting_ids']);
+                $data['tujuan'] = $data['tujuan'] ?? '-';
+                unset($data['status'], $data['tingkat']);
+                $filePath = $this->handleFile($req);
 
-            if ($filePath) {
-                if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
-                    Storage::disk('public')->delete($surat_masuk->file);
+                if ($filePath) {
+                    $newMainPath = $filePath;
+                    if ($surat_masuk->file) {
+                        $pathsToDeleteAfterCommit[] = $surat_masuk->file;
+                    }
+                    $data['file'] = $filePath;
+                } else {
+                    unset($data['file']);
                 }
-                $data['file'] = $filePath;
-            } else {
-                unset($data['file']);
-            }
 
-            return $surat_masuk->update($data);
+                $surat_masuk->update($data);
+                $pathsToDeleteAfterCommit = array_merge(
+                    $pathsToDeleteAfterCommit,
+                    $this->supportingDocuments->deleteMany(
+                        $surat_masuk,
+                        $req->input('remove_supporting_ids', []) ?? [],
+                    ),
+                );
+                $supportingPaths = $this->supportingDocuments->storeMany(
+                    $surat_masuk,
+                    $this->supportingUploads($req),
+                    $req->user()?->id,
+                );
+
+                return true;
+            });
         } catch (\Exception $e) {
+            $this->supportingDocuments->deleteStoredPaths(array_filter([
+                $newMainPath,
+                ...$supportingPaths,
+            ]));
             Log::error('Error updating surat masuk: '.$e->getMessage());
             throw $e;
         }
+
+        $this->supportingDocuments->deleteStoredPaths($pathsToDeleteAfterCommit);
+
+        return $updated;
     }
 
     public function destroy(SuratMasuk $surat_masuk)
     {
         try {
-            if ($surat_masuk->file && Storage::disk('public')->exists($surat_masuk->file)) {
-                Storage::disk('public')->delete($surat_masuk->file);
-            }
+            $paths = DB::transaction(function () use ($surat_masuk) {
+                $paths = $this->supportingDocuments->deleteAllForLetter($surat_masuk);
 
-            return $surat_masuk->delete();
+                if ($surat_masuk->file) {
+                    $paths[] = $surat_masuk->file;
+                }
+
+                $surat_masuk->delete();
+
+                return $paths;
+            });
         } catch (\Exception $e) {
             Log::error('Error deleting surat masuk: '.$e->getMessage());
             throw $e;
         }
+
+        $this->supportingDocuments->deleteStoredPaths($paths);
+
+        return true;
     }
 
     public function reviewBySekdes(SuratMasuk $suratMasuk, string $tingkat, User $user): SuratMasuk
@@ -241,6 +379,7 @@ class SuratMasukService
      */
     public function formatShowPayload(SuratMasuk $suratMasuk, User $user): array
     {
+        $suratMasuk->loadMissing('supportingDocuments');
         $letter = $suratMasuk->toArray();
         $letter['can_review_by_sekdes'] = $user->isSekdes() && $suratMasuk->canReviewBySekdes();
         $letter['can_verify_by_kades'] = $user->isKades() && $suratMasuk->canVerifyByKades();

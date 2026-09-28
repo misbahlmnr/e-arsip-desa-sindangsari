@@ -1,4 +1,5 @@
 ﻿import { FilePreview } from "@/components/FilePreview";
+import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -88,67 +89,72 @@ export default function ArsipSuratShow({ jenis, letter }) {
 
             <BackLink href={route("admin.arsip-surat.index")} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <div className="space-y-6 lg:col-span-2">
                     <div className="surface-card p-6 md:p-8">
-                        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+                        <div className="space-y-5">
                             <div>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                    Nomor Surat
-                                </p>
-                                <p className="font-mono text-xl font-bold mt-1">
+                                <h2 className="text-xl font-semibold leading-snug text-foreground">
+                                    {letter.perihal}
+                                </h2>
+                                <p className="mt-2 font-mono text-base text-foreground">
                                     {letter.no_surat}
                                 </p>
+                                <div className="mt-3 flex flex-wrap items-center gap-2">
+                                    <Badge
+                                        variant="outline"
+                                        className={cn(
+                                            "rounded-sm border px-2 py-0 text-[11px] font-medium",
+                                            isMasuk
+                                                ? "border-info/20 bg-info-soft text-info"
+                                                : "border-warning/20 bg-warning-soft text-warning",
+                                        )}
+                                    >
+                                        {isMasuk ? "Surat Masuk" : "Surat Keluar"}
+                                    </Badge>
+                                    <Badge
+                                        variant="outline"
+                                        className="rounded-sm border border-success/20 bg-success-soft px-2 py-0 text-[11px] font-medium text-success"
+                                    >
+                                        Diarsipkan
+                                    </Badge>
+                                </div>
+                                <p className="mt-3 text-sm text-muted-foreground">
+                                    Nomor agenda{" "}
+                                    <span className="font-mono">
+                                        {letter.nomor_agenda ?? "—"}
+                                    </span>
+                                </p>
                             </div>
-                            <div className="flex items-center gap-2 flex-wrap justify-end">
-                                <Badge
-                                    variant="outline"
-                                    className={cn(
-                                        "font-semibold rounded-sm px-2.5 py-0.5 border",
-                                        isMasuk
-                                            ? "bg-info-soft text-info border-info/20"
-                                            : "bg-warning-soft text-warning border-warning/20",
-                                    )}
-                                >
-                                    {isMasuk ? "Surat Masuk" : "Surat Keluar"}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className="font-semibold rounded-sm px-2.5 py-0.5 border bg-success-soft text-success border-success/20"
-                                >
-                                    Diarsipkan
-                                </Badge>
-                            </div>
+
+                            <dl className="grid grid-cols-1 gap-x-6 gap-y-5 border-t border-border pt-5 sm:grid-cols-2">
+                                <Field
+                                    label="Tanggal Surat"
+                                    value={
+                                        tanggalSurat
+                                            ? formatTanggalKalenderWib(tanggalSurat)
+                                            : null
+                                    }
+                                />
+                                <Field
+                                    label={isMasuk ? "Pengirim" : "Tujuan"}
+                                    value={pihak}
+                                />
+                            </dl>
+
+                            {letter.catatan?.trim() && (
+                                <div className="border-t border-border pt-5">
+                                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                                        Catatan
+                                    </p>
+                                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                                        {letter.catatan}
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
-                        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
-                            <Field
-                                label="Tanggal Surat"
-                                value={
-                                    tanggalSurat
-                                        ? formatTanggalKalenderWib(tanggalSurat)
-                                        : null
-                                }
-                            />
-                            <Field
-                                label={isMasuk ? "Pengirim" : "Tujuan"}
-                                value={pihak}
-                            />
-                            <Field
-                                label="Perihal"
-                                value={letter.perihal}
-                                className="sm:col-span-2"
-                            />
-                            {letter.catatan?.trim() && (
-                                <Field
-                                    label="Catatan"
-                                    value={letter.catatan}
-                                    className="sm:col-span-2"
-                                />
-                            )}
-                        </dl>
-
-                        <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
+                        <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-5">
                             {canManageSurat && (
                                 <Button
                                     variant="outline"
@@ -160,7 +166,7 @@ export default function ArsipSuratShow({ jenis, letter }) {
                                 </Button>
                             )}
                             {letter.file_url ? (
-                                <Button asChild variant="outline" className="rounded-xl">
+                                <Button asChild className="rounded-xl">
                                     <a
                                         href={letter.file_url}
                                         download
@@ -205,11 +211,14 @@ export default function ArsipSuratShow({ jenis, letter }) {
                             </p>
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">
                     <h3 className="font-bold text-base">Informasi Arsip</h3>
-                    <p className="text-sm text-muted-foreground mt-0.5 mb-5">
+                    <p className="mb-5 mt-1 text-sm text-muted-foreground">
                         Ringkasan data arsip surat.
                     </p>
                     <div className="space-y-4 text-sm">

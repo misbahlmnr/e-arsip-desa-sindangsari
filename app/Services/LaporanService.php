@@ -23,12 +23,6 @@ class LaporanService
         'penting' => 'Penting',
     ];
 
-    /** @var array<string, string> */
-    private const SURAT_KELUAR_STATUS_LABELS = [
-        'draft' => 'Draft',
-        'terkirim' => 'Terkirim',
-    ];
-
     /**
      * @return array<string, mixed>
      */
@@ -51,10 +45,6 @@ class LaporanService
             'surat_masuk_status' => $this->withStatusLabels(
                 $report['surat_masuk_status'],
                 SuratMasuk::STATUS_TAMPIL_LABELS,
-            ),
-            'surat_keluar_status' => $this->withStatusLabels(
-                $report['surat_keluar_status'],
-                self::SURAT_KELUAR_STATUS_LABELS,
             ),
             'tingkat_surat' => $this->withStatusLabels(
                 $report['tingkat_surat'],
@@ -83,7 +73,6 @@ class LaporanService
         return [
             'summary' => $this->buildSummary($dateFrom, $user),
             'surat_masuk_status' => $this->countSuratMasukByStatus($dateFrom),
-            'surat_keluar_status' => $this->countSuratKeluarByStatus($dateFrom),
             'tingkat_surat' => $this->countSuratMasukByTingkat($dateFrom),
             'monthly_trend' => $this->monthlyTrend(),
             'top_pengirim' => $this->topPengirim($dateFrom),
@@ -164,7 +153,6 @@ class LaporanService
                 ->whereDoesntHave('disposisi')
                 ->count(),
             'surat_keluar' => (clone $suratKeluarQuery)->count(),
-            'surat_keluar_draft' => (clone $suratKeluarQuery)->where('status', 'draft')->count(),
             'arsip' => $arsipMasukQuery->count() + $arsipKeluarQuery->count(),
             'disposisi' => $disposisiQuery->count(),
             'surat_penting_menunggu_kades' => (clone $suratMasukQuery)
@@ -200,20 +188,6 @@ class LaporanService
             ])
             ->values()
             ->all();
-    }
-
-    /**
-     * @return list<array{status: string, total: int}>
-     */
-    private function countSuratKeluarByStatus(?Carbon $dateFrom): array
-    {
-        $statuses = ['draft', 'terkirim'];
-
-        return $this->countByStatuses(
-            $this->applyDateFilter(SuratKeluar::query()->whereNull('diarsipkan_at'), $dateFrom, 'tanggal_kirim'),
-            'status',
-            $statuses,
-        );
     }
 
     /**

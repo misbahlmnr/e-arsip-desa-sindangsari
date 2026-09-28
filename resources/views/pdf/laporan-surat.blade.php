@@ -158,7 +158,6 @@
             <td>
                 <div class="label">Surat Keluar</div>
                 <div class="value">{{ $summary['surat_keluar'] }}</div>
-                <div class="hint">{{ $summary['surat_keluar_draft'] }} draft</div>
             </td>
             <td>
                 <div class="label">Arsip</div>
@@ -193,47 +192,22 @@
         </tbody>
     </table>
 
-    <table class="two-col">
-        <tr>
-            <td>
-                <h2>Status Surat Masuk</h2>
-                <table class="data">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th class="num">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($surat_masuk_status as $row)
-                            <tr>
-                                <td>{{ $row['label'] }}</td>
-                                <td class="num">{{ $row['total'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </td>
-            <td>
-                <h2>Status Surat Keluar</h2>
-                <table class="data">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th class="num">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($surat_keluar_status as $row)
-                            <tr>
-                                <td>{{ $row['label'] }}</td>
-                                <td class="num">{{ $row['total'] }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </td>
-        </tr>
+    <h2>Status Surat Masuk</h2>
+    <table class="data" style="width: 50%;">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th class="num">Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($surat_masuk_status as $row)
+                <tr>
+                    <td>{{ $row['label'] }}</td>
+                    <td class="num">{{ $row['total'] }}</td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
 
     <h2>Tingkat Surat</h2>

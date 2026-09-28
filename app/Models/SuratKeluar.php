@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Services\NomorAgendaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class SuratKeluar extends Model
@@ -13,14 +15,29 @@ class SuratKeluar extends Model
     protected $fillable = [
         'surat_masuk_id',
         'no_surat',
+        'nomor_agenda',
         'tanggal_kirim',
         'tujuan',
         'perihal',
         'catatan',
-        'status',
         'file',
         'diarsipkan_at',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (SuratKeluar $letter): void {
+            if (filled($letter->nomor_agenda) || $letter->tanggal_kirim === null) {
+                return;
+            }
+
+            $letter->nomor_agenda = app(NomorAgendaService::class)->next(
+                NomorAgendaService::KODE_KELUAR,
+                $letter->tanggal_kirim,
+                self::class,
+            );
+        });
+    }
 
     /**
      * @return array<string, string>
@@ -52,5 +69,12 @@ class SuratKeluar extends Model
     public function suratMasuk(): BelongsTo
     {
         return $this->belongsTo(SuratMasuk::class);
+    }
+
+    public function supportingDocuments(): HasMany
+    {
+        return $this->hasMany(SupportingDocument::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 }

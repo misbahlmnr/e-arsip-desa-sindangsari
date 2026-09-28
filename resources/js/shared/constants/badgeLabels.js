@@ -25,12 +25,6 @@ export const TINGKAT_SURAT_LABELS = {
     penting: "Penting",
 };
 
-/** Label tampilan untuk key status surat keluar */
-export const SURAT_KELUAR_STATUS_LABELS = {
-    draft: "Draft",
-    terkirim: "Terkirim",
-};
-
 /** Indikator sudah/belum ada disposisi di tabel surat masuk */
 export const DISPOSISI_FLAG_LABELS = {
     belum: "Belum",

@@ -47,12 +47,6 @@ class DashboardService
                 ->whereYear('tanggal_terima', now()->year)
                 ->count(),
             'surat_keluar' => (clone $suratKeluarAktif)->count(),
-            'surat_keluar_draft' => (clone $suratKeluarAktif)
-                ->where('status', 'draft')
-                ->count(),
-            'surat_keluar_terkirim' => (clone $suratKeluarAktif)
-                ->where('status', 'terkirim')
-                ->count(),
             'surat_keluar_bulan_ini' => SuratKeluar::query()
                 ->whereMonth('tanggal_kirim', now()->month)
                 ->whereYear('tanggal_kirim', now()->year)
@@ -334,15 +328,6 @@ class DashboardService
                 'params' => ['status' => SuratMasuk::STATUS_DIDISPOSISIKAN],
                 'severity' => 'info',
             ],
-            [
-                'key' => 'draft_keluar',
-                'label' => 'Surat keluar masih draft',
-                'description' => 'Belum dikirim atau difinalisasi',
-                'count' => $summary['surat_keluar_draft'],
-                'route' => 'admin.surat-keluar.index',
-                'params' => ['status' => 'draft'],
-                'severity' => 'info',
-            ],
         ];
 
         return array_values(array_filter(
@@ -500,14 +485,13 @@ class DashboardService
             ->orderByDesc('tanggal_kirim')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'tujuan', 'perihal', 'tanggal_kirim', 'status'])
+            ->get(['id', 'no_surat', 'tujuan', 'perihal', 'tanggal_kirim'])
             ->map(fn (SuratKeluar $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
                 'tujuan' => $s->tujuan,
                 'perihal' => $s->perihal,
                 'tanggal_kirim' => $s->tanggal_kirim?->format('Y-m-d'),
-                'status' => $s->status,
             ])
             ->values()
             ->all();

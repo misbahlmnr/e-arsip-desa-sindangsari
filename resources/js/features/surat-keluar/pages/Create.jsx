@@ -1,14 +1,8 @@
 ﻿import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
@@ -23,8 +17,8 @@ export default function CreateSuratKeluar() {
         tujuan: "",
         perihal: "",
         catatan: "",
-        status: "draft",
         file: null,
+        supporting_files: [],
     });
 
     const handleSubmit = (e) => {
@@ -61,6 +55,9 @@ export default function CreateSuratKeluar() {
                                 placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
+                            <p className="text-xs text-muted-foreground">
+                                Nomor agenda dicatat otomatis saat surat disimpan.
+                            </p>
                         </FormField>
                         <FormField
                             label="Tujuan"
@@ -105,26 +102,6 @@ export default function CreateSuratKeluar() {
                                 className="h-11 rounded-xl"
                                 maxLength={250}
                             />
-                        </FormField>
-                        <FormField
-                            label="Status"
-                            required
-                            error={errors.status}
-                        >
-                            <Select
-                                value={data.status}
-                                onValueChange={(v) => setData("status", v)}
-                            >
-                                <SelectTrigger className="h-11 rounded-xl">
-                                    <SelectValue placeholder="Pilih status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="terkirim">
-                                        Terkirim
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
                         </FormField>
                         <FormField
                             label="Catatan"
@@ -174,6 +151,15 @@ export default function CreateSuratKeluar() {
                             {errors.file}
                         </p>
                     ) : null}
+                    <div className="border-t border-border pt-4">
+                        <SupportingDocumentsField
+                            files={data.supporting_files}
+                            onFilesChange={(files) =>
+                                setData("supporting_files", files)
+                            }
+                            error={errors.supporting_files}
+                        />
+                    </div>
                 </div>
             </form>
         </AppLayout>
