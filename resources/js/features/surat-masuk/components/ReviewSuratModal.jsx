@@ -18,6 +18,7 @@ import {
 import { ClipboardCheck } from "lucide-react";
 import { useState } from "react";
 import { router } from "@inertiajs/react";
+import { TINGKAT_SURAT_LABELS } from "@/shared/constants/badgeLabels";
 
 export default function ReviewSuratModal({ letter, open, onOpenChange }) {
     const [tingkat, setTingkat] = useState("biasa");
@@ -57,8 +58,12 @@ export default function ReviewSuratModal({ letter, open, onOpenChange }) {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="biasa">Biasa</SelectItem>
-                                <SelectItem value="penting">Penting</SelectItem>
+                                <SelectItem value="biasa">
+                                    {TINGKAT_SURAT_LABELS.biasa}
+                                </SelectItem>
+                                <SelectItem value="penting">
+                                    {TINGKAT_SURAT_LABELS.penting}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground">

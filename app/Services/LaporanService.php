@@ -19,8 +19,8 @@ class LaporanService
 
     /** @var array<string, string> */
     private const TINGKAT_SURAT_LABELS = [
-        'biasa' => 'Biasa',
-        'penting' => 'Penting',
+        'biasa' => 'Prioritas Normal',
+        'penting' => 'Prioritas Tinggi',
     ];
 
     /**

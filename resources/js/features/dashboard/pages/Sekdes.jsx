@@ -156,7 +156,7 @@ export default function SekdesDashboard({
                                 title="Surat Masuk"
                                 items={[
                                     {
-                                        label: "Draft",
+                                        label: SURAT_MASUK_ALUR_LABELS.menunggu_review_sekdes,
                                         value: summary?.surat_masuk_draft ?? summary?.surat_masuk_belum_diproses,
                                     },
                                     {
