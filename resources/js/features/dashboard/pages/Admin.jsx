@@ -305,7 +305,7 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Tambahkan surat pertama untuk memulai."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
                             { key: "status", label: "Status" },
@@ -327,7 +327,7 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat keluar"
                         emptyHint="Buat surat keluar pertama dari modul terkait."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "tujuan", label: "Tujuan" },
                             { key: "tanggal_kirim", label: "Tanggal" },
                         ]}
@@ -350,7 +350,7 @@ export default function AdminDashboard({
                     emptyTitle="Tidak ada disposisi menunggu"
                     emptyHint="Semua disposisi ke Kepala Desa sudah ditangani."
                     columns={[
-                        { key: "no_surat", label: "No. Surat" },
+                        { key: "nomor_agenda", label: "Nomor Agenda" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "kepada", label: "Kepada" },
                         { key: "tanggal", label: "Tanggal" },
@@ -358,6 +358,7 @@ export default function AdminDashboard({
                     rows={(pending_disposisi ?? []).map((row) => ({
                         id: row.id,
                         no_surat: row.surat_masuk?.no_surat ?? "—",
+                        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
                         pengirim: row.surat_masuk?.pengirim ?? "—",
                         kepada: row.kepada,
                         tanggal: row.tanggal,
@@ -537,24 +538,32 @@ function RecentTable({
                                         {columns.map((col, index) => {
                                             const value = row[col.key];
 
-                                            if (col.key === "no_surat") {
+                                            if (col.key === "nomor_agenda") {
+                                                const agenda =
+                                                    row.nomor_agenda ?? "—";
+
                                                 return (
                                                     <td
                                                         key={col.key}
                                                         className="px-6 md:px-8 py-4"
                                                     >
-                                                        {href ? (
-                                                            <Link
-                                                                href={href}
-                                                                className="font-mono text-sm font-semibold text-primary hover:underline"
-                                                            >
-                                                                {value}
-                                                            </Link>
-                                                        ) : (
-                                                            <span className="font-mono text-sm font-semibold">
-                                                                {value}
-                                                            </span>
-                                                        )}
+                                                        <div>
+                                                            {href ? (
+                                                                <Link
+                                                                    href={href}
+                                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                                >
+                                                                    {agenda}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="font-mono text-sm font-semibold text-primary">
+                                                                    {agenda}
+                                                                </span>
+                                                            )}
+                                                            <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                                                                {row.no_surat}
+                                                            </p>
+                                                        </div>
                                                     </td>
                                                 );
                                             }

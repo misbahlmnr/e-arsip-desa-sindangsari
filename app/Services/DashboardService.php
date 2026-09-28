@@ -413,10 +413,11 @@ class DashboardService
             ->whereNull('verified_kades_at')
             ->orderByDesc('tanggal_terima')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
@@ -438,10 +439,11 @@ class DashboardService
             ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
             ->orderByDesc('tanggal_terima')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
@@ -462,10 +464,11 @@ class DashboardService
             ->orderByDesc('tanggal_terima')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal_terima' => $s->tanggal_terima?->format('Y-m-d'),
@@ -485,10 +488,11 @@ class DashboardService
             ->orderByDesc('tanggal_kirim')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'tujuan', 'perihal', 'tanggal_kirim'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'tujuan', 'perihal', 'tanggal_kirim'])
             ->map(fn (SuratKeluar $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'tujuan' => $s->tujuan,
                 'perihal' => $s->perihal,
                 'tanggal_kirim' => $s->tanggal_kirim?->format('Y-m-d'),
@@ -505,7 +509,7 @@ class DashboardService
     {
         $query = Disposisi::query()
             ->forActiveSurat()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
+            ->with('suratMasuk:id,no_surat,nomor_agenda,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -529,7 +533,7 @@ class DashboardService
     {
         $query = Disposisi::query()
             ->forActiveSurat()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
+            ->with('suratMasuk:id,no_surat,nomor_agenda,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -559,6 +563,7 @@ class DashboardService
             'surat_masuk' => $d->suratMasuk ? [
                 'id' => $d->suratMasuk->id,
                 'no_surat' => $d->suratMasuk->no_surat,
+                'nomor_agenda' => $d->suratMasuk->nomor_agenda,
                 'perihal' => $d->suratMasuk->perihal,
                 'pengirim' => $d->suratMasuk->pengirim,
             ] : null,

@@ -20,6 +20,7 @@ function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.surat_masuk?.no_surat ?? "—",
+        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
         pengirim: row.surat_masuk?.pengirim ?? "—",
         perihal: row.surat_masuk?.perihal ?? "—",
         kepada: row.kepada,
@@ -32,6 +33,7 @@ function mapPendingSuratRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.no_surat ?? "—",
+        nomor_agenda: row.nomor_agenda ?? "—",
         pengirim: row.pengirim ?? "—",
         perihal: row.perihal ?? "—",
         tanggal: row.tanggal,
@@ -199,7 +201,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Surat masuk baru akan tampil di sini."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
                             { key: "status", label: "Status" },
@@ -221,7 +223,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada disposisi"
                         emptyHint="Buat disposisi dari surat masuk."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "kepada", label: "Kepada" },
                             { key: "tanggal", label: "Tanggal" },
                             { key: "status", label: "Status" },
@@ -246,7 +248,7 @@ export default function SekdesDashboard({
                     emptyTitle="Tidak ada surat menunggu"
                     emptyHint="Semua surat penting sudah diverifikasi Kepala Desa."
                     columns={[
-                        { key: "no_surat", label: "No. Surat" },
+                        { key: "nomor_agenda", label: "Nomor Agenda" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "perihal", label: "Perihal" },
                         { key: "tanggal", label: "Tanggal" },

@@ -276,14 +276,37 @@ export function DataTable({
                                         {columns.map((col, index) => {
                                             const value = row[col.key];
 
-                                            if (
-                                                col.key === "no_surat" ||
-                                                col.key === "link_label"
-                                            ) {
-                                                const label =
-                                                    col.key === "link_label"
-                                                        ? value
-                                                        : value;
+                                            if (col.key === "nomor_agenda") {
+                                                const agenda =
+                                                    row.nomor_agenda ?? "—";
+
+                                                return (
+                                                    <td
+                                                        key={col.key}
+                                                        className="px-6 md:px-8 py-4"
+                                                    >
+                                                        <div>
+                                                            {href ? (
+                                                                <Link
+                                                                    href={href}
+                                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                                >
+                                                                    {agenda}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="font-mono text-sm font-semibold text-primary">
+                                                                    {agenda}
+                                                                </span>
+                                                            )}
+                                                            <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                                                                {row.no_surat}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                );
+                                            }
+
+                                            if (col.key === "link_label") {
                                                 return (
                                                     <td
                                                         key={col.key}
@@ -294,11 +317,11 @@ export function DataTable({
                                                                 href={href}
                                                                 className="font-mono text-sm font-semibold text-primary hover:underline"
                                                             >
-                                                                {label}
+                                                                {value}
                                                             </Link>
                                                         ) : (
                                                             <span className="text-sm font-semibold">
-                                                                {label}
+                                                                {value}
                                                             </span>
                                                         )}
                                                     </td>
