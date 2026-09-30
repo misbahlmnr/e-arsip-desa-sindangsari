@@ -9,11 +9,7 @@ import AppLayout from "@/layouts/AppLayout";
 import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
 import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import {
-    Archive,
-    Clock,
-    Send,
-} from "lucide-react";
+import { Archive, Clock, Send } from "lucide-react";
 
 function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({

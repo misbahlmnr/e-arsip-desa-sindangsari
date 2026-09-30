@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/StatusBadge";
 import AppLayout from "@/layouts/AppLayout";
 import { badgeLabel, ROLE_LABELS } from "@/shared/constants/badgeLabels";
+import { carryListState } from "@/shared/lib/listState";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Pencil, Trash2 } from "lucide-react";
@@ -84,9 +85,11 @@ export default function UsersShow({ user }) {
                         <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
                             <Button asChild className="rounded-xl">
                                 <Link
-                                    href={route("admin.users.edit", {
-                                        user: user.id,
-                                    })}
+                                    href={carryListState(
+                                        route("admin.users.edit", {
+                                            user: user.id,
+                                        }),
+                                    )}
                                 >
                                     <Pencil className="size-4 mr-1.5" />
                                     Edit

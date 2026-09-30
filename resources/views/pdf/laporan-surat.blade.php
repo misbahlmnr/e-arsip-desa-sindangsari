@@ -209,11 +209,11 @@
         </tbody>
     </table>
 
-    <h2>Tingkat Surat</h2>
+    <h2>Hasil Review</h2>
     <table class="data" style="width: 50%;">
         <thead>
             <tr>
-                <th>Tingkat</th>
+                <th>Hasil Review</th>
                 <th class="num">Jumlah</th>
             </tr>
         </thead>

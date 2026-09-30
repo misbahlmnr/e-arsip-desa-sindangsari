@@ -13,9 +13,35 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 
+const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
+
+function readSidebarCollapsed() {
+    try {
+        return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+    } catch {
+        return false;
+    }
+}
+
+function writeSidebarCollapsed(collapsed) {
+    try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+    } catch {
+        // Private mode or storage quota — keep the in-memory toggle.
+    }
+}
+
 export default function AppLayout({ title, subtitle, children }) {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(readSidebarCollapsed);
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setCollapsed((current) => {
+            const next = !current;
+            writeSidebarCollapsed(next);
+            return next;
+        });
+    };
     const user = usePage().props.auth.user;
     const menuItems = NAVBAR_ITEMS.filter(
         (n) => !n.roles || (user && n.roles.includes(user.role)),
@@ -29,7 +55,7 @@ export default function AppLayout({ title, subtitle, children }) {
                 <AppHeader
                     title={title}
                     subtitle={subtitle}
-                    onToggleSidebar={() => setCollapsed((c) => !c)}
+                    onToggleSidebar={toggleSidebar}
                     onOpenMobile={() => setMobileOpen(true)}
                 />
                 <main className="flex-1 overflow-y-auto min-h-0">

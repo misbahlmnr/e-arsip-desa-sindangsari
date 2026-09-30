@@ -281,7 +281,7 @@ export default function LaporanIndex({
                         icon={Inbox}
                     />
                     <StatusPieCard
-                        title="Tingkat Surat"
+                        title="Hasil Review"
                         subtitle="Surat yang sudah direview Sekdes"
                         data={tingkatChartData}
                         icon={Send}

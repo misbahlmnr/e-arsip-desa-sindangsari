@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/AppLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,8 @@ import { getColumns } from "../columns";
 
 export default function SuratKeluar({ letters, filters }) {
     const canManageSurat = usePage().props.auth.canManageSurat;
-    const { loading, searchInput, setSearchInput, visit } = useServerTable({
+    const { loading, searchInput, setSearchInput, visit, openFromList } =
+        useServerTable({
         routeName: "admin.surat-keluar.index",
         filters,
         searchDebounceMs: 400,
@@ -30,19 +31,19 @@ export default function SuratKeluar({ letters, filters }) {
                 startIndex,
                 canManage: canManageSurat,
                 onDetail: (row) =>
-                    router.visit(
+                    openFromList(
                         route("admin.surat-keluar.show", {
                             surat_keluar: row.id,
                         }),
                     ),
                 onEdit: (row) =>
-                    router.visit(
+                    openFromList(
                         route("admin.surat-keluar.edit", {
                             surat_keluar: row.id,
                         }),
                     ),
             }),
-        [startIndex, canManageSurat],
+        [startIndex, canManageSurat, openFromList],
     );
 
     return (
@@ -62,9 +63,7 @@ export default function SuratKeluar({ letters, filters }) {
                         <Button
                             size="lg"
                             onClick={() =>
-                                router.visit(
-                                    route("admin.surat-keluar.create"),
-                                )
+                                openFromList(route("admin.surat-keluar.create"))
                             }
                         >
                             Tambah Surat

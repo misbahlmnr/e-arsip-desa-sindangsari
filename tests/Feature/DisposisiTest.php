@@ -123,6 +123,7 @@ class DisposisiTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->has('disposisi.data', 1)
                 ->where('disposisi.data.0.no_surat', $surat->no_surat)
+                ->where('disposisi.data.0.nomor_agenda', $surat->fresh()->nomor_agenda)
             );
 
         $this->actingAs($admin)

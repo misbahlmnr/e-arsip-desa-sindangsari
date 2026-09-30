@@ -11,6 +11,7 @@ import {
     Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { carryListState } from "@/shared/lib/listState";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
 import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
@@ -114,11 +115,6 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                                 letter.tingkat,
                                             )}
                                         />
-                                    )}
-                                    {letter.diarsipkan_at && (
-                                        <span className="inline-flex px-2.5 py-1 rounded-sm text-xs font-semibold bg-success-soft text-success">
-                                            Diarsip
-                                        </span>
                                     )}
                                 </div>
                             </div>
@@ -263,9 +259,11 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                         className="rounded-xl"
                                     >
                                         <Link
-                                            href={route(
-                                                "admin.surat-masuk.edit",
-                                                { surat_masuk: letter.id },
+                                            href={carryListState(
+                                                route(
+                                                    "admin.surat-masuk.edit",
+                                                    { surat_masuk: letter.id },
+                                                ),
                                             )}
                                         >
                                             <Pencil className="size-4 mr-1.5" />
@@ -322,9 +320,11 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                             {canManageSurat && (
                                 <Button asChild variant="link" className="mt-2">
                                     <Link
-                                        href={route("admin.surat-masuk.edit", {
-                                            surat_masuk: letter.id,
-                                        })}
+                                        href={carryListState(
+                                            route("admin.surat-masuk.edit", {
+                                                surat_masuk: letter.id,
+                                            }),
+                                        )}
                                     >
                                         Tambahkan lampiran
                                     </Link>

@@ -60,7 +60,7 @@ class DisposisiService
         $query = Disposisi::query()
             ->forActiveSurat()
             ->with([
-                'suratMasuk:id,no_surat,pengirim,perihal,status,tingkat,verified_kades_at,diarsipkan_at',
+                'suratMasuk:id,no_surat,nomor_agenda,pengirim,perihal,status,tingkat,verified_kades_at,diarsipkan_at',
                 'user:id,name,role',
             ])
             ->where('dari_jabatan', $dariJabatan)
@@ -259,6 +259,7 @@ class DisposisiService
         return [
             'id' => $d->id,
             'no_surat' => $d->suratMasuk?->no_surat,
+            'nomor_agenda' => $d->suratMasuk?->nomor_agenda,
             'surat_masuk_id' => $d->surat_masuk_id,
             'surat_status' => $d->suratMasuk?->status,
             'surat_status_tampil' => $d->suratMasuk?->status_tampil,

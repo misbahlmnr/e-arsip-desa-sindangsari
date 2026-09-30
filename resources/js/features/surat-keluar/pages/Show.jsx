@@ -13,6 +13,7 @@ import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Archive, FileText, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { carryListState } from "@/shared/lib/listState";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
 import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
@@ -150,11 +151,14 @@ export default function ShowSuratKeluar({ letter }) {
                                             className="rounded-xl"
                                         >
                                             <Link
-                                                href={route(
-                                                    "admin.surat-keluar.edit",
-                                                    {
-                                                        surat_keluar: letter.id,
-                                                    },
+                                                href={carryListState(
+                                                    route(
+                                                        "admin.surat-keluar.edit",
+                                                        {
+                                                            surat_keluar:
+                                                                letter.id,
+                                                        },
+                                                    ),
                                                 )}
                                             >
                                                 <Pencil className="size-4 mr-1.5" />
@@ -218,9 +222,11 @@ export default function ShowSuratKeluar({ letter }) {
                             {canManageSurat && (
                                 <Button asChild variant="link" className="mt-2">
                                     <Link
-                                        href={route("admin.surat-keluar.edit", {
-                                            surat_keluar: letter.id,
-                                        })}
+                                        href={carryListState(
+                                            route("admin.surat-keluar.edit", {
+                                                surat_keluar: letter.id,
+                                            }),
+                                        )}
                                     >
                                         Tambahkan lampiran
                                     </Link>

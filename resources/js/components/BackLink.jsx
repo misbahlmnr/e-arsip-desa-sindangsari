@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { resolveListBackHref } from "@/shared/lib/listState";
 import { Link } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 
@@ -10,7 +11,7 @@ export default function BackLink({ href, children = "Kembali ke daftar" }) {
                 asChild
                 className="-ml-2 text-muted-foreground"
             >
-                <Link href={href}>
+                <Link href={resolveListBackHref(href)}>
                     <ArrowLeft className="size-4 mr-1.5" />
                     {children}
                 </Link>

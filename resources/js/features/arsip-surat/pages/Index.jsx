@@ -18,6 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { withListState } from "@/shared/lib/listState";
 import { Head, Link, router } from "@inertiajs/react";
 import {
     Archive,
@@ -656,12 +657,14 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                                     {a.perihal}
                                                 </p>
                                                 <Link
-                                                    href={route(
-                                                        "admin.arsip-surat.show",
-                                                        {
-                                                            jenis: a.jenis,
-                                                            id: a.id,
-                                                        },
+                                                    href={withListState(
+                                                        route(
+                                                            "admin.arsip-surat.show",
+                                                            {
+                                                                jenis: a.jenis,
+                                                                id: a.id,
+                                                            },
+                                                        ),
                                                     )}
                                                     className="mt-0.5 inline-block font-mono text-sm text-primary hover:underline"
                                                 >
@@ -713,12 +716,14 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                                         aria-label="Lihat detail arsip"
                                                     >
                                                         <Link
-                                                            href={route(
-                                                                "admin.arsip-surat.show",
-                                                                {
-                                                                    jenis: a.jenis,
-                                                                    id: a.id,
-                                                                },
+                                                            href={withListState(
+                                                                route(
+                                                                    "admin.arsip-surat.show",
+                                                                    {
+                                                                        jenis: a.jenis,
+                                                                        id: a.id,
+                                                                    },
+                                                                ),
                                                             )}
                                                         >
                                                             <Eye className="size-4" />

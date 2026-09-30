@@ -116,7 +116,7 @@ export default function ShowDisposisi({ disposisi }) {
                             {surat.tingkat && (
                                 <div>
                                     <dt className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        Tingkat
+                                        Hasil Review
                                     </dt>
                                     <dd className="mt-2">
                                         <StatusBadge

@@ -1,3 +1,4 @@
+import { withListState } from "@/shared/lib/listState";
 import { router } from "@inertiajs/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -79,6 +80,10 @@ export function useServerTable({
         [routeName, buildQuery],
     );
 
+    const openFromList = useCallback((href) => {
+        router.visit(withListState(href));
+    }, []);
+
     useEffect(() => {
         const handle = setTimeout(() => {
             const q = String(searchInput ?? "").trim();
@@ -102,5 +107,6 @@ export function useServerTable({
         searchInput,
         setSearchInput,
         visit,
+        openFromList,
     };
 }

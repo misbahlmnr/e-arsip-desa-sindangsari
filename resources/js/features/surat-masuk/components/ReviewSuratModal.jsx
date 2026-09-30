@@ -45,14 +45,15 @@ export default function ReviewSuratModal({ letter, open, onOpenChange }) {
                 <DialogHeader>
                     <DialogTitle>Review Surat</DialogTitle>
                     <DialogDescription>
-                        Telaah administratif surat dan tentukan tingkat
-                        kepentingannya.
+                        Telaah surat dan tentukan apakah surat diproses oleh
+                        Sekretaris Desa atau perlu diverifikasi oleh Kepala
+                        Desa.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
-                        <Label>Tingkat Surat</Label>
+                        <Label>Hasil Review</Label>
                         <Select value={tingkat} onValueChange={setTingkat}>
                             <SelectTrigger className="h-11 rounded-xl">
                                 <SelectValue />
@@ -67,8 +68,9 @@ export default function ReviewSuratModal({ letter, open, onOpenChange }) {
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground">
-                            Surat prioritas normal: disposisi oleh Sekdes. Surat prioritas tinggi:
-                            verifikasi Kades lalu disposisi Kades.
+                            Diproses Sekretaris Desa: disposisi oleh Sekdes.
+                            Perlu Verifikasi Kepala Desa: verifikasi Kades lalu
+                            disposisi Kades.
                         </p>
                     </div>
                 </div>
