@@ -18,7 +18,7 @@ export default {
         },
         extend: {
             fontFamily: {
-                sans: ['"Plus Jakarta Sans"', "system-ui", "sans-serif"],
+                sans: ["Inter", "system-ui", "sans-serif"],
             },
             colors: {
                 border: "hsl(var(--border))",
@@ -86,9 +86,14 @@ export default {
                 },
             },
             borderRadius: {
-                lg: "var(--radius)",
-                md: "calc(var(--radius) - 4px)",
-                sm: "calc(var(--radius) - 8px)",
+                none: "0px",
+                sm: "2px",
+                DEFAULT: "2px",
+                md: "2px",
+                lg: "2px",
+                xl: "2px",
+                "2xl": "2px",
+                "3xl": "2px",
             },
             boxShadow: {
                 soft: "var(--shadow-soft)",

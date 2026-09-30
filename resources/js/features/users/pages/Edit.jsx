@@ -13,6 +13,7 @@ import { cn } from "@/shared/lib/utils";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
+import BackLink from "@/components/BackLink";
 
 const ROLE_OPTIONS = [
     { value: "admin", label: "Admin" },
@@ -71,6 +72,8 @@ export default function UsersEdit({ user }) {
             subtitle="Perbarui data dan peran pengguna."
         >
             <Head title={`Edit — ${user.name}`} />
+
+            <BackLink href={route("admin.users.index")} />
 
             <form
                 onSubmit={handleSubmit}

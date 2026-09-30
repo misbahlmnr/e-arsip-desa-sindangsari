@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/select";
 import {
     badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
     SURAT_MASUK_ALUR_LABELS,
     TINGKAT_SURAT_LABELS,
 } from "@/shared/constants/badgeLabels";
@@ -49,23 +48,22 @@ const RANGE_OPTIONS = [
 ];
 
 const CHART_COLORS = {
-    masuk: "hsl(188, 45%, 38%)",
-    keluar: "hsl(38, 92%, 50%)",
-    arsip: "hsl(24, 95%, 53%)",
-    disposisi: "hsl(262, 52%, 47%)",
+    masuk: "hsl(196, 92%, 36%)",
+    keluar: "hsl(48, 88%, 44%)",
+    arsip: "hsl(147, 62%, 32%)",
+    disposisi: "hsl(196, 70%, 28%)",
     status: [
-        "hsl(188, 45%, 38%)",
-        "hsl(38, 92%, 50%)",
-        "hsl(142, 71%, 45%)",
-        "hsl(262, 52%, 47%)",
-        "hsl(0, 84%, 60%)",
+        "hsl(196, 92%, 36%)",
+        "hsl(48, 88%, 44%)",
+        "hsl(147, 62%, 32%)",
+        "hsl(196, 70%, 28%)",
+        "hsl(357, 82%, 48%)",
     ],
 };
 
 export default function LaporanIndex({
     summary,
     surat_masuk_status,
-    surat_keluar_status,
     tingkat_surat,
     monthly_trend,
     top_pengirim,
@@ -90,35 +88,33 @@ export default function LaporanIndex({
         {
             label: "Surat Masuk",
             value: summary?.surat_masuk ?? 0,
-            hint: `${summary?.surat_masuk_aktif ?? 0} aktif`,
+            hint: `${summary?.surat_masuk_aktif ?? 0} Surat Aktif`,
             icon: FileInput,
             tone: "primary",
         },
         {
-            label: "Menunggu Review",
+            label: "Menunggu Review Sekdes",
             value: summary?.surat_masuk_belum_diproses ?? 0,
-            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} tanpa disposisi`,
             icon: Clock,
             tone: "warning",
         },
         {
             label: "Surat Keluar",
             value: summary?.surat_keluar ?? 0,
-            hint: `${summary?.surat_keluar_draft ?? 0} masih draft`,
             icon: FileOutput,
             tone: "info",
         },
         {
             label: "Arsip",
             value: summary?.arsip ?? 0,
-            hint: "Surat masuk & keluar",
+            hint: "Surat telah diarsipkan",
             icon: Archive,
             tone: "success",
         },
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.surat_penting_menunggu_kades ?? 0} penting menunggu Kades`,
+            hint: `${summary?.surat_penting_menunggu_kades ?? 0} menunggu tindak lanjut`,
             icon: Send,
             tone: "disposisi",
         },
@@ -126,12 +122,6 @@ export default function LaporanIndex({
 
     const masukChartData = (surat_masuk_status ?? []).map((row) => ({
         name: badgeLabel(SURAT_MASUK_ALUR_LABELS, row.status),
-        value: row.total,
-        key: row.status,
-    }));
-
-    const keluarChartData = (surat_keluar_status ?? []).map((row) => ({
-        name: badgeLabel(SURAT_KELUAR_STATUS_LABELS, row.status),
         value: row.total,
         key: row.status,
     }));
@@ -156,7 +146,7 @@ export default function LaporanIndex({
                     className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                 >
                     <div className="flex items-center gap-3 text-muted-foreground">
-                        <div className="size-10 rounded-xl bg-primary-soft text-primary flex items-center justify-center">
+                        <div className="size-9 bg-primary-soft text-primary flex items-center justify-center">
                             <BarChart3 className="size-5" />
                         </div>
                         <p className="text-sm">
@@ -260,7 +250,7 @@ export default function LaporanIndex({
                                 />
                                 <Tooltip
                                     contentStyle={{
-                                        borderRadius: "12px",
+                                        borderRadius: "2px",
                                         border: "1px solid hsl(var(--border))",
                                         background: "hsl(var(--card))",
                                     }}
@@ -283,7 +273,7 @@ export default function LaporanIndex({
                     </div>
                 </motion.section>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <StatusPieCard
                         title="Status Surat Masuk"
                         subtitle="Surat aktif (belum diarsipkan)"
@@ -291,13 +281,7 @@ export default function LaporanIndex({
                         icon={Inbox}
                     />
                     <StatusPieCard
-                        title="Status Surat Keluar"
-                        subtitle="Surat aktif (belum diarsipkan)"
-                        data={keluarChartData}
-                        icon={FileOutput}
-                    />
-                    <StatusPieCard
-                        title="Tingkat Surat"
+                        title="Hasil Review"
                         subtitle="Surat yang sudah direview Sekdes"
                         data={tingkatChartData}
                         icon={Send}
@@ -337,20 +321,20 @@ function StatCard({ label, value, hint, icon: Icon, tone }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi: "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
     }[tone];
 
     return (
         <div className="surface-card surface-card-hover p-6">
             <div
-                className={`size-11 rounded-xl ${toneClasses} flex items-center justify-center`}
+                className={`size-10 ${toneClasses} flex items-center justify-center`}
             >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-5" strokeWidth={2} />
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-4">
                 {label}
             </p>
-            <p className="text-3xl font-extrabold tracking-tight tabular-nums mt-1">
+            <p className="text-2xl font-semibold tracking-tight tabular-nums mt-1">
                 {value}
             </p>
             {hint && (
@@ -367,7 +351,7 @@ function StatusPieCard({ title, subtitle, data, icon: Icon }) {
     return (
         <div className="surface-card p-6 md:p-7">
             <div className="flex items-start gap-3 mb-4">
-                <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <div className="size-9 bg-muted flex items-center justify-center shrink-0">
                     <Icon className="size-5 text-muted-foreground" />
                 </div>
                 <div>
@@ -410,7 +394,7 @@ function StatusPieCard({ title, subtitle, data, icon: Icon }) {
                                 </Pie>
                                 <Tooltip
                                     contentStyle={{
-                                        borderRadius: "12px",
+                                        borderRadius: "2px",
                                         border: "1px solid hsl(var(--border))",
                                         background: "hsl(var(--card))",
                                     }}
@@ -460,7 +444,7 @@ function RankListCard({ title, subtitle, icon: Icon, rows, emptyMessage }) {
     return (
         <div className="surface-card overflow-hidden">
             <div className="flex items-start gap-3 px-6 md:px-8 py-5 border-b border-border">
-                <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <div className="size-9 bg-muted flex items-center justify-center shrink-0">
                     <Icon className="size-5 text-muted-foreground" />
                 </div>
                 <div>
@@ -492,9 +476,9 @@ function RankListCard({ title, subtitle, icon: Icon, rows, emptyMessage }) {
                                     {row.value}
                                 </span>
                             </div>
-                            <div className="h-2 rounded-full bg-muted overflow-hidden">
+                            <div className="h-1.5 bg-muted overflow-hidden">
                                 <div
-                                    className="h-full rounded-full bg-primary transition-all"
+                                    className="h-full bg-primary transition-all"
                                     style={{
                                         width: `${max ? (row.value / max) * 100 : 0}%`,
                                     }}

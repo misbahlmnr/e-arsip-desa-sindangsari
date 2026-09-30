@@ -1,8 +1,7 @@
 ﻿import { Button } from "@/components/ui/button";
-import { DisposisiBadge, StatusBadge } from "@/components/StatusBadge";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
     badgeLabel,
-    DISPOSISI_FLAG_LABELS,
     resolveSuratMasukAlurStatus,
     SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
@@ -37,16 +36,21 @@ export function getColumns({
             ),
         },
         {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
             cell: ({ row }) => (
-                <button
-                    type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
-                    onClick={() => onDetail?.(row.original)}
-                >
-                    {row.original.no_surat}
-                </button>
+                <div>
+                    <button
+                        type="button"
+                        className="font-mono text-sm font-semibold text-primary hover:underline"
+                        onClick={() => onDetail?.(row.original)}
+                    >
+                        {row.original.nomor_agenda ?? "—"}
+                    </button>
+                    <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                        {row.original.no_surat}
+                    </p>
+                </div>
             ),
         },
         {
@@ -88,19 +92,6 @@ export function getColumns({
                     <StatusBadge
                         value={alur}
                         label={badgeLabel(SURAT_MASUK_ALUR_LABELS, alur)}
-                    />
-                );
-            },
-        },
-        {
-            accessorKey: "disposisi",
-            header: "Disposisi",
-            cell: ({ row }) => {
-                const key = row.original.disposisi ?? "belum";
-                return (
-                    <DisposisiBadge
-                        value={key}
-                        label={badgeLabel(DISPOSISI_FLAG_LABELS, key)}
                     />
                 );
             },

@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import {
     badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
     SURAT_MASUK_ALUR_LABELS,
 } from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
@@ -13,14 +12,11 @@ import {
     AlertCircle,
     Archive,
     ArrowRight,
-    BarChart3,
     CheckCircle2,
     Clock,
     FileInput,
     FileOutput,
-    Plus,
     Send,
-    Users,
 } from "lucide-react";
 import {
     Bar,
@@ -34,8 +30,8 @@ import {
 } from "recharts";
 
 const CHART_COLORS = {
-    masuk: "hsl(188, 45%, 38%)",
-    keluar: "hsl(38, 92%, 50%)",
+    masuk: "hsl(196, 92%, 36%)",
+    keluar: "hsl(48, 88%, 44%)",
 };
 
 const ATTENTION_STYLES = {
@@ -74,7 +70,7 @@ export default function AdminDashboard({
         {
             label: "Menunggu Review",
             value: summary?.surat_masuk_belum_diproses ?? 0,
-            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} biasa tanpa disposisi`,
+            hint: `${summary?.surat_masuk_tanpa_disposisi ?? 0} surat prioritas normal tanpa disposisi`,
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", { status: "draft" }),
@@ -90,7 +86,7 @@ export default function AdminDashboard({
         {
             label: "Disposisi",
             value: summary?.disposisi ?? 0,
-            hint: `${summary?.disposisi_menunggu ?? 0} penting menunggu Kades`,
+            hint: `${summary?.disposisi_menunggu ?? 0} surat prioritas tinggi menunggu Kades`,
             icon: Send,
             tone: "disposisi",
             href: route("admin.surat-masuk.index", {
@@ -115,64 +111,6 @@ export default function AdminDashboard({
             <Head title="Dashboard Admin" />
 
             <div className="space-y-8">
-                <motion.section
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    aria-labelledby="akses-cepat"
-                >
-                    <h2 id="akses-cepat" className="sr-only">
-                        Akses cepat
-                    </h2>
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild className="rounded-xl">
-                            <Link href={route("admin.surat-masuk.create")}>
-                                <Plus className="size-4" />
-                                Tambah Surat Masuk
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.surat-keluar.create")}>
-                                <FileOutput className="size-4" />
-                                Tambah Surat Keluar
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.arsip-surat.index")}>
-                                <Archive className="size-4" />
-                                Arsip Surat
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.laporan.index")}>
-                                <BarChart3 className="size-4" />
-                                Laporan
-                            </Link>
-                        </Button>
-                        <Button
-                            asChild
-                            variant="outline"
-                            className="rounded-xl"
-                        >
-                            <Link href={route("admin.users.index")}>
-                                <Users className="size-4" />
-                                Manajemen User
-                            </Link>
-                        </Button>
-                    </div>
-                </motion.section>
-
                 <section aria-labelledby="ringkasan">
                     <h2 id="ringkasan" className="sr-only">
                         Ringkasan modul
@@ -280,7 +218,7 @@ export default function AdminDashboard({
                                     />
                                     <Tooltip
                                         contentStyle={{
-                                            borderRadius: "12px",
+                                            borderRadius: "2px",
                                             border: "1px solid hsl(var(--border))",
                                             background: "hsl(var(--card))",
                                         }}
@@ -338,19 +276,6 @@ export default function AdminDashboard({
                                 ]}
                             />
                             <StatusGroup
-                                title="Surat Keluar"
-                                items={[
-                                    {
-                                        label: "Draft",
-                                        value: summary?.surat_keluar_draft,
-                                    },
-                                    {
-                                        label: "Terkirim",
-                                        value: summary?.surat_keluar_terkirim,
-                                    },
-                                ]}
-                            />
-                            <StatusGroup
                                 title="Disposisi"
                                 items={[
                                     {
@@ -380,7 +305,7 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Tambahkan surat pertama untuk memulai."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
                             { key: "status", label: "Status" },
@@ -402,10 +327,9 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat keluar"
                         emptyHint="Buat surat keluar pertama dari modul terkait."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "tujuan", label: "Tujuan" },
                             { key: "tanggal_kirim", label: "Tanggal" },
-                            { key: "status", label: "Status" },
                         ]}
                         rows={recent_surat_keluar ?? []}
                         detailRoute={(row) =>
@@ -413,7 +337,6 @@ export default function AdminDashboard({
                                 surat_keluar: row.id,
                             })
                         }
-                        statusLabels={SURAT_KELUAR_STATUS_LABELS}
                         dateKey="tanggal_kirim"
                     />
                 </div>
@@ -427,7 +350,7 @@ export default function AdminDashboard({
                     emptyTitle="Tidak ada disposisi menunggu"
                     emptyHint="Semua disposisi ke Kepala Desa sudah ditangani."
                     columns={[
-                        { key: "no_surat", label: "No. Surat" },
+                        { key: "nomor_agenda", label: "Nomor Agenda" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "kepada", label: "Kepada" },
                         { key: "tanggal", label: "Tanggal" },
@@ -435,6 +358,7 @@ export default function AdminDashboard({
                     rows={(pending_disposisi ?? []).map((row) => ({
                         id: row.id,
                         no_surat: row.surat_masuk?.no_surat ?? "—",
+                        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
                         pengirim: row.surat_masuk?.pengirim ?? "—",
                         kepada: row.kepada,
                         tanggal: row.tanggal,
@@ -460,22 +384,21 @@ function StatCard({ label, value, hint, icon: Icon, tone, href }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi:
-            "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
         muted: "bg-muted text-muted-foreground",
     }[tone];
 
     const content = (
         <div className="surface-card surface-card-hover p-6 h-full">
             <div
-                className={`size-11 rounded-xl ${toneClasses} flex items-center justify-center`}
+                className={`size-10 ${toneClasses} flex items-center justify-center`}
             >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-5" strokeWidth={2} />
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-4">
                 {label}
             </p>
-            <p className="text-3xl font-extrabold tracking-tight tabular-nums mt-1">
+            <p className="text-2xl font-semibold tracking-tight tabular-nums mt-1">
                 {value}
             </p>
             {hint && (
@@ -615,24 +538,32 @@ function RecentTable({
                                         {columns.map((col, index) => {
                                             const value = row[col.key];
 
-                                            if (col.key === "no_surat") {
+                                            if (col.key === "nomor_agenda") {
+                                                const agenda =
+                                                    row.nomor_agenda ?? "—";
+
                                                 return (
                                                     <td
                                                         key={col.key}
                                                         className="px-6 md:px-8 py-4"
                                                     >
-                                                        {href ? (
-                                                            <Link
-                                                                href={href}
-                                                                className="font-mono text-sm font-semibold text-primary hover:underline"
-                                                            >
-                                                                {value}
-                                                            </Link>
-                                                        ) : (
-                                                            <span className="font-mono text-sm font-semibold">
-                                                                {value}
-                                                            </span>
-                                                        )}
+                                                        <div>
+                                                            {href ? (
+                                                                <Link
+                                                                    href={href}
+                                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                                >
+                                                                    {agenda}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="font-mono text-sm font-semibold text-primary">
+                                                                    {agenda}
+                                                                </span>
+                                                            )}
+                                                            <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                                                                {row.no_surat}
+                                                            </p>
+                                                        </div>
                                                     </td>
                                                 );
                                             }

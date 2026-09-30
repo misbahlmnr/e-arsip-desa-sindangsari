@@ -8,27 +8,21 @@ export const SURAT_MASUK_STATUS_LABELS = {
 
 /** Label status alur surat masuk (UI) — bedakan review Sekdes vs verifikasi Kades */
 export const SURAT_MASUK_ALUR_LABELS = {
-    menunggu_review_sekdes: "Draft",
-    direview_sekdes: "Review Sekdes",
-    menunggu_verifikasi_kades: "Menunggu verifikasi Kades",
-    siap_disposisi_kades: "Siap disposisi Kades",
+    menunggu_review_sekdes: "Menunggu Review Sekdes",
+    direview_sekdes: "Siap Disposisi Sekdes",
+    menunggu_verifikasi_kades: "Menunggu Verifikasi Kades",
+    siap_disposisi_kades: "Siap Disposisi Kades",
     didisposisikan: "Didisposisikan",
     diarsipkan: "Diarsipkan",
     // fallback dashboard kades (legacy keys)
-    menunggu_verifikasi: "Menunggu verifikasi Kades",
-    siap_disposisi: "Siap disposisi Kades",
+    menunggu_verifikasi: "Menunggu Verifikasi Kades",
+    siap_disposisi: "Siap Disposisi Kades",
 };
 
-/** Tingkat surat setelah review Sekdes */
+/** Hasil review Sekretaris Desa */
 export const TINGKAT_SURAT_LABELS = {
-    biasa: "Biasa",
-    penting: "Penting",
-};
-
-/** Label tampilan untuk key status surat keluar */
-export const SURAT_KELUAR_STATUS_LABELS = {
-    draft: "Draft",
-    terkirim: "Terkirim",
+    biasa: "Diproses Sekretaris Desa",
+    penting: "Perlu Verifikasi Kepala Desa",
 };
 
 /** Indikator sudah/belum ada disposisi di tabel surat masuk */

@@ -12,7 +12,7 @@ class SuratNomorSearchTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_surat_masuk_search_matches_no_surat_prefix_only(): void
+    public function test_surat_masuk_search_matches_no_surat_and_perihal(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
@@ -38,12 +38,16 @@ class SuratNomorSearchTest extends TestCase
             ->get(route('admin.surat-masuk.index', ['search' => '145/']))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
-                ->has('letters.data', 1)
-                ->where('letters.data.0.no_surat', '145/001/I/2026')
+                ->has('letters.data', 2)
+                ->where('letters.data', function ($letters) {
+                    $numbers = collect($letters)->pluck('no_surat')->sort()->values()->all();
+
+                    return $numbers === ['145/001/I/2026', '470.1/002/V/2026'];
+                })
             );
     }
 
-    public function test_surat_masuk_search_ignores_perihal_match(): void
+    public function test_surat_masuk_search_matches_perihal(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
@@ -60,8 +64,43 @@ class SuratNomorSearchTest extends TestCase
             ->get(route('admin.surat-masuk.index', ['search' => 'Undangan']))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
-                ->has('letters.data', 0)
+                ->has('letters.data', 1)
+                ->where('letters.data.0.no_surat', '470.1/002/V/2026')
             );
+    }
+
+    public function test_surat_masuk_search_matches_pengirim_tujuan_and_nomor_agenda(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        SuratMasuk::query()->create([
+            'no_surat' => '001/A',
+            'nomor_agenda' => 'SM/2026/09/0007',
+            'tanggal_terima' => '2026-09-01',
+            'pengirim' => 'Dinas Kesehatan',
+            'perihal' => 'Sosialisasi',
+            'status' => 'draft',
+            'tujuan' => 'Kepala Desa',
+        ]);
+
+        SuratMasuk::query()->create([
+            'no_surat' => '002/B',
+            'tanggal_terima' => '2026-09-02',
+            'pengirim' => 'Camat',
+            'perihal' => 'Lain',
+            'status' => 'draft',
+            'tujuan' => '-',
+        ]);
+
+        foreach (['Dinas Kesehatan', 'Kepala Desa', 'SM/2026/09/0007'] as $term) {
+            $this->actingAs($admin)
+                ->get(route('admin.surat-masuk.index', ['search' => $term]))
+                ->assertOk()
+                ->assertInertia(fn ($page) => $page
+                    ->has('letters.data', 1)
+                    ->where('letters.data.0.no_surat', '001/A')
+                );
+        }
     }
 
     public function test_surat_keluar_search_matches_no_surat_prefix(): void
@@ -73,7 +112,6 @@ class SuratNomorSearchTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'BPD',
             'perihal' => 'Laporan keuangan',
-            'status' => 'terkirim',
             'file' => 'surat-keluar/test.pdf',
         ]);
 
@@ -82,7 +120,6 @@ class SuratNomorSearchTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'Camat',
             'perihal' => 'Surat tugas',
-            'status' => 'draft',
             'file' => 'surat-keluar/test2.pdf',
         ]);
 
@@ -93,6 +130,38 @@ class SuratNomorSearchTest extends TestCase
                 ->has('letters.data', 1)
                 ->where('letters.data.0.no_surat', '145/010/I/2026')
             );
+    }
+
+    public function test_surat_keluar_search_matches_agenda_nomor_perihal_and_tujuan(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        SuratKeluar::query()->create([
+            'no_surat' => '145/010/I/2026',
+            'nomor_agenda' => 'SK/2026/09/0007',
+            'tanggal_kirim' => '2026-09-01',
+            'tujuan' => 'BPD Desa Sindangsari',
+            'perihal' => 'Laporan keuangan desa',
+            'file' => 'surat-keluar/test.pdf',
+        ]);
+
+        SuratKeluar::query()->create([
+            'no_surat' => '200/001/II/2026',
+            'tanggal_kirim' => '2026-09-02',
+            'tujuan' => 'Camat',
+            'perihal' => 'Surat tugas',
+            'file' => 'surat-keluar/test2.pdf',
+        ]);
+
+        foreach (['SK/2026/09/0007', '145/010/I/2026', 'Laporan keuangan desa', 'BPD Desa Sindangsari'] as $term) {
+            $this->actingAs($admin)
+                ->get(route('admin.surat-keluar.index', ['search' => $term]))
+                ->assertOk()
+                ->assertInertia(fn ($page) => $page
+                    ->has('letters.data', 1)
+                    ->where('letters.data.0.no_surat', '145/010/I/2026')
+                );
+        }
     }
 
     public function test_arsip_search_matches_archived_no_surat(): void
@@ -114,7 +183,6 @@ class SuratNomorSearchTest extends TestCase
             'tanggal_kirim' => now()->subMonths(2)->toDateString(),
             'tujuan' => 'BPD',
             'perihal' => 'Balasan',
-            'status' => 'terkirim',
             'file' => 'surat-keluar/test.pdf',
             'diarsipkan_at' => now()->subMonth(),
         ]);

@@ -18,7 +18,7 @@ const ROLE_LABEL = {
     kades: "Kepala Desa",
 };
 
-const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
+const AppHeader = ({ title, subtitle, onToggleSidebar, onOpenMobile }) => {
     const user = usePage().props.auth.user;
 
     const initials = user?.name
@@ -32,8 +32,17 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
     };
 
     return (
-        <header className="h-20 bg-card border-b border-border flex items-center justify-between gap-4 px-6 md:px-10 sticky top-0 z-20">
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between gap-4 px-5 md:px-6 sticky top-0 z-20">
             <div className="flex items-center gap-3 min-w-0">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onOpenMobile}
+                    className="md:hidden shrink-0"
+                    aria-label="Buka menu"
+                >
+                    <Menu className="size-5" />
+                </Button>
                 <Button
                     variant="ghost"
                     size="icon"
@@ -44,11 +53,11 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
                     <Menu className="size-5" />
                 </Button>
                 <div className="min-w-0">
-                    <h2 className="text-lg md:text-xl font-bold tracking-tight text-foreground truncate">
+                    <h2 className="text-base md:text-lg font-semibold tracking-tight text-foreground truncate">
                         {title}
                     </h2>
                     {subtitle && (
-                        <p className="text-sm text-muted-foreground truncate">
+                        <p className="text-xs text-muted-foreground truncate">
                             {subtitle}
                         </p>
                     )}
@@ -58,17 +67,17 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
             <div className="flex items-center gap-3 shrink-0">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-muted transition-colors">
+                        <button className="flex items-center gap-3 px-2 py-1.5 hover:bg-muted transition-colors border border-transparent hover:border-border">
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-semibold text-foreground leading-tight">
                                     {user?.name}
                                 </p>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-[11px] text-muted-foreground">
                                     {user ? ROLE_LABEL[user.role] : ""}
                                 </p>
                             </div>
-                            <Avatar className="size-10 border border-border">
-                                <AvatarFallback className="bg-primary-soft text-primary font-bold">
+                            <Avatar className="size-8 border border-border">
+                                <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                                     {initials}
                                 </AvatarFallback>
                             </Avatar>
@@ -81,10 +90,6 @@ const AppHeader = ({ title, subtitle, onToggleSidebar }) => {
                                 {user?.email}
                             </div>
                         </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem disabled>
-                            <UserIcon className="size-4 mr-2" /> Profil Saya
-                        </DropdownMenuItem> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={logout}

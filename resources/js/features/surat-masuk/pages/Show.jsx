@@ -3,7 +3,6 @@ import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
     Archive,
-    ArrowLeft,
     ClipboardCheck,
     FileText,
     Pencil,
@@ -12,9 +11,12 @@ import {
     Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { carryListState } from "@/shared/lib/listState";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
+import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
 import { StatusBadge } from "@/components/StatusBadge";
+import BackLink from "@/components/BackLink";
 import {
     badgeLabel,
     resolveSuratMasukAlurStatus,
@@ -84,52 +86,57 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
         <AppLayout
             title="Detail Surat Masuk"
             subtitle={letter.no_surat}
-            actions={
-                <Button asChild variant="outline" className="rounded-xl h-10">
-                    <Link href={route("admin.surat-masuk.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali
-                    </Link>
-                </Button>
-            }
         >
             <Head title={`Surat — ${letter.no_surat}`} />
+
+            <BackLink href={route("admin.surat-masuk.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="surface-card p-6 md:p-8">
-                        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-                            <div>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                    Nomor Surat
-                                </p>
-                                <p className="font-mono text-xl font-bold mt-1">
-                                    {letter.no_surat}
-                                </p>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2">
-                                <StatusBadge
-                                    value={resolveSuratMasukAlurStatus(letter)}
-                                    label={badgeLabel(
-                                        SURAT_MASUK_ALUR_LABELS,
-                                        resolveSuratMasukAlurStatus(letter),
-                                    )}
-                                />
-                                {letter.tingkat && (
+                        <div className="mb-6 space-y-5">
+                            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                                <h2 className="text-xl font-semibold leading-tight text-foreground min-w-0 flex-1">
+                                    {letter.perihal || "—"}
+                                </h2>
+                                <div className="flex flex-wrap items-center gap-2">
                                     <StatusBadge
-                                        value={letter.tingkat}
+                                        value={resolveSuratMasukAlurStatus(letter)}
                                         label={badgeLabel(
-                                            TINGKAT_SURAT_LABELS,
-                                            letter.tingkat,
+                                            SURAT_MASUK_ALUR_LABELS,
+                                            resolveSuratMasukAlurStatus(letter),
                                         )}
                                     />
-                                )}
-                                {letter.diarsipkan_at && (
-                                    <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
-                                        Diarsip
-                                    </span>
-                                )}
+                                    {letter.tingkat && (
+                                        <StatusBadge
+                                            value={letter.tingkat}
+                                            label={badgeLabel(
+                                                TINGKAT_SURAT_LABELS,
+                                                letter.tingkat,
+                                            )}
+                                        />
+                                    )}
+                                </div>
                             </div>
+
+                            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                                <div>
+                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        Nomor Agenda
+                                    </dt>
+                                    <dd className="font-mono text-base font-semibold text-foreground mt-1">
+                                        {letter.nomor_agenda ?? "—"}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                        Nomor Surat
+                                    </dt>
+                                    <dd className="font-mono text-sm font-medium text-foreground mt-1">
+                                        {letter.no_surat}
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
@@ -150,11 +157,6 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                 )}
                             />
                             <Field label="Pengirim" value={letter.pengirim} />
-                            <Field
-                                label="Perihal"
-                                value={letter.perihal}
-                                className="sm:col-span-2"
-                            />
                             {letter.tujuan && (
                                 <Field label="Tujuan" value={letter.tujuan} />
                             )}
@@ -257,9 +259,11 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                         className="rounded-xl"
                                     >
                                         <Link
-                                            href={route(
-                                                "admin.surat-masuk.edit",
-                                                { surat_masuk: letter.id },
+                                            href={carryListState(
+                                                route(
+                                                    "admin.surat-masuk.edit",
+                                                    { surat_masuk: letter.id },
+                                                ),
                                             )}
                                         >
                                             <Pencil className="size-4 mr-1.5" />
@@ -316,9 +320,11 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                             {canManageSurat && (
                                 <Button asChild variant="link" className="mt-2">
                                     <Link
-                                        href={route("admin.surat-masuk.edit", {
-                                            surat_masuk: letter.id,
-                                        })}
+                                        href={carryListState(
+                                            route("admin.surat-masuk.edit", {
+                                                surat_masuk: letter.id,
+                                            }),
+                                        )}
                                     >
                                         Tambahkan lampiran
                                     </Link>
@@ -326,16 +332,19 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                             )}
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">
-                    <h3 className="font-bold text-base">Riwayat Disposisi</h3>
+                    <h3 className="font-semibold text-base">Riwayat Disposisi</h3>
                     <p className="text-sm text-muted-foreground mt-0.5 mb-5">
                         {disposisi.length} entri
                     </p>
 
                     {disposisi.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                        <div className="border border-dashed border-border p-6 text-center">
                             <p className="text-sm text-muted-foreground">
                                 Belum ada disposisi.
                             </p>

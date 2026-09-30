@@ -327,7 +327,7 @@ class DesaWorkflowSeeder extends Seeder
             $jenis = self::JENIS_SURAT_KELUAR[$i % count(self::JENIS_SURAT_KELUAR)];
             $tujuan = self::TUJUAN_KELUAR[$i % count(self::TUJUAN_KELUAR)];
 
-            [$status, $catatan, $diarsipkanAt, $suratMasukId, $perihal] = $this->resolveSuratKeluarWorkflow(
+            [$catatan, $diarsipkanAt, $suratMasukId, $perihal] = $this->resolveSuratKeluarWorkflow(
                 $i,
                 $jenis,
                 $balasanCandidates,
@@ -340,7 +340,7 @@ class DesaWorkflowSeeder extends Seeder
                 $sumber = $balasanCandidates->firstWhere('id', $suratMasukId);
                 if ($sumber) {
                     $offsetHari = match (true) {
-                        $status === 'draft' => 7,
+                        $i < 9 => 7,
                         $diarsipkanAt !== null => 25,
                         default => 14,
                     };
@@ -355,7 +355,6 @@ class DesaWorkflowSeeder extends Seeder
                 'tujuan' => $tujuan,
                 'perihal' => $perihal,
                 'catatan' => $catatan,
-                'status' => $status,
                 'file' => 'surat-keluar/arsip-digital/'.$this->nomorSuratKeluar($i, $tanggalKirim).'.pdf',
                 'diarsipkan_at' => $diarsipkanAt,
             ]);
@@ -364,7 +363,7 @@ class DesaWorkflowSeeder extends Seeder
 
     /**
      * @param  Collection<int, SuratMasuk>  $balasanCandidates
-     * @return array{0: string, 1: ?string, 2: ?Carbon, 3: ?int, 4: string}
+     * @return array{0: ?string, 1: ?Carbon, 2: ?int, 3: string}
      */
     private function resolveSuratKeluarWorkflow(
         int $index,
@@ -384,20 +383,19 @@ class DesaWorkflowSeeder extends Seeder
             $perihal = $this->perihalBalasan($sumber->perihal, $jenis);
 
             if ($index < 4) {
-                return ['draft', 'Draf awal; belum direview Sekretaris Desa.', null, $suratMasukId, $perihal];
+                return ['Draf awal; belum direview Sekretaris Desa.', null, $suratMasukId, $perihal];
             }
             if ($index < 7) {
-                return ['draft', '[Menunggu Persetujuan] Menunggu paraf Kepala Desa sebelum dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
+                return ['[Menunggu Persetujuan] Menunggu paraf Kepala Desa sebelum dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
             }
             if ($index < 9) {
-                return ['draft', '[Disetujui] Kepala Desa menyetujui draf. Siap dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
+                return ['[Disetujui] Kepala Desa menyetujui draf. Siap dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
             }
             if ($index < 11) {
-                return ['terkirim', 'Surat balasan telah dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
+                return ['Surat balasan telah dikirim ke '.$tujuanBalasan.'.', null, $suratMasukId, $perihal];
             }
 
             return [
-                'terkirim',
                 '[Selesai] Tindak lanjut surat masuk '.$sumber->no_surat.' telah rampung.',
                 $tanggalKirim->copy()->addDays(10),
                 $suratMasukId,
@@ -406,23 +404,22 @@ class DesaWorkflowSeeder extends Seeder
         }
 
         if ($index < 17) {
-            return ['draft', 'Draf surat layanan; menunggu kelengkapan berkas warga.', null, null, $perihal];
+            return ['Draf surat layanan; menunggu kelengkapan berkas warga.', null, null, $perihal];
         }
         if ($index < 22) {
-            return ['draft', '[Menunggu Persetujuan] Draf menunggu tanda tangan Kepala Desa.', null, null, $perihal];
+            return ['[Menunggu Persetujuan] Draf menunggu tanda tangan Kepala Desa.', null, null, $perihal];
         }
         if ($index < 27) {
-            return ['draft', '[Disetujui] Draf disetujui dan siap diserahkan / dikirim.', null, null, $perihal];
+            return ['[Disetujui] Draf disetujui dan siap diserahkan / dikirim.', null, null, $perihal];
         }
         if ($index < 37) {
-            return ['terkirim', 'Surat telah diserahkan kepada pemohon / pihak tujuan.', null, null, $perihal];
+            return ['Surat telah diserahkan kepada pemohon / pihak tujuan.', null, null, $perihal];
         }
         if ($index < 45) {
-            return ['terkirim', '[Selesai] Layanan surat menyelesaikan permohonan pemohon.', null, null, $perihal];
+            return ['[Selesai] Layanan surat menyelesaikan permohonan pemohon.', null, null, $perihal];
         }
 
         return [
-            'terkirim',
             '[Selesai] Surat telah diarsipkan sesuai ketentuan penyimpanan dokumen desa.',
             $tanggalKirim->copy()->addDays(7),
             null,

@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/StatusBadge";
 import AppLayout from "@/layouts/AppLayout";
 import { badgeLabel, ROLE_LABELS } from "@/shared/constants/badgeLabels";
+import { carryListState } from "@/shared/lib/listState";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import BackLink from "@/components/BackLink";
 
 function Field({ label, value, className }) {
     return (
@@ -40,16 +42,10 @@ export default function UsersShow({ user }) {
         <AppLayout
             title="Detail Pengguna"
             subtitle={user.name}
-            actions={
-                <Button asChild variant="outline" className="rounded-xl h-10">
-                    <Link href={route("admin.users.index")}>
-                        <ArrowLeft className="size-4 mr-1.5" />
-                        Kembali
-                    </Link>
-                </Button>
-            }
         >
             <Head title={`Pengguna — ${user.name}`} />
+
+            <BackLink href={route("admin.users.index")} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
@@ -89,9 +85,11 @@ export default function UsersShow({ user }) {
                         <div className="mt-7 pt-5 border-t border-border flex flex-wrap items-center gap-2">
                             <Button asChild className="rounded-xl">
                                 <Link
-                                    href={route("admin.users.edit", {
-                                        user: user.id,
-                                    })}
+                                    href={carryListState(
+                                        route("admin.users.edit", {
+                                            user: user.id,
+                                        }),
+                                    )}
                                 >
                                     <Pencil className="size-4 mr-1.5" />
                                     Edit

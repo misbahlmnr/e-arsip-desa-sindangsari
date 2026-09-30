@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     AttentionPanel,
     DataTable,
@@ -8,11 +7,10 @@ import {
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
 import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
     Archive,
-    BarChart3,
     Clock,
     FileInput,
     Send,
@@ -22,6 +20,7 @@ function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.surat_masuk?.no_surat ?? "—",
+        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
         pengirim: row.surat_masuk?.pengirim ?? "—",
         perihal: row.surat_masuk?.perihal ?? "—",
         kepada: row.kepada,
@@ -34,6 +33,7 @@ function mapPendingSuratRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.no_surat ?? "—",
+        nomor_agenda: row.nomor_agenda ?? "—",
         pengirim: row.pengirim ?? "—",
         perihal: row.perihal ?? "—",
         tanggal: row.tanggal,
@@ -71,7 +71,7 @@ export default function SekdesDashboard({
         {
             label: "Tanpa Disposisi",
             value: summary?.surat_masuk_tanpa_disposisi ?? 0,
-            hint: "Surat biasa perlu disposisi Sekdes",
+            hint: "Surat prioritas normal perlu disposisi Sekdes",
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", {
@@ -115,38 +115,6 @@ export default function SekdesDashboard({
             <Head title="Beranda Sekretaris Desa" />
 
             <div className="space-y-8">
-                <motion.section
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild className="rounded-xl">
-                            <Link href={route("admin.surat-masuk.index")}>
-                                <FileInput className="size-4" />
-                                Surat Masuk
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.disposisi.index")}>
-                                <Send className="size-4" />
-                                Disposisi
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.arsip-surat.index")}>
-                                <Archive className="size-4" />
-                                Arsip Surat
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.laporan.index")}>
-                                <BarChart3 className="size-4" />
-                                Laporan
-                            </Link>
-                        </Button>
-                    </div>
-                </motion.section>
-
                 <section>
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5">
                         {statCards.map((card, i) => (
@@ -190,7 +158,7 @@ export default function SekdesDashboard({
                                 title="Surat Masuk"
                                 items={[
                                     {
-                                        label: "Draft",
+                                        label: SURAT_MASUK_ALUR_LABELS.menunggu_review_sekdes,
                                         value: summary?.surat_masuk_draft ?? summary?.surat_masuk_belum_diproses,
                                     },
                                     {
@@ -204,14 +172,14 @@ export default function SekdesDashboard({
                                 ]}
                             />
                             <StatusGroup
-                                title="Surat Penting"
+                                title="Surat prioritas tinggi"
                                 items={[
                                     {
                                         label: "Menunggu Kades",
                                         value: summary?.disposisi_ke_kades_menunggu,
                                     },
                                     {
-                                        label: "Tanpa disposisi (biasa)",
+                                        label: "Tanpa disposisi (surat prioritas normal)",
                                         value: summary?.surat_masuk_tanpa_disposisi,
                                     },
                                     {
@@ -233,7 +201,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Surat masuk baru akan tampil di sini."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
                             { key: "status", label: "Status" },
@@ -255,7 +223,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada disposisi"
                         emptyHint="Buat disposisi dari surat masuk."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "kepada", label: "Kepada" },
                             { key: "tanggal", label: "Tanggal" },
                             { key: "status", label: "Status" },
@@ -273,14 +241,14 @@ export default function SekdesDashboard({
 
                 <DataTable
                     title="Surat Menunggu Kepala Desa"
-                    subtitle="Surat penting yang belum diverifikasi Kepala Desa"
+                    subtitle="Surat prioritas tinggi yang belum diverifikasi Kepala Desa"
                     viewAllRoute="admin.surat-masuk.index"
                     viewAllParams={{ kades_aksi: "menunggu_verifikasi" }}
                     emptyIcon={Send}
                     emptyTitle="Tidak ada surat menunggu"
-                    emptyHint="Semua surat penting sudah diverifikasi Kepala Desa."
+                    emptyHint="Semua surat prioritas tinggi sudah diverifikasi Kepala Desa."
                     columns={[
-                        { key: "no_surat", label: "No. Surat" },
+                        { key: "nomor_agenda", label: "Nomor Agenda" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "perihal", label: "Perihal" },
                         { key: "tanggal", label: "Tanggal" },

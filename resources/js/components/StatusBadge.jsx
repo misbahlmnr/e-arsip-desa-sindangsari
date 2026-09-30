@@ -6,7 +6,6 @@ const STATUS_STYLES = {
     terverifikasi: "bg-info-soft text-info border-info/20",
     didisposisikan: "bg-success-soft text-success border-success/20",
     diarsipkan: "bg-success-soft text-success border-success/20",
-    terkirim: "bg-success-soft text-success border-success/20",
     biasa: "bg-muted text-muted-foreground border-border",
     penting: "bg-destructive/10 text-destructive border-destructive/20",
     menunggu_review_sekdes: "bg-muted text-muted-foreground border-border",
@@ -22,7 +21,7 @@ const STATUS_STYLES = {
 const DISPOSISI_STYLES = {
     belum: "bg-muted text-muted-foreground border-border",
     sudah: "bg-success-soft text-success border-success/20",
-    menunggu: "bg-orange-100 text-orange-800 border-orange-200",
+    menunggu: "bg-warning-soft text-warning border-warning/20",
     diproses: "bg-warning-soft text-warning border-warning/20",
     selesai: "bg-success-soft text-success border-success/20",
 };
@@ -40,7 +39,7 @@ function OutlineBadge({ value, label, styleMap, className }) {
         <Badge
             variant="outline"
             className={cn(
-                "font-medium rounded-full px-2.5 py-0.5",
+                "font-medium rounded-sm px-2 py-0.5",
                 styleMap[value] ?? FALLBACK_STYLE,
                 className,
             )}

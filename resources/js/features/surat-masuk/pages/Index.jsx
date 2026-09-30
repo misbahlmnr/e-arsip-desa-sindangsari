@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/AppLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,22 @@ import { getColumns } from "../columns";
 
 export default function SuratMasuk({ letters, filters }) {
     const canManageSurat = usePage().props.auth.canManageSurat;
-    const { loading, searchInput, setSearchInput, visit } = useServerTable({
+    const { loading, searchInput, setSearchInput, visit, openFromList } =
+        useServerTable({
         routeName: "admin.surat-masuk.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status", "tingkat", "kades_aksi", "disposisi"],
+        preserveQueryKeys: [
+            "status",
+            "tingkat",
+            "kades_aksi",
+            "disposisi",
+            "tahun",
+            "bulan",
+            "tanggal",
+            "perihal",
+            "pengirim",
+        ],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
@@ -24,19 +35,19 @@ export default function SuratMasuk({ letters, filters }) {
                 startIndex,
                 canManage: canManageSurat,
                 onDetail: (row) =>
-                    router.visit(
+                    openFromList(
                         route("admin.surat-masuk.show", {
                             surat_masuk: row.id,
                         }),
                     ),
                 onEdit: (row) =>
-                    router.visit(
+                    openFromList(
                         route("admin.surat-masuk.edit", {
                             surat_masuk: row.id,
                         }),
                     ),
             }),
-        [startIndex, canManageSurat],
+        [startIndex, canManageSurat, openFromList],
     );
 
     return (
@@ -56,7 +67,7 @@ export default function SuratMasuk({ letters, filters }) {
                         <Button
                             size="lg"
                             onClick={() =>
-                                router.visit(route("admin.surat-masuk.create"))
+                                openFromList(route("admin.surat-masuk.create"))
                             }
                         >
                             Tambah Surat
@@ -77,7 +88,7 @@ export default function SuratMasuk({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
-                        searchPlaceholder="Cari nomor surat…"
+                        searchPlaceholder="Cari nomor agenda, nomor surat, perihal, pengirim, atau tujuan..."
                         emptyMessage="Coba ubah kata kunci pencarian."
                     />
                 </motion.div>

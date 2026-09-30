@@ -69,7 +69,6 @@ class LaporanTest extends TestCase
             'tanggal_kirim' => now()->toDateString(),
             'tujuan' => 'BPD',
             'perihal' => 'Laporan keuangan',
-            'status' => 'terkirim',
             'file' => 'surat-keluar/test.pdf',
         ]);
 

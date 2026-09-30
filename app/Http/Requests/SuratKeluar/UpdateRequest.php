@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests\SuratKeluar;
 
+use App\Http\Requests\ValidatesSupportingDocuments;
+use App\Models\SuratKeluar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
     use NormalizesSuratKeluarInput;
+    use ValidatesSupportingDocuments;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -39,8 +42,17 @@ class UpdateRequest extends FormRequest
             'tujuan' => ['required', 'string'],
             'perihal' => ['required', 'string'],
             'catatan' => ['nullable', 'string'],
-            'status' => ['required', 'in:draft,terkirim'],
             'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
+            ...$this->supportingDocumentRules(withRemoval: true),
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $letter = $this->route('surat_keluar');
+
+        if ($letter instanceof SuratKeluar) {
+            $this->assertSupportingDocumentLimits($validator, $letter);
+        }
     }
 }

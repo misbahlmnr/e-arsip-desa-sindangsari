@@ -56,7 +56,7 @@ export function FilePreview({ file, onRemove, height = "h-[420px]" }) {
     const { src, name, isImage, isPdf, size } = normaliseFile(file);
 
     return (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-border bg-muted/30">
                 <div className="flex items-center gap-3 min-w-0">
                     {isImage ? (

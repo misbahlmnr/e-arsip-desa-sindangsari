@@ -1,9 +1,4 @@
-﻿import { StatusBadge } from "@/components/StatusBadge";
-import { Button } from "@/components/ui/button";
-import {
-    badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
-} from "@/shared/constants/badgeLabels";
+﻿import { Button } from "@/components/ui/button";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
@@ -35,16 +30,21 @@ export function getColumns({
             ),
         },
         {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
             cell: ({ row }) => (
-                <button
-                    type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
-                    onClick={() => onDetail?.(row.original)}
-                >
-                    {row.original.no_surat}
-                </button>
+                <div>
+                    <button
+                        type="button"
+                        className="font-mono text-sm font-semibold text-primary hover:underline"
+                        onClick={() => onDetail?.(row.original)}
+                    >
+                        {row.original.nomor_agenda ?? "—"}
+                    </button>
+                    <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                        {row.original.no_surat}
+                    </p>
+                </div>
             ),
         },
         {
@@ -73,26 +73,11 @@ export function getColumns({
             header: "Perihal",
             cell: ({ row }) => (
                 <span
+                    className="text-sm max-w-[280px] truncate inline-block"
                     title={row.original.perihal}
-                    className="truncate text-sm font-medium inline-block"
                 >
                     {row.original.perihal}
                 </span>
-            ),
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => (
-                <StatusBadge
-                    value={row.original.status}
-                    label={
-                        badgeLabel(
-                            SURAT_KELUAR_STATUS_LABELS,
-                            row.original.status,
-                        )
-                    }
-                />
             ),
         },
         {

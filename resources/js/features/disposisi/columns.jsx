@@ -1,10 +1,4 @@
-import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
-import {
-    badgeLabel,
-    resolveSuratMasukAlurStatus,
-    SURAT_MASUK_ALUR_LABELS,
-} from "@/shared/constants/badgeLabels";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { Eye } from "lucide-react";
 
@@ -28,16 +22,21 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
-            accessorKey: "no_surat",
-            header: "Nomor Surat",
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
             cell: ({ row }) => (
-                <button
-                    type="button"
-                    className="font-mono text-sm font-semibold text-primary hover:underline"
-                    onClick={() => onDetail?.(row.original)}
-                >
-                    {row.original.no_surat ?? "—"}
-                </button>
+                <div>
+                    <button
+                        type="button"
+                        className="font-mono text-sm font-semibold text-primary hover:underline"
+                        onClick={() => onDetail?.(row.original)}
+                    >
+                        {row.original.nomor_agenda ?? "—"}
+                    </button>
+                    <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                        {row.original.no_surat}
+                    </p>
+                </div>
             ),
         },
         {
@@ -57,18 +56,6 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
-            accessorKey: "catatan",
-            header: "Catatan",
-            cell: ({ row }) => (
-                <span
-                    className="text-sm max-w-[240px] truncate inline-block text-muted-foreground"
-                    title={row.original.catatan}
-                >
-                    {row.original.catatan}
-                </span>
-            ),
-        },
-        {
             accessorKey: "tanggal",
             header: "Tanggal",
             cell: ({ row }) => (
@@ -80,26 +67,6 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
-            accessorKey: "surat_status",
-            header: "Status Surat",
-            cell: ({ row }) => {
-                const alur =
-                    row.original.surat_status_tampil ??
-                    resolveSuratMasukAlurStatus({
-                        status: row.original.surat_status,
-                        tingkat: row.original.surat_tingkat,
-                        verified_kades_at: row.original.surat_verified_kades_at,
-                        status_tampil: row.original.surat_status_tampil,
-                    });
-                return (
-                    <StatusBadge
-                        value={alur}
-                        label={badgeLabel(SURAT_MASUK_ALUR_LABELS, alur)}
-                    />
-                );
-            },
-        },
-        {
             id: "actions",
             enableSorting: false,
             header: <div className="text-center">Aksi</div>,
@@ -108,7 +75,7 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="size-9 rounded-lg"
+                        className="size-9"
                         aria-label="Lihat detail"
                         onClick={() => onDetail?.(row.original)}
                     >

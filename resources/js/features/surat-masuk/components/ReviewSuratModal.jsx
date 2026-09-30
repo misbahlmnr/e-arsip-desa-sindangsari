@@ -18,6 +18,7 @@ import {
 import { ClipboardCheck } from "lucide-react";
 import { useState } from "react";
 import { router } from "@inertiajs/react";
+import { TINGKAT_SURAT_LABELS } from "@/shared/constants/badgeLabels";
 
 export default function ReviewSuratModal({ letter, open, onOpenChange }) {
     const [tingkat, setTingkat] = useState("biasa");
@@ -44,26 +45,32 @@ export default function ReviewSuratModal({ letter, open, onOpenChange }) {
                 <DialogHeader>
                     <DialogTitle>Review Surat</DialogTitle>
                     <DialogDescription>
-                        Telaah administratif surat dan tentukan tingkat
-                        kepentingannya.
+                        Telaah surat dan tentukan apakah surat diproses oleh
+                        Sekretaris Desa atau perlu diverifikasi oleh Kepala
+                        Desa.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
-                        <Label>Tingkat Surat</Label>
+                        <Label>Hasil Review</Label>
                         <Select value={tingkat} onValueChange={setTingkat}>
                             <SelectTrigger className="h-11 rounded-xl">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="biasa">Biasa</SelectItem>
-                                <SelectItem value="penting">Penting</SelectItem>
+                                <SelectItem value="biasa">
+                                    {TINGKAT_SURAT_LABELS.biasa}
+                                </SelectItem>
+                                <SelectItem value="penting">
+                                    {TINGKAT_SURAT_LABELS.penting}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground">
-                            Surat Biasa: disposisi oleh Sekdes. Surat Penting:
-                            verifikasi Kades lalu disposisi Kades.
+                            Diproses Sekretaris Desa: disposisi oleh Sekdes.
+                            Perlu Verifikasi Kepala Desa: verifikasi Kades lalu
+                            disposisi Kades.
                         </p>
                     </div>
                 </div>

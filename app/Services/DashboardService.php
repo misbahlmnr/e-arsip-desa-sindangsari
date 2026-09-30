@@ -47,12 +47,6 @@ class DashboardService
                 ->whereYear('tanggal_terima', now()->year)
                 ->count(),
             'surat_keluar' => (clone $suratKeluarAktif)->count(),
-            'surat_keluar_draft' => (clone $suratKeluarAktif)
-                ->where('status', 'draft')
-                ->count(),
-            'surat_keluar_terkirim' => (clone $suratKeluarAktif)
-                ->where('status', 'terkirim')
-                ->count(),
             'surat_keluar_bulan_ini' => SuratKeluar::query()
                 ->whereMonth('tanggal_kirim', now()->month)
                 ->whereYear('tanggal_kirim', now()->year)
@@ -210,7 +204,7 @@ class DashboardService
         $items = [
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat biasa tanpa disposisi',
+                'label' => 'Surat prioritas normal tanpa disposisi',
                 'description' => 'Perlu dibuatkan instruksi disposisi',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
@@ -222,7 +216,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_menunggu_kades',
-                'label' => 'Surat penting menunggu Kades',
+                'label' => 'Surat prioritas tinggi menunggu Kades',
                 'description' => 'Perlu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_ke_kades_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -255,7 +249,7 @@ class DashboardService
         $items = [
             [
                 'key' => 'verifikasi_penting',
-                'label' => 'Surat penting menunggu verifikasi',
+                'label' => 'Surat prioritas tinggi menunggu verifikasi',
                 'description' => 'Perlu verifikasi sebelum disposisi',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -264,7 +258,7 @@ class DashboardService
             ],
             [
                 'key' => 'siap_disposisi',
-                'label' => 'Surat penting siap disposisi',
+                'label' => 'Surat prioritas tinggi siap disposisi',
                 'description' => 'Sudah diverifikasi, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
                 'route' => 'admin.surat-masuk.index',
@@ -297,7 +291,7 @@ class DashboardService
             ],
             [
                 'key' => 'tanpa_disposisi',
-                'label' => 'Surat biasa tanpa disposisi',
+                'label' => 'Surat prioritas normal tanpa disposisi',
                 'description' => 'Menunggu disposisi Sekretaris Desa',
                 'count' => $summary['surat_masuk_tanpa_disposisi'],
                 'route' => 'admin.surat-masuk.index',
@@ -309,7 +303,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_menunggu_kades',
-                'label' => 'Surat penting menunggu Kades',
+                'label' => 'Surat prioritas tinggi menunggu Kades',
                 'description' => 'Menunggu verifikasi Kepala Desa',
                 'count' => $summary['disposisi_menunggu'],
                 'route' => 'admin.surat-masuk.index',
@@ -318,7 +312,7 @@ class DashboardService
             ],
             [
                 'key' => 'penting_siap_disposisi',
-                'label' => 'Surat penting siap disposisi',
+                'label' => 'Surat prioritas tinggi siap disposisi',
                 'description' => 'Sudah diverifikasi Kades, menunggu disposisi',
                 'count' => $summary['disposisi_diproses'],
                 'route' => 'admin.surat-masuk.index',
@@ -332,15 +326,6 @@ class DashboardService
                 'count' => $summary['siap_arsip'],
                 'route' => 'admin.surat-masuk.index',
                 'params' => ['status' => SuratMasuk::STATUS_DIDISPOSISIKAN],
-                'severity' => 'info',
-            ],
-            [
-                'key' => 'draft_keluar',
-                'label' => 'Surat keluar masih draft',
-                'description' => 'Belum dikirim atau difinalisasi',
-                'count' => $summary['surat_keluar_draft'],
-                'route' => 'admin.surat-keluar.index',
-                'params' => ['status' => 'draft'],
                 'severity' => 'info',
             ],
         ];
@@ -428,10 +413,11 @@ class DashboardService
             ->whereNull('verified_kades_at')
             ->orderByDesc('tanggal_terima')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
@@ -453,10 +439,11 @@ class DashboardService
             ->where('status', SuratMasuk::STATUS_TERVERIFIKASI)
             ->orderByDesc('tanggal_terima')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal' => $s->tanggal_terima?->format('Y-m-d'),
@@ -477,10 +464,11 @@ class DashboardService
             ->orderByDesc('tanggal_terima')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'pengirim', 'perihal', 'tanggal_terima', 'status', 'tingkat', 'verified_kades_at'])
             ->map(fn (SuratMasuk $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'pengirim' => $s->pengirim,
                 'perihal' => $s->perihal,
                 'tanggal_terima' => $s->tanggal_terima?->format('Y-m-d'),
@@ -500,14 +488,14 @@ class DashboardService
             ->orderByDesc('tanggal_kirim')
             ->orderByDesc('id')
             ->limit(5)
-            ->get(['id', 'no_surat', 'tujuan', 'perihal', 'tanggal_kirim', 'status'])
+            ->get(['id', 'no_surat', 'nomor_agenda', 'tujuan', 'perihal', 'tanggal_kirim'])
             ->map(fn (SuratKeluar $s) => [
                 'id' => $s->id,
                 'no_surat' => $s->no_surat,
+                'nomor_agenda' => $s->nomor_agenda,
                 'tujuan' => $s->tujuan,
                 'perihal' => $s->perihal,
                 'tanggal_kirim' => $s->tanggal_kirim?->format('Y-m-d'),
-                'status' => $s->status,
             ])
             ->values()
             ->all();
@@ -521,7 +509,7 @@ class DashboardService
     {
         $query = Disposisi::query()
             ->forActiveSurat()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
+            ->with('suratMasuk:id,no_surat,nomor_agenda,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -545,7 +533,7 @@ class DashboardService
     {
         $query = Disposisi::query()
             ->forActiveSurat()
-            ->with('suratMasuk:id,no_surat,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
+            ->with('suratMasuk:id,no_surat,nomor_agenda,perihal,pengirim,status,tingkat,verified_kades_at,diarsipkan_at')
             ->orderByDesc('tanggal')
             ->orderByDesc('id')
             ->limit(5);
@@ -575,6 +563,7 @@ class DashboardService
             'surat_masuk' => $d->suratMasuk ? [
                 'id' => $d->suratMasuk->id,
                 'no_surat' => $d->suratMasuk->no_surat,
+                'nomor_agenda' => $d->suratMasuk->nomor_agenda,
                 'perihal' => $d->suratMasuk->perihal,
                 'pengirim' => $d->suratMasuk->pengirim,
             ] : null,

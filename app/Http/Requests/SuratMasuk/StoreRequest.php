@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests\SuratMasuk;
 
+use App\Http\Requests\ValidatesSupportingDocuments;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
     use NormalizesSuratMasukInput;
+    use ValidatesSupportingDocuments;
 
     public function authorize(): bool
     {
@@ -33,6 +35,7 @@ class StoreRequest extends FormRequest
             'catatan' => ['nullable', 'string', 'max:5000'],
             'tujuan' => ['nullable', 'string', 'max:191'],
             'file' => ['nullable', 'file', 'mimes:pdf,jpeg,jpg,png,doc,docx', 'max:5120'],
+            ...$this->supportingDocumentRules(),
         ];
     }
 

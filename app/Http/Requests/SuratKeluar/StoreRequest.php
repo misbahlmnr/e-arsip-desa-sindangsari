@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\SuratKeluar;
 
+use App\Http\Requests\ValidatesSupportingDocuments;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
 {
     use NormalizesSuratKeluarInput;
+    use ValidatesSupportingDocuments;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -34,8 +36,8 @@ class StoreRequest extends FormRequest
             'tujuan' => 'required|string',
             'perihal' => 'required|string',
             'catatan' => 'nullable|string',
-            'status' => 'required|in:draft,terkirim',
-            'file' => 'required|file|mimes:pdf,doc,docx',
+            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx'],
+            ...$this->supportingDocumentRules(),
         ];
     }
 
@@ -50,7 +52,6 @@ class StoreRequest extends FormRequest
             'tujuan' => 'tujuan',
             'perihal' => 'perihal',
             'catatan' => 'catatan',
-            'status' => 'status',
             'file' => 'lampiran',
         ];
     }

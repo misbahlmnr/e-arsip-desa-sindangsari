@@ -1,8 +1,8 @@
 ﻿import NavLink from "@/components/NavLink";
+import BrandLogo from "@/components/BrandLogo";
 import { NAVBAR_ITEMS } from "@/shared/config/navigation";
 import { cn } from "@/shared/lib/utils";
 import { usePage } from "@inertiajs/react";
-import { FileText } from "lucide-react";
 
 const Sidebar = ({ collapsed = false }) => {
     const user = usePage().props.auth.user;
@@ -13,32 +13,40 @@ const Sidebar = ({ collapsed = false }) => {
     return (
         <aside
             className={cn(
-                "hidden md:flex shrink-0 bg-sidebar border-r border-sidebar-border flex-col h-full min-h-0 overflow-hidden transition-[width] duration-200",
-                collapsed ? "w-20" : "w-72",
+                "hidden md:flex shrink-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex-col h-full min-h-0 overflow-hidden transition-[width] duration-200",
+                collapsed ? "w-[72px]" : "w-64",
             )}
         >
             <div
                 className={cn(
-                    "flex items-center gap-3 px-6 py-6 border-b border-sidebar-border",
-                    collapsed && "justify-center px-3",
+                    "flex items-center gap-3 px-4 h-16 border-b border-sidebar-border",
+                    collapsed && "justify-center px-2",
                 )}
             >
-                <div className="size-11 rounded-xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-soft shrink-0">
-                    <FileText className="size-5" strokeWidth={2.2} />
-                </div>
+                <BrandLogo
+                    className={cn(
+                        "shrink-0",
+                        collapsed ? "size-10" : "size-12",
+                    )}
+                />
                 {!collapsed && (
                     <div className="min-w-0">
-                        <h1 className="font-bold text-sidebar-foreground tracking-tight text-base leading-none">
+                        <h1 className="font-semibold text-white tracking-tight text-sm leading-none">
                             E-Arsip
                         </h1>
-                        <p className="text-[11px] text-muted-foreground mt-1.5 uppercase tracking-widest font-medium">
-                            Sistem Arsip Desa
+                        <p className="text-[10px] text-sidebar-foreground/60 mt-1 uppercase tracking-[0.16em] font-medium">
+                            Desa Sindangsari
                         </p>
                     </div>
                 )}
             </div>
+            <div className="h-1 flex shrink-0" aria-hidden>
+                <span className="flex-[3] bg-sidebar-primary" />
+                <span className="flex-1 bg-warning" />
+                <span className="w-8 bg-destructive" />
+            </div>
 
-            <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto min-h-0">
+            <nav className="flex-1 py-4 space-y-0.5 overflow-y-auto min-h-0">
                 {menuItems.map((item) => {
                     const isActive = route().current(item.routeName);
                     return (
@@ -46,11 +54,11 @@ const Sidebar = ({ collapsed = false }) => {
                             key={item.href}
                             href={item.href}
                             end={item.href === "/"}
-                            className={collapsed ? "!justify-center" : ""}
+                            className={collapsed ? "!justify-center px-0" : ""}
                             active={isActive}
                         >
                             <item.icon
-                                className="size-[18px] shrink-0"
+                                className="size-4 shrink-0"
                                 strokeWidth={2}
                             />
                             {!collapsed && (
@@ -63,14 +71,12 @@ const Sidebar = ({ collapsed = false }) => {
 
             {!collapsed && (
                 <div className="p-4 border-t border-sidebar-border">
-                    <div className="rounded-xl bg-primary-soft px-4 py-3.5">
-                        <p className="text-[11px] font-bold text-primary uppercase tracking-wider mb-1">
-                            Bantuan
-                        </p>
-                        <p className="text-xs text-foreground/70 leading-relaxed">
-                            Hubungi operator desa jika menemui kendala sistem.
-                        </p>
-                    </div>
+                    <p className="text-[10px] font-semibold text-sidebar-primary uppercase tracking-wider mb-1">
+                        Bantuan
+                    </p>
+                    <p className="text-xs text-sidebar-foreground/55 leading-relaxed">
+                        Hubungi operator desa jika menemui kendala sistem.
+                    </p>
                 </div>
             )}
         </aside>

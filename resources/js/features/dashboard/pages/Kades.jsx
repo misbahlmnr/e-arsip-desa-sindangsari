@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     AttentionPanel,
     DataTable,
@@ -8,20 +7,15 @@ import {
 } from "@/features/dashboard/components/widgets";
 import AppLayout from "@/layouts/AppLayout";
 import { SURAT_MASUK_ALUR_LABELS } from "@/shared/constants/badgeLabels";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import {
-    Archive,
-    BarChart3,
-    Clock,
-    FileInput,
-    Send,
-} from "lucide-react";
+import { Archive, Clock, Send } from "lucide-react";
 
 function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.surat_masuk?.no_surat ?? "—",
+        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
         pengirim: row.surat_masuk?.pengirim ?? "—",
         perihal: row.surat_masuk?.perihal ?? "—",
         kepada: row.kepada,
@@ -34,6 +28,7 @@ function mapPendingSuratRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
         no_surat: row.no_surat ?? "—",
+        nomor_agenda: row.nomor_agenda ?? "—",
         perihal: row.perihal ?? "—",
         tanggal: row.tanggal,
         status: row.status,
@@ -69,7 +64,7 @@ export default function KadesDashboard({
         {
             label: "Menunggu Verifikasi",
             value: summary?.disposisi_menunggu ?? 0,
-            hint: "Surat penting perlu diverifikasi",
+            hint: "Surat prioritas tinggi perlu diverifikasi",
             icon: Clock,
             tone: "warning",
             href: route("admin.surat-masuk.index", {
@@ -104,38 +99,6 @@ export default function KadesDashboard({
             <Head title="Beranda Kepala Desa" />
 
             <div className="space-y-8">
-                <motion.section
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <div className="flex flex-wrap gap-3">
-                        <Button asChild className="rounded-xl">
-                            <Link href={route("admin.disposisi.index")}>
-                                <Send className="size-4" />
-                                Lihat Disposisi
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.surat-masuk.index")}>
-                                <FileInput className="size-4" />
-                                Surat Masuk
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.arsip-surat.index")}>
-                                <Archive className="size-4" />
-                                Arsip Surat
-                            </Link>
-                        </Button>
-                        <Button asChild variant="outline" className="rounded-xl">
-                            <Link href={route("admin.laporan.index")}>
-                                <BarChart3 className="size-4" />
-                                Laporan
-                            </Link>
-                        </Button>
-                    </div>
-                </motion.section>
-
                 <section>
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                         {statCards.map((card, i) => (
@@ -169,7 +132,7 @@ export default function KadesDashboard({
                                 {
                                     key: "total",
                                     name: "Disposisi",
-                                    color: "hsl(188, 45%, 38%)",
+                                    color: "hsl(196, 92%, 36%)",
                                 },
                             ]}
                         />
@@ -210,7 +173,7 @@ export default function KadesDashboard({
                         emptyTitle="Belum ada disposisi masuk"
                         emptyHint="Disposisi dari Sekretaris Desa akan tampil di sini."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal", label: "Tanggal" },
                             { key: "status", label: "Status" },
@@ -226,7 +189,7 @@ export default function KadesDashboard({
                     />
                     <DataTable
                         title="Menunggu Arahan Anda"
-                        subtitle="Surat penting yang perlu diverifikasi atau didisposisikan"
+                        subtitle="Surat prioritas tinggi yang perlu diverifikasi atau didisposisikan"
                         viewAllRoute="admin.surat-masuk.index"
                         viewAllParams={{
                             tingkat: "penting",
@@ -234,9 +197,9 @@ export default function KadesDashboard({
                         }}
                         emptyIcon={Clock}
                         emptyTitle="Tidak ada surat menunggu"
-                        emptyHint="Semua surat penting sudah Anda tangani."
+                        emptyHint="Semua surat prioritas tinggi sudah Anda tangani."
                         columns={[
-                            { key: "no_surat", label: "No. Surat" },
+                            { key: "nomor_agenda", label: "Nomor Agenda" },
                             { key: "perihal", label: "Perihal" },
                             { key: "tanggal", label: "Tanggal" },
                         ]}

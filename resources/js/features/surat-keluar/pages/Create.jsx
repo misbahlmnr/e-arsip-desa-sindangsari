@@ -1,30 +1,42 @@
 ﻿import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { Save } from "lucide-react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
+import { Lock, Save } from "lucide-react";
+import BackLink from "@/components/BackLink";
 
-export default function CreateSuratKeluar() {
+export default function CreateSuratKeluar({ nomorAgendaPreview = "" }) {
     const { data, setData, post, processing, errors } = useForm({
         nomor_surat: "",
         tanggal_kirim: new Date().toISOString().slice(0, 10),
         tujuan: "",
         perihal: "",
         catatan: "",
-        status: "draft",
         file: null,
+        supporting_files: [],
     });
+
+    const refreshAgendaPreview = (tanggalKirim) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(tanggalKirim)) {
+            return;
+        }
+
+        router.get(
+            route("admin.surat-keluar.create"),
+            { tanggal_kirim: tanggalKirim },
+            {
+                only: ["nomorAgendaPreview"],
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,6 +50,8 @@ export default function CreateSuratKeluar() {
         >
             <Head title="Tambah Surat Keluar" />
 
+            <BackLink href={route("admin.surat-keluar.index")} />
+
             <form
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 lg:grid-cols-3 gap-6"
@@ -45,6 +59,9 @@ export default function CreateSuratKeluar() {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5 flex flex-col justify-between">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <ReadonlyAgendaInput value={nomorAgendaPreview} />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -55,9 +72,12 @@ export default function CreateSuratKeluar() {
                                 onChange={(e) =>
                                     setData("nomor_surat", e.target.value)
                                 }
-                                placeholder="Contoh: 474.1/22/V/2024"
+                                placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
+                            <p className="text-xs text-muted-foreground">
+                                Nomor agenda dicatat otomatis saat surat disimpan.
+                            </p>
                         </FormField>
                         <FormField
                             label="Tujuan"
@@ -82,9 +102,10 @@ export default function CreateSuratKeluar() {
                             <Input
                                 type="date"
                                 value={data.tanggal_kirim}
-                                onChange={(e) =>
-                                    setData("tanggal_kirim", e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setData("tanggal_kirim", e.target.value);
+                                    refreshAgendaPreview(e.target.value);
+                                }}
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
@@ -102,26 +123,6 @@ export default function CreateSuratKeluar() {
                                 className="h-11 rounded-xl"
                                 maxLength={250}
                             />
-                        </FormField>
-                        <FormField
-                            label="Status"
-                            required
-                            error={errors.status}
-                        >
-                            <Select
-                                value={data.status}
-                                onValueChange={(v) => setData("status", v)}
-                            >
-                                <SelectTrigger className="h-11 rounded-xl">
-                                    <SelectValue placeholder="Pilih status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="terkirim">
-                                        Terkirim
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
                         </FormField>
                         <FormField
                             label="Catatan"
@@ -171,9 +172,33 @@ export default function CreateSuratKeluar() {
                             {errors.file}
                         </p>
                     ) : null}
+                    <div className="border-t border-border pt-4">
+                        <SupportingDocumentsField
+                            files={data.supporting_files}
+                            onFilesChange={(files) =>
+                                setData("supporting_files", files)
+                            }
+                            error={errors.supporting_files}
+                        />
+                    </div>
                 </div>
             </form>
         </AppLayout>
+    );
+}
+
+function ReadonlyAgendaInput({ value }) {
+    return (
+        <div className="relative">
+            <Input
+                value={value}
+                readOnly
+                tabIndex={-1}
+                onMouseDown={(e) => e.preventDefault()}
+                className="h-11 rounded-xl cursor-not-allowed border-muted-foreground/30 bg-muted pr-10 text-foreground/70 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+            <Lock className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        </div>
     );
 }
 

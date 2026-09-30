@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { DataTable } from "@/components/DataTable/Index";
 import { useServerTable } from "@/shared/hooks/useServerTable";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 import { getColumns } from "../columns";
@@ -22,7 +22,8 @@ export default function UsersIndex({ users, filters }) {
     } = usePage();
     const authUserId = auth?.user?.id;
 
-    const { loading, searchInput, setSearchInput, visit } = useServerTable({
+    const { loading, searchInput, setSearchInput, visit, openFromList } =
+        useServerTable({
         routeName: "admin.users.index",
         filters,
         searchDebounceMs: 400,
@@ -37,15 +38,11 @@ export default function UsersIndex({ users, filters }) {
                 startIndex,
                 authUserId,
                 onDetail: (row) =>
-                    router.visit(
-                        route("admin.users.show", { user: row.id }),
-                    ),
+                    openFromList(route("admin.users.show", { user: row.id })),
                 onEdit: (row) =>
-                    router.visit(
-                        route("admin.users.edit", { user: row.id }),
-                    ),
+                    openFromList(route("admin.users.edit", { user: row.id })),
             }),
-        [startIndex, authUserId],
+        [startIndex, authUserId, openFromList],
     );
 
     const roleValue = filters?.role ?? "all";
@@ -66,7 +63,7 @@ export default function UsersIndex({ users, filters }) {
                     <Button
                         size="lg"
                         onClick={() =>
-                            router.visit(route("admin.users.create"))
+                            openFromList(route("admin.users.create"))
                         }
                     >
                         Tambah Pengguna

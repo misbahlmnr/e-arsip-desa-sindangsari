@@ -19,7 +19,7 @@ function UploadPreview({
     const isPdf = type === "application/pdf";
 
     return (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="border border-border bg-card overflow-hidden">
             <div className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-border bg-muted/30">
                 <div className="flex items-center gap-3 min-w-0">
                     {isImage ? (
@@ -158,7 +158,7 @@ export function FileUpload({ value, onChange, required }) {
                     setDrag(false);
                     handleFiles(e.dataTransfer.files);
                 }}
-                className={`rounded-2xl border-2 border-dashed transition-colors p-8 text-center cursor-pointer ${
+                className={`border-2 border-dashed transition-colors p-8 text-center cursor-pointer ${
                     drag
                         ? "border-primary bg-primary/10"
                         : "border-gray-300 bg-gray-50 hover:border-primary hover:bg-primary/10"
@@ -179,7 +179,7 @@ export function FileUpload({ value, onChange, required }) {
                     onChange={(e) => handleFiles(e.target.files)}
                 />
 
-                <div className="mx-auto w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                <div className="mx-auto w-14 h-14 bg-primary/10 text-primary flex items-center justify-center mb-4">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-6 h-6"
@@ -206,7 +206,7 @@ export function FileUpload({ value, onChange, required }) {
 
                 <button
                     type="button"
-                    className="mt-5 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-foreground hover:bg-gray-50 transition"
+                    className="mt-5 border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-foreground hover:bg-gray-50 transition"
                     onClick={(e) => {
                         e.stopPropagation();
                         inputRef.current?.click();

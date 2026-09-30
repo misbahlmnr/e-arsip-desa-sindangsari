@@ -4,11 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
-import { Save } from "lucide-react";
+import { Lock, Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { FilePreview } from "@/components/FilePreview";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { cn } from "@/shared/lib/utils";
+import BackLink from "@/components/BackLink";
 
 function tanggalToInput(value) {
     if (!value) return "";
@@ -34,6 +36,8 @@ export default function EditSuratMasuk({ letter }) {
             catatan: letter.catatan ?? "",
             tujuan: letter.tujuan ?? "-",
             file: null,
+            supporting_files: [],
+            remove_supporting_ids: [],
         }),
         [letter],
     );
@@ -62,10 +66,27 @@ export default function EditSuratMasuk({ letter }) {
             onFinish: () => setBusy(false),
         };
 
-        if (data.file instanceof File) {
+        const supportingFiles = Array.isArray(data.supporting_files)
+            ? data.supporting_files
+            : [];
+        const removeIds = Array.isArray(data.remove_supporting_ids)
+            ? data.remove_supporting_ids
+            : [];
+        const hasSupportingChange =
+            supportingFiles.length > 0 || removeIds.length > 0;
+
+        if (data.file instanceof File || hasSupportingChange) {
             router.post(
                 url,
-                { ...fields, _method: "put", file: data.file },
+                {
+                    ...fields,
+                    _method: "put",
+                    ...(data.file instanceof File ? { file: data.file } : {}),
+                    ...(supportingFiles.length > 0
+                        ? { supporting_files: supportingFiles }
+                        : {}),
+                    remove_supporting_ids: removeIds,
+                },
                 { forceFormData: true, ...finish },
             );
             return;
@@ -74,7 +95,12 @@ export default function EditSuratMasuk({ letter }) {
         router.put(url, fields, {
             ...finish,
             onSuccess: () => {
-                reset({ ...fields, file: null });
+                reset({
+                    ...fields,
+                    file: null,
+                    supporting_files: [],
+                    remove_supporting_ids: [],
+                });
             },
         });
     };
@@ -92,6 +118,8 @@ export default function EditSuratMasuk({ letter }) {
         >
             <Head title={`Edit — ${letter.no_surat}`} />
 
+            <BackLink href={route("admin.surat-masuk.index")} />
+
             <form
                 onSubmit={handleSubmit}
                 className="grid grid-cols-1 lg:grid-cols-3 gap-6"
@@ -99,6 +127,18 @@ export default function EditSuratMasuk({ letter }) {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <div className="relative">
+                                <Input
+                                    value={letter.nomor_agenda ?? ""}
+                                    readOnly
+                                    tabIndex={-1}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    className="h-11 rounded-xl cursor-not-allowed border-muted-foreground/30 bg-muted pr-10 text-foreground/70 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                />
+                                <Lock className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -268,6 +308,24 @@ export default function EditSuratMasuk({ letter }) {
                             ) : null}
                         </div>
                     ) : null}
+
+                    <div className="border-t border-border pt-4">
+                        <SupportingDocumentsField
+                            files={data.supporting_files}
+                            onFilesChange={(files) =>
+                                setData("supporting_files", files)
+                            }
+                            existing={letter.supporting_documents ?? []}
+                            removedIds={data.remove_supporting_ids}
+                            onRemovedIdsChange={(ids) =>
+                                setData("remove_supporting_ids", ids)
+                            }
+                            error={
+                                pageErrors.supporting_files ||
+                                pageErrors.remove_supporting_ids
+                            }
+                        />
+                    </div>
                 </div>
             </form>
         </AppLayout>

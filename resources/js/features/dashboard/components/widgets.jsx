@@ -27,22 +27,21 @@ export function StatCard({ label, value, hint, icon: Icon, tone, href }) {
         warning: "bg-warning-soft text-warning",
         info: "bg-info-soft text-info",
         success: "bg-success-soft text-success",
-        disposisi:
-            "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300",
+        disposisi: "bg-destructive-soft text-destructive",
         muted: "bg-muted text-muted-foreground",
     }[tone];
 
     const content = (
         <div className="surface-card surface-card-hover p-6 h-full">
             <div
-                className={`size-11 rounded-xl ${toneClasses} flex items-center justify-center`}
+                className={`size-10 ${toneClasses} flex items-center justify-center`}
             >
-                <Icon className="size-5" strokeWidth={2.2} />
+                <Icon className="size-5" strokeWidth={2} />
             </div>
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-4">
                 {label}
             </p>
-            <p className="text-3xl font-extrabold tracking-tight tabular-nums mt-1">
+            <p className="text-2xl font-semibold tracking-tight tabular-nums mt-1">
                 {value}
             </p>
             {hint && (
@@ -154,8 +153,8 @@ export function TrendChart({
     subtitle,
     data,
     bars = [
-        { key: "masuk", name: "Masuk", color: "hsl(188, 45%, 38%)" },
-        { key: "keluar", name: "Keluar", color: "hsl(38, 92%, 50%)" },
+        { key: "masuk", name: "Masuk", color: "hsl(196, 92%, 36%)" },
+        { key: "keluar", name: "Keluar", color: "hsl(48, 88%, 44%)" },
     ],
 }) {
     return (
@@ -178,7 +177,7 @@ export function TrendChart({
                         <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                         <Tooltip
                             contentStyle={{
-                                borderRadius: "12px",
+                                borderRadius: "2px",
                                 border: "1px solid hsl(var(--border))",
                                 background: "hsl(var(--card))",
                             }}
@@ -277,14 +276,37 @@ export function DataTable({
                                         {columns.map((col, index) => {
                                             const value = row[col.key];
 
-                                            if (
-                                                col.key === "no_surat" ||
-                                                col.key === "link_label"
-                                            ) {
-                                                const label =
-                                                    col.key === "link_label"
-                                                        ? value
-                                                        : value;
+                                            if (col.key === "nomor_agenda") {
+                                                const agenda =
+                                                    row.nomor_agenda ?? "—";
+
+                                                return (
+                                                    <td
+                                                        key={col.key}
+                                                        className="px-6 md:px-8 py-4"
+                                                    >
+                                                        <div>
+                                                            {href ? (
+                                                                <Link
+                                                                    href={href}
+                                                                    className="font-mono text-sm font-semibold text-primary hover:underline"
+                                                                >
+                                                                    {agenda}
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="font-mono text-sm font-semibold text-primary">
+                                                                    {agenda}
+                                                                </span>
+                                                            )}
+                                                            <p className="font-mono text-xs text-muted-foreground mt-0.5">
+                                                                {row.no_surat}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                );
+                                            }
+
+                                            if (col.key === "link_label") {
                                                 return (
                                                     <td
                                                         key={col.key}
@@ -295,11 +317,11 @@ export function DataTable({
                                                                 href={href}
                                                                 className="font-mono text-sm font-semibold text-primary hover:underline"
                                                             >
-                                                                {label}
+                                                                {value}
                                                             </Link>
                                                         ) : (
                                                             <span className="text-sm font-semibold">
-                                                                {label}
+                                                                {value}
                                                             </span>
                                                         )}
                                                     </td>
