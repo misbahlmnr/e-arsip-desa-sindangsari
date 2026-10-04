@@ -1,7 +1,8 @@
 import AppLayout from "@/layouts/AppLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { Archive } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable/Index";
 import { useServerTable } from "@/shared/hooks/useServerTable";
@@ -24,12 +25,62 @@ export default function SuratKeluar({ letters, filters }) {
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
+    const pageIds = useMemo(
+        () => (letters?.data ?? []).map((row) => row.id),
+        [letters?.data],
+    );
+    const [selectedIds, setSelectedIds] = useState([]);
+
+    const pageKey = pageIds.join(",");
+
+    useEffect(() => {
+        setSelectedIds([]);
+    }, [pageKey]);
+
+    const toggleRow = (id) => {
+        setSelectedIds((current) =>
+            current.includes(id)
+                ? current.filter((selectedId) => selectedId !== id)
+                : [...current, id],
+        );
+    };
+
+    const togglePage = () => {
+        setSelectedIds((current) => {
+            const allSelected = pageIds.every((id) => current.includes(id));
+
+            return allSelected ? [] : pageIds;
+        });
+    };
+
+    const archiveSelected = () => {
+        if (selectedIds.length === 0) {
+            return;
+        }
+
+        const ok = confirm(
+            `Arsipkan ${selectedIds.length} surat yang dipilih?`,
+        );
+        if (!ok) {
+            return;
+        }
+
+        router.patch(
+            route("admin.surat-keluar.archive-selected"),
+            { ids: selectedIds },
+            { preserveScroll: true },
+        );
+    };
 
     const columns = useMemo(
         () =>
             getColumns({
                 startIndex,
                 canManage: canManageSurat,
+                selectedIds,
+                pageIds,
+                onToggleRow: toggleRow,
+                onTogglePage: togglePage,
                 onDetail: (row) =>
                     openFromList(
                         route("admin.surat-keluar.show", {
@@ -43,7 +94,7 @@ export default function SuratKeluar({ letters, filters }) {
                         }),
                     ),
             }),
-        [startIndex, canManageSurat, openFromList],
+        [startIndex, canManageSurat, openFromList, selectedIds, pageIds],
     );
 
     return (
@@ -58,8 +109,17 @@ export default function SuratKeluar({ letters, filters }) {
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-end"
+                        className="flex items-center justify-end gap-3"
                     >
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            disabled={selectedIds.length === 0}
+                            onClick={archiveSelected}
+                        >
+                            <Archive className="size-4 mr-1.5" />
+                            Arsipkan yang dipilih
+                        </Button>
                         <Button
                             size="lg"
                             onClick={() =>

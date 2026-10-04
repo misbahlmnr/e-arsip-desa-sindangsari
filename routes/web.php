@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
 
     // Mutasi surat & manajemen user: admin saja
     Route::middleware('role:admin')->name('admin.')->group(function () {
+        Route::patch('surat-masuk/arsipkan-terpilih', [SuratMasukController::class, 'archiveSelected'])->name('surat-masuk.archive-selected');
+        Route::patch('surat-keluar/arsipkan-terpilih', [SuratKeluarController::class, 'archiveSelected'])->name('surat-keluar.archive-selected');
         Route::patch('surat-masuk/{surat_masuk}/arsipkan', [SuratMasukController::class, 'archive'])->name('surat-masuk.archive');
         Route::patch('surat-masuk/{surat_masuk}/batal-arsip', [SuratMasukController::class, 'unarchive'])->name('surat-masuk.unarchive');
         Route::patch('surat-keluar/{surat_keluar}/arsipkan', [SuratKeluarController::class, 'archive'])->name('surat-keluar.archive');

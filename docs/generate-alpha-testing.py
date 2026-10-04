@@ -169,7 +169,7 @@ SECTIONS = [
             ),
             (
                 "Sekdes mereview surat masuk dengan menetapkan tingkat biasa atau penting",
-                "Sistem memperbarui status menjadi terverifikasi dan menampilkan pesan 'Surat berhasil direview dan tingkat ditetapkan'",
+                "Sistem memperbarui status menjadi terverifikasi dan menampilkan pesan 'Surat berhasil direview dan tindak lanjut ditetapkan'",
             ),
             (
                 "Sekdes mencoba mereview surat yang bukan berstatus *draft*",
@@ -243,23 +243,27 @@ SECTIONS = [
         "cases": [
             (
                 "Pengguna membuka menu Arsip Surat",
-                "Sistem menampilkan halaman arsip surat masuk dan surat keluar",
+                "Sistem menampilkan halaman arsip yang berisi surat masuk dan surat keluar yang sudah diarsipkan",
             ),
             (
-                "Pengguna mencari arsip dengan prefix nomor surat yang ada di database",
-                "Sistem menampilkan daftar arsip yang nomor suratnya cocok dengan prefix pencarian",
+                "Pengguna mencari nomor agenda yang ada di database, misalnya SM/2026, SM/2026/08, atau SM/2026/08/0005",
+                "Sistem menampilkan arsip yang nomor agendanya cocok. Kode SM menampilkan surat masuk dan kode SK menampilkan surat keluar",
             ),
             (
-                "Pengguna mencari arsip dengan nomor surat yang tidak ditemukan",
-                "Sistem menampilkan daftar kosong / pesan bahwa data tidak ditemukan",
+                "Pengguna mencari nomor surat yang ada di database melalui filter Nomor Surat",
+                "Sistem menampilkan arsip yang nomor suratnya mengandung kata kunci pencarian",
             ),
             (
-                "Pengguna memfilter arsip berdasarkan jenis surat (masuk / keluar)",
-                "Sistem menampilkan hanya arsip sesuai filter jenis yang dipilih",
+                "Pengguna mencari nomor surat atau nomor agenda yang tidak ditemukan",
+                "Sistem menampilkan pesan 'Belum ada surat di arsip' dan 'Coba ubah kata kunci pencarian atau filter.'",
+            ),
+            (
+                "Pengguna memfilter arsip berdasarkan jenis surat masuk atau surat keluar",
+                "Sistem menampilkan hanya arsip sesuai jenis yang dipilih",
             ),
             (
                 "Pengguna membuka detail arsip surat",
-                "Sistem menampilkan detail lengkap arsip surat yang dipilih",
+                "Sistem menampilkan detail arsip yang dipilih, meliputi perihal, nomor surat, jenis surat, status diarsipkan, nomor agenda, tanggal surat, serta pengirim atau tujuan",
             ),
         ],
     },

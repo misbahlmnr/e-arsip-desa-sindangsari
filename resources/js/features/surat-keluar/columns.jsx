@@ -1,4 +1,5 @@
 ﻿import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
@@ -9,6 +10,10 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
  *   onDetail?: (row: object) => void;
  *   onEdit?: (row: object) => void;
  *   canManage?: boolean;
+ *   selectedIds?: number[];
+ *   onToggleRow?: (id: number) => void;
+ *   onTogglePage?: () => void;
+ *   pageIds?: number[];
  * }} opts
  */
 export function getColumns({
@@ -16,8 +21,40 @@ export function getColumns({
     onDetail,
     onEdit,
     canManage = true,
+    selectedIds = [],
+    onToggleRow,
+    onTogglePage,
+    pageIds = [],
 } = {}) {
-    return [
+    const columns = [];
+
+    if (canManage && onToggleRow && onTogglePage) {
+        const allSelected =
+            pageIds.length > 0 &&
+            pageIds.every((id) => selectedIds.includes(id));
+
+        columns.push({
+            id: "select",
+            enableSorting: false,
+            header: () => (
+                <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={() => onTogglePage()}
+                    disabled={pageIds.length === 0}
+                    aria-label="Pilih semua surat di halaman ini"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={selectedIds.includes(row.original.id)}
+                    onCheckedChange={() => onToggleRow(row.original.id)}
+                    aria-label={`Pilih surat ${row.original.nomor_agenda ?? row.original.no_surat}`}
+                />
+            ),
+        });
+    }
+
+    columns.push(
         {
             id: "row_number",
             accessorKey: "no",
@@ -134,5 +171,7 @@ export function getColumns({
                 );
             },
         },
-    ];
+    );
+
+    return columns;
 }

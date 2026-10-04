@@ -122,7 +122,7 @@ class SuratMasukController extends Controller
             $request->user(),
         );
 
-        return back()->with('success', 'Surat berhasil direview dan tingkat ditetapkan.');
+        return back()->with('success', 'Surat berhasil direview dan tindak lanjut ditetapkan.');
     }
 
     public function verifikasiKades(VerifikasiKadesRequest $request, SuratMasuk $surat_masuk)
@@ -136,17 +136,98 @@ class SuratMasukController extends Controller
     {
         $this->authorizeSuratManagement();
 
+        $result = $this->performArchive($surat_masuk);
+
+        return back()->with($result['flash'], $result['message']);
+    }
+
+    public function archiveSelected(Request $request)
+    {
+        $this->authorizeSuratManagement();
+
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'distinct', 'exists:surat_masuk,id'],
+        ]);
+
+        $letters = SuratMasuk::query()->whereIn('id', $validated['ids'])->get()->keyBy('id');
+        $archived = 0;
+        $skippedByReason = [];
+
+        foreach ($validated['ids'] as $id) {
+            $result = $this->performArchive($letters->get($id));
+
+            if ($result['archived']) {
+                $archived++;
+
+                continue;
+            }
+
+            $skippedByReason[$result['message']] = ($skippedByReason[$result['message']] ?? 0) + 1;
+        }
+
+        return $this->bulkArchiveRedirect($archived, $skippedByReason);
+    }
+
+    /**
+     * @return array{archived: bool, flash: string, message: string}
+     */
+    private function performArchive(SuratMasuk $surat_masuk): array
+    {
         if ($surat_masuk->diarsipkan_at) {
-            return back()->with('info', 'Surat ini sudah berada di arsip.');
+            return [
+                'archived' => false,
+                'flash' => 'info',
+                'message' => 'Surat ini sudah berada di arsip.',
+            ];
         }
 
         if (! $surat_masuk->canArchive()) {
-            return back()->with('error', 'Surat harus didisposisikan terlebih dahulu sebelum diarsipkan.');
+            return [
+                'archived' => false,
+                'flash' => 'error',
+                'message' => 'Surat harus didisposisikan terlebih dahulu sebelum diarsipkan.',
+            ];
         }
 
         $this->services->archive($surat_masuk);
 
-        return back()->with('success', 'Surat masuk berhasil diarsipkan.');
+        return [
+            'archived' => true,
+            'flash' => 'success',
+            'message' => 'Surat masuk berhasil diarsipkan.',
+        ];
+    }
+
+    /**
+     * @param  array<string, int>  $skippedByReason
+     */
+    private function bulkArchiveRedirect(int $archived, array $skippedByReason)
+    {
+        $skipped = array_sum($skippedByReason);
+        $parts = [];
+
+        if ($archived > 0) {
+            $parts[] = $archived.' surat berhasil diarsipkan.';
+        }
+
+        if ($skipped > 0) {
+            $reasons = [];
+
+            foreach ($skippedByReason as $reason => $count) {
+                $reasons[] = $count > 1 ? $reason.' ('.$count.')' : $reason;
+            }
+
+            $parts[] = $skipped.' surat dilewati: '.implode(' ', $reasons);
+        }
+
+        $message = implode(' ', $parts);
+
+        if ($archived > 0) {
+            return back()->with('success', $message);
+        }
+
+        return back()->with('error', $message !== '' ? $message : 'Tidak ada surat yang diarsipkan.');
     }
 
     public function unarchive(SuratMasuk $surat_masuk)
