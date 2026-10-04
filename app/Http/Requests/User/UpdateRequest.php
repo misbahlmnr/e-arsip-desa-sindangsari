@@ -48,7 +48,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => 'nama',
-            'username' => 'nama pengguna',
+            'username' => 'username',
         ];
     }
 }

@@ -16,7 +16,7 @@ export default function CreateSuratMasuk({ nomorAgendaPreview = "" }) {
         tanggal_diterima: new Date().toISOString().slice(0, 10),
         pengirim: "",
         perihal: "",
-        tujuan: "-",
+        tujuan: "Desa Sindangsari",
         catatan: "",
         file: null,
         supporting_files: [],
@@ -62,6 +62,10 @@ export default function CreateSuratMasuk({ nomorAgendaPreview = "" }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <FormField label="Nomor Agenda">
                             <ReadonlyAgendaInput value={nomorAgendaPreview} />
+                            <p className="text-xs text-muted-foreground">
+                                Nomor Agenda akan dibuat otomatis oleh sistem
+                                setelah surat berhasil diregistrasi.
+                            </p>
                         </FormField>
                         <FormField
                             label="Nomor Surat"
@@ -76,9 +80,6 @@ export default function CreateSuratMasuk({ nomorAgendaPreview = "" }) {
                                 placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
-                            <p className="text-xs text-muted-foreground">
-                                Nomor Agenda akan dibuat otomatis oleh sistem setelah surat berhasil diregistrasi.
-                            </p>
                         </FormField>
 
                         <FormField
@@ -152,7 +153,6 @@ export default function CreateSuratMasuk({ nomorAgendaPreview = "" }) {
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
-
                     </div>
 
                     <FormField

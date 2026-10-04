@@ -33,7 +33,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'nama',
-            'username' => 'nama pengguna',
+            'username' => 'username',
         ];
     }
 }

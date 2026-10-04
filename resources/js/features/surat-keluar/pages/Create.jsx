@@ -61,6 +61,10 @@ export default function CreateSuratKeluar({ nomorAgendaPreview = "" }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <FormField label="Nomor Agenda">
                             <ReadonlyAgendaInput value={nomorAgendaPreview} />
+                            <p className="text-xs text-muted-foreground">
+                                Nomor agenda dicatat otomatis saat surat
+                                disimpan.
+                            </p>
                         </FormField>
                         <FormField
                             label="Nomor Surat"
@@ -75,9 +79,6 @@ export default function CreateSuratKeluar({ nomorAgendaPreview = "" }) {
                                 placeholder="Contoh: 474.1/22/V/2026"
                                 className="h-11 rounded-xl"
                             />
-                            <p className="text-xs text-muted-foreground">
-                                Nomor agenda dicatat otomatis saat surat disimpan.
-                            </p>
                         </FormField>
                         <FormField
                             label="Tujuan"
