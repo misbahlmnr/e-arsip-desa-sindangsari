@@ -10,12 +10,15 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Seeder data demo Kantor Desa — alur: draft → review Sekdes → (verifikasi Kades) → disposisi → arsip.
  */
 class DesaWorkflowSeeder extends Seeder
 {
+    private const SAMPLE_FILE = 'seed/surat-keterangan-ahli-waris.pdf';
+
     /** @var list<string> */
     private const PENGIRIM = [
         'Kecamatan Cikarang Utara',
@@ -138,6 +141,7 @@ class DesaWorkflowSeeder extends Seeder
         }
 
         $this->resetDemoSurat();
+        $this->copySampleFile();
 
         $this->command?->info('Menyemai 50 Surat Masuk dengan variasi workflow...');
         $this->suratMasuk = $this->seedSuratMasuk($sekdes, $kades);
@@ -156,6 +160,17 @@ class DesaWorkflowSeeder extends Seeder
         Disposisi::query()->delete();
         SuratKeluar::query()->delete();
         SuratMasuk::query()->delete();
+    }
+
+    private function copySampleFile(): void
+    {
+        $source = base_path('docs/SURAT KETERANGAN AHLI WARIS.pdf');
+
+        if (! is_file($source)) {
+            throw new \RuntimeException('Berkas contoh surat tidak ditemukan: '.$source);
+        }
+
+        Storage::disk('public')->put(self::SAMPLE_FILE, file_get_contents($source));
     }
 
     /**
@@ -250,7 +265,7 @@ class DesaWorkflowSeeder extends Seeder
             'status' => $meta['status'],
             'tingkat' => $meta['tingkat'],
             'tujuan' => 'Kantor Desa Mekarsari',
-            'file' => null,
+            'file' => self::SAMPLE_FILE,
             'diarsipkan_at' => $meta['diarsipkan_at'],
             'verified_sekdes_at' => $reviewAt,
             'verified_sekdes_by' => $reviewAt ? $sekdes->id : null,
@@ -355,7 +370,7 @@ class DesaWorkflowSeeder extends Seeder
                 'tujuan' => $tujuan,
                 'perihal' => $perihal,
                 'catatan' => $catatan,
-                'file' => 'surat-keluar/arsip-digital/'.$this->nomorSuratKeluar($i, $tanggalKirim).'.pdf',
+                'file' => self::SAMPLE_FILE,
                 'diarsipkan_at' => $diarsipkanAt,
             ]);
         }
