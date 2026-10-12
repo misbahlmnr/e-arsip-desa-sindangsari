@@ -112,7 +112,7 @@ function parseAgendaInput(raw) {
         return { valid: true };
     }
 
-    const full = text.match(/^(SM|SK)\/(\d{4})\/(\d{2})\/(\d{4})$/);
+    const full = text.match(/^(SM|SK)\/(\d{4})\/(\d{2})\/(\d{3})$/);
     const month = text.match(/^(SM|SK)\/(\d{4})\/(\d{2})$/);
     const year = text.match(/^(SM|SK)\/(\d{4})$/);
     const kind = text.match(/^(SM|SK)$/);
@@ -377,7 +377,7 @@ export default function ArsipSuratIndex({ letters, filters }) {
                         <Input
                             value={agendaInput}
                             onChange={(event) => setAgendaInput(event.target.value)}
-                            placeholder="Cari Nomor Agenda, contoh SM/2026, SM/2026/08, SM/2026/08/0005"
+                            placeholder="Cari Nomor Agenda, contoh SM/2026, SM/2026/08, SM/2026/08/005"
                             aria-label="Cari Nomor Agenda"
                             className="h-12 rounded-xl pl-12 text-base"
                         />

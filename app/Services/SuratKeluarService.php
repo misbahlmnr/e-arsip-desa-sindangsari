@@ -110,6 +110,10 @@ class SuratKeluarService
 
         $query->orderBy($sortBy, $sortDir);
 
+        if ($sortBy !== 'id') {
+            $query->orderBy('id', $sortDir);
+        }
+
         $letters = $query->paginate($perPage)->withQueryString();
 
         return [

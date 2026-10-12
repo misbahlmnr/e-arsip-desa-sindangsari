@@ -53,7 +53,7 @@ class NomorAgendaService
             $sequence = ((int) $matches[1]) + 1;
         }
 
-        return sprintf('%s/%s/%04d', $kode, $date->format('Y/m'), $sequence);
+        return sprintf('%s/%s/%03d', $kode, $date->format('Y/m'), $sequence);
     }
 
     public function yearPrefix(string $kode, int $year): string

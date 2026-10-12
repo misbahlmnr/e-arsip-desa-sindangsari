@@ -1,2 +1,6 @@
 *
 !.gitignore
+!surat-masuk/
+!surat-masuk/**
+!surat-keluar/
+!surat-keluar/**

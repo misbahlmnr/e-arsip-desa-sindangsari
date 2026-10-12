@@ -75,7 +75,7 @@ class SuratNomorSearchTest extends TestCase
 
         SuratMasuk::query()->create([
             'no_surat' => '001/A',
-            'nomor_agenda' => 'SM/2026/09/0007',
+            'nomor_agenda' => 'SM/2026/09/007',
             'tanggal_terima' => '2026-09-01',
             'pengirim' => 'Dinas Kesehatan',
             'perihal' => 'Sosialisasi',
@@ -92,7 +92,7 @@ class SuratNomorSearchTest extends TestCase
             'tujuan' => '-',
         ]);
 
-        foreach (['Dinas Kesehatan', 'Kepala Desa', 'SM/2026/09/0007'] as $term) {
+        foreach (['Dinas Kesehatan', 'Kepala Desa', 'SM/2026/09/007'] as $term) {
             $this->actingAs($admin)
                 ->get(route('admin.surat-masuk.index', ['search' => $term]))
                 ->assertOk()
@@ -138,7 +138,7 @@ class SuratNomorSearchTest extends TestCase
 
         SuratKeluar::query()->create([
             'no_surat' => '145/010/I/2026',
-            'nomor_agenda' => 'SK/2026/09/0007',
+            'nomor_agenda' => 'SK/2026/09/007',
             'tanggal_kirim' => '2026-09-01',
             'tujuan' => 'BPD Desa Sindangsari',
             'perihal' => 'Laporan keuangan desa',
@@ -153,7 +153,7 @@ class SuratNomorSearchTest extends TestCase
             'file' => 'surat-keluar/test2.pdf',
         ]);
 
-        foreach (['SK/2026/09/0007', '145/010/I/2026', 'Laporan keuangan desa', 'BPD Desa Sindangsari'] as $term) {
+        foreach (['SK/2026/09/007', '145/010/I/2026', 'Laporan keuangan desa', 'BPD Desa Sindangsari'] as $term) {
             $this->actingAs($admin)
                 ->get(route('admin.surat-keluar.index', ['search' => $term]))
                 ->assertOk()

@@ -11,7 +11,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             JabatanTujuanDisposisiSeeder::class,
-            DesaWorkflowSeeder::class,
+            SuratMasukSeeder::class,
+            SuratKeluarSeeder::class,
+            // DesaWorkflowSeeder::class,
         ]);
     }
 }

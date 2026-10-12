@@ -50,7 +50,7 @@ return new class extends Migration
             $counters[$key] = ($counters[$key] ?? 0) + 1;
 
             DB::table($table)->where('id', $row->id)->update([
-                'nomor_agenda' => sprintf('%s/%s/%04d', $kode, $date->format('Y/m'), $counters[$key]),
+                'nomor_agenda' => sprintf('%s/%s/%03d', $kode, $date->format('Y/m'), $counters[$key]),
             ]);
         }
     }

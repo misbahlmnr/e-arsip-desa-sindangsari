@@ -46,9 +46,9 @@ class NomorAgendaTest extends TestCase
         $numbers = SuratMasuk::query()->orderBy('id')->pluck('nomor_agenda')->all();
 
         $this->assertSame([
-            'SM/2026/01/0001',
-            'SM/2026/01/0002',
-            'SM/2026/02/0001',
+            'SM/2026/01/001',
+            'SM/2026/01/002',
+            'SM/2026/02/001',
         ], $numbers);
     }
 
@@ -60,7 +60,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-masuk.create'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SM/{$prefix}/0001"));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SM/{$prefix}/001"));
 
         $this->assertSame(0, SuratMasuk::query()->count());
 
@@ -76,7 +76,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-masuk.create'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SM/{$prefix}/0002"));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SM/{$prefix}/002"));
 
         $this->assertSame(1, SuratMasuk::query()->count());
     }
@@ -99,12 +99,12 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-masuk.create', ['tanggal_terima' => '2026-01-20']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/01/0002'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/01/002'));
 
         $this->actingAs($admin)
             ->get(route('admin.surat-masuk.create', ['tanggal_terima' => '2026-03-02']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/03/0001'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/03/001'));
 
         $this->assertSame($before, SuratMasuk::query()->count());
     }
@@ -116,7 +116,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-masuk.create', ['tanggal_terima' => '2026-09-01']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/09/0001'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SM/2026/09/001'));
 
         SuratMasuk::query()->create([
             'no_surat' => 'LAIN/1',
@@ -137,7 +137,7 @@ class NomorAgendaTest extends TestCase
         ])->assertRedirect();
 
         $this->assertSame(
-            'SM/2026/09/0002',
+            'SM/2026/09/002',
             SuratMasuk::query()->where('no_surat', 'BARU/1')->value('nomor_agenda'),
         );
     }
@@ -185,7 +185,7 @@ class NomorAgendaTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->has('letters.data', 1)
-                ->where('letters.data.0.nomor_agenda', 'SM/2026/01/0001')
+                ->where('letters.data.0.nomor_agenda', 'SM/2026/01/001')
             );
 
         $this->actingAs($admin)
@@ -254,7 +254,7 @@ class NomorAgendaTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->has('letters.data', 1)
-                ->where('letters.data.0.nomor_agenda', 'SM/2026/01/0001')
+                ->where('letters.data.0.nomor_agenda', 'SM/2026/01/001')
             );
     }
 
@@ -269,7 +269,7 @@ class NomorAgendaTest extends TestCase
             'perihal' => 'Tugas',
         ])->assertRedirect();
 
-        $this->assertSame('SK/2026/03/0001', SuratKeluar::query()->value('nomor_agenda'));
+        $this->assertSame('SK/2026/03/001', SuratKeluar::query()->value('nomor_agenda'));
     }
 
     public function test_surat_keluar_create_page_previews_next_agenda_number_without_inserting(): void
@@ -280,7 +280,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.create'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/0001"));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/001"));
 
         $this->assertSame(0, SuratKeluar::query()->count());
 
@@ -295,7 +295,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.create'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/0002"));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', "SK/{$prefix}/002"));
 
         $this->assertSame(1, SuratKeluar::query()->count());
     }
@@ -317,12 +317,12 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-01-20']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/01/0002'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/01/002'));
 
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-03-02']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/03/0001'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/03/001'));
 
         $this->assertSame($before, SuratKeluar::query()->count());
     }
@@ -334,7 +334,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.create', ['tanggal_kirim' => '2026-09-01']))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/09/0001'));
+            ->assertInertia(fn ($page) => $page->where('nomorAgendaPreview', 'SK/2026/09/001'));
 
         SuratKeluar::query()->create([
             'no_surat' => 'LAIN/1',
@@ -352,7 +352,7 @@ class NomorAgendaTest extends TestCase
         ])->assertRedirect();
 
         $this->assertSame(
-            'SK/2026/09/0002',
+            'SK/2026/09/002',
             SuratKeluar::query()->where('no_surat', 'BARU/1')->value('nomor_agenda'),
         );
     }
@@ -362,7 +362,7 @@ class NomorAgendaTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $letter = SuratKeluar::query()->create([
             'no_surat' => 'EDIT/1',
-            'nomor_agenda' => 'SK/2026/09/0004',
+            'nomor_agenda' => 'SK/2026/09/004',
             'tanggal_kirim' => '2026-09-04',
             'tujuan' => 'BPD',
             'perihal' => 'Tersimpan',
@@ -372,7 +372,7 @@ class NomorAgendaTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.surat-keluar.edit', $letter))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('letter.nomor_agenda', 'SK/2026/09/0004'));
+            ->assertInertia(fn ($page) => $page->where('letter.nomor_agenda', 'SK/2026/09/004'));
     }
 
     public function test_update_does_not_change_agenda_number_when_date_changes(): void
@@ -397,7 +397,7 @@ class NomorAgendaTest extends TestCase
             'tujuan' => '-',
         ])->assertRedirect();
 
-        $this->assertSame('SM/2026/01/0001', $letter->fresh()->nomor_agenda);
+        $this->assertSame('SM/2026/01/001', $letter->fresh()->nomor_agenda);
     }
 
     public function test_full_agenda_number_matches_exactly_inside_binary_search_results(): void
@@ -405,9 +405,9 @@ class NomorAgendaTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
 
         $archived = [
-            ['no_surat' => 'A/2026-08-01', 'nomor_agenda' => 'SM/2026/08/0001', 'tanggal_terima' => '2026-08-01', 'perihal' => 'Awal'],
-            ['no_surat' => 'B/2026-08-05', 'nomor_agenda' => 'SM/2026/08/0005', 'tanggal_terima' => '2026-08-05', 'perihal' => 'Target'],
-            ['no_surat' => 'C/2025-08-05', 'nomor_agenda' => 'SM/2025/08/0005', 'tanggal_terima' => '2025-08-05', 'perihal' => 'Tahun lain'],
+            ['no_surat' => 'A/2026-08-01', 'nomor_agenda' => 'SM/2026/08/001', 'tanggal_terima' => '2026-08-01', 'perihal' => 'Awal'],
+            ['no_surat' => 'B/2026-08-05', 'nomor_agenda' => 'SM/2026/08/005', 'tanggal_terima' => '2026-08-05', 'perihal' => 'Target'],
+            ['no_surat' => 'C/2025-08-05', 'nomor_agenda' => 'SM/2025/08/005', 'tanggal_terima' => '2025-08-05', 'perihal' => 'Tahun lain'],
         ];
 
         foreach ($archived as $row) {
@@ -425,27 +425,27 @@ class NomorAgendaTest extends TestCase
                 'jenis' => 'masuk',
                 'tahun' => 2026,
                 'bulan' => 8,
-                'nomor_agenda' => 'SM/2026/08/0005',
+                'nomor_agenda' => 'SM/2026/08/005',
             ]))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->has('letters.data', 1)
-                ->where('letters.data.0.nomor_agenda', 'SM/2026/08/0005')
-                ->where('filters.nomor_agenda', 'SM/2026/08/0005')
+                ->where('letters.data.0.nomor_agenda', 'SM/2026/08/005')
+                ->where('filters.nomor_agenda', 'SM/2026/08/005')
             );
 
         $this->actingAs($admin)
             ->get(route('admin.arsip-surat.index', [
                 'jenis' => 'masuk',
                 'tahun' => 2026,
-                'nomor_agenda' => 'SM/2026/08/000',
+                'nomor_agenda' => 'SM/2026/08/00',
             ]))
             ->assertOk()
             ->assertInertia(fn ($page) => $page->has('letters.data', 0));
 
         $this->actingAs($admin)
             ->get(route('admin.arsip-surat.index', [
-                'nomor_agenda' => 'SM/2026/08/0005',
+                'nomor_agenda' => 'SM/2026/08/005',
             ]))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
@@ -461,7 +461,7 @@ class NomorAgendaTest extends TestCase
         $rows = [
             [
                 'no_surat' => 'META/2026',
-                'nomor_agenda' => 'SM/2026/03/0001',
+                'nomor_agenda' => 'SM/2026/03/001',
                 'tanggal_terima' => '2026-03-04',
                 'tanggal_surat' => '2026-03-04',
                 'pengirim' => 'Kecamatan Cimerak',
@@ -470,7 +470,7 @@ class NomorAgendaTest extends TestCase
             ],
             [
                 'no_surat' => 'META/2025',
-                'nomor_agenda' => 'SM/2025/03/0001',
+                'nomor_agenda' => 'SM/2025/03/001',
                 'tanggal_terima' => '2025-03-04',
                 'tanggal_surat' => '2025-03-04',
                 'pengirim' => 'Dinas',
@@ -479,7 +479,7 @@ class NomorAgendaTest extends TestCase
             ],
             [
                 'no_surat' => 'META/LAIN',
-                'nomor_agenda' => 'SM/2026/03/0002',
+                'nomor_agenda' => 'SM/2026/03/002',
                 'tanggal_terima' => '2026-03-10',
                 'tanggal_surat' => '2026-03-10',
                 'pengirim' => 'BPD',
@@ -533,28 +533,28 @@ class NomorAgendaTest extends TestCase
         $rows = [
             [
                 'no_surat' => 'URUT/LAMA',
-                'nomor_agenda' => 'SM/2025/01/0001',
+                'nomor_agenda' => 'SM/2025/01/001',
                 'tanggal_terima' => '2025-01-05',
                 'perihal' => 'Undangan',
                 'diarsipkan_at' => '2026-09-03 08:00:00',
             ],
             [
                 'no_surat' => 'URUT/AWAL',
-                'nomor_agenda' => 'SM/2026/01/0001',
+                'nomor_agenda' => 'SM/2026/01/001',
                 'tanggal_terima' => '2026-01-05',
                 'perihal' => 'Undangan',
                 'diarsipkan_at' => '2026-02-01 08:00:00',
             ],
             [
                 'no_surat' => 'URUT/AKHIR',
-                'nomor_agenda' => 'SM/2026/06/0001',
+                'nomor_agenda' => 'SM/2026/06/001',
                 'tanggal_terima' => '2026-06-05',
                 'perihal' => 'Undangan',
                 'diarsipkan_at' => '2026-07-01 08:00:00',
             ],
             [
                 'no_surat' => 'URUT/LAIN',
-                'nomor_agenda' => 'SM/2026/06/0002',
+                'nomor_agenda' => 'SM/2026/06/002',
                 'tanggal_terima' => '2026-06-06',
                 'perihal' => 'Laporan',
                 'diarsipkan_at' => '2026-08-01 08:00:00',

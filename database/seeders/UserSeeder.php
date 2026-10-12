@@ -10,25 +10,25 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $password = Hash::make('password');
+        $password = Hash::make('password$123');
 
         $users = [
             [
-                'name' => 'Admin',
-                'username' => 'admin',
-                'email' => 'admin@gmail.com',
+                'name' => 'Jejen Muhammad H, S.Pd.',
+                'username' => 'jejen',
+                'email' => 'jejenmuhammad@gmail.com',
                 'role' => 'admin',
             ],
             [
-                'name' => 'Sekdes',
-                'username' => 'sekdes',
-                'email' => 'sekdes@gmail.com',
+                'name' => 'Usup Supriadi, S.T.',
+                'username' => 'usupsupriadi',
+                'email' => 'usupsupriadi@gmail.com',
                 'role' => 'sekdes',
             ],
             [
-                'name' => 'Kades',
-                'username' => 'kades',
-                'email' => 'kades@gmail.com',
+                'name' => 'Dani Herdiana',
+                'username' => 'daniherdiana',
+                'email' => 'daniherdiana@gmail.com',
                 'role' => 'kades',
             ],
         ];
