@@ -355,8 +355,9 @@ class DesaWorkflowSeeder extends Seeder
                 'tujuan' => $tujuan,
                 'perihal' => $perihal,
                 'catatan' => $catatan,
-                'status' => $status,
-                'file' => 'surat-keluar/arsip-digital/'.$this->nomorSuratKeluar($i, $tanggalKirim).'.pdf',
+                'file' => $status === 'draft'
+                    ? null
+                    : 'surat-keluar/arsip-digital/'.$this->nomorSuratKeluar($i, $tanggalKirim).'.pdf',
                 'diarsipkan_at' => $diarsipkanAt,
             ]);
         }

@@ -1,4 +1,5 @@
-﻿import { Button } from "@/components/ui/button";
+﻿import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
+import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,7 +14,7 @@ import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Archive, ArrowLeft, FileText, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { cn, formatTanggalKalenderWib } from "@/shared/lib/utils";
+import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { FilePreview } from "@/components/FilePreview";
 
 function Field({ label, value, className }) {
@@ -40,16 +41,6 @@ export default function ShowSuratKeluar({ letter }) {
             { preserveScroll: true },
         );
     };
-
-    const STATUS_CONFIG = {
-        draft: { label: "Draft", className: "bg-yellow-100 text-yellow-800" },
-        terkirim: {
-            label: "Terkirim",
-            className: "bg-blue-100 text-blue-800",
-        },
-    };
-
-    const statusCfg = STATUS_CONFIG[letter.status];
 
     return (
         <AppLayout
@@ -80,17 +71,13 @@ export default function ShowSuratKeluar({ letter }) {
                                 <p className="font-mono text-xl font-bold mt-1">
                                     {letter.no_surat}
                                 </p>
+                                {letter.nomor_agenda ? (
+                                    <p className="text-sm text-muted-foreground mt-1 font-mono">
+                                        Agenda {letter.nomor_agenda}
+                                    </p>
+                                ) : null}
                             </div>
                             <div className="flex flex-wrap items-center gap-2 justify-end">
-                                <span
-                                    className={cn(
-                                        "inline-flex px-2.5 py-1 rounded-full text-xs font-semibold",
-                                        statusCfg?.className ??
-                                            "bg-gray-100 text-gray-700",
-                                    )}
-                                >
-                                    {statusCfg?.label ?? letter.status ?? "—"}
-                                </span>
                                 {letter.diarsipkan_at && (
                                     <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-100">
                                         Diarsip
@@ -244,6 +231,9 @@ export default function ShowSuratKeluar({ letter }) {
                             )}
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 {/* ── Sidebar disposisi ────────────────────────────────── */}
@@ -255,10 +245,10 @@ export default function ShowSuratKeluar({ letter }) {
                     <div className="space-y-3 text-sm">
                         <div className="flex items-center justify-between gap-3">
                             <span className="text-muted-foreground">
-                                Status
+                                Nomor Agenda
                             </span>
-                            <span className="font-medium">
-                                {statusCfg?.label ?? letter.status ?? "—"}
+                            <span className="font-medium font-mono">
+                                {letter.nomor_agenda ?? "—"}
                             </span>
                         </div>
                         <div className="flex items-center justify-between gap-3">

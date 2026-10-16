@@ -1,7 +1,8 @@
+import { AgendaSearchFields } from "@/components/AgendaSearchFields";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable/Index";
 import { useServerTable } from "@/shared/hooks/useServerTable";
@@ -9,11 +10,21 @@ import { getColumns } from "../columns";
 
 export default function SuratMasuk({ letters, filters }) {
     const canManageSurat = usePage().props.auth.canManageSurat;
+    const [selectedIds, setSelectedIds] = useState([]);
     const { loading, searchInput, setSearchInput, visit } = useServerTable({
         routeName: "admin.surat-masuk.index",
         filters,
         searchDebounceMs: 400,
-        preserveQueryKeys: ["status", "tingkat", "kades_aksi", "disposisi"],
+        preserveQueryKeys: [
+            "status",
+            "tingkat",
+            "kades_aksi",
+            "disposisi",
+            "tahun",
+            "bulan",
+            "perihal",
+            "pengirim",
+        ],
     });
     const startIndex =
         ((letters?.current_page ?? 1) - 1) * (letters?.per_page ?? 10);
@@ -23,6 +34,31 @@ export default function SuratMasuk({ letters, filters }) {
             getColumns({
                 startIndex,
                 canManage: canManageSurat,
+                selection: canManageSurat
+                    ? {
+                          ids: selectedIds,
+                          allChecked:
+                              (letters?.data ?? []).length > 0 &&
+                              (letters?.data ?? []).every((row) =>
+                                  selectedIds.includes(row.id),
+                              ),
+                          onToggleAll: () => {
+                              const pageIds = (letters?.data ?? []).map(
+                                  (row) => row.id,
+                              );
+                              const allOn = pageIds.every((id) =>
+                                  selectedIds.includes(id),
+                              );
+                              setSelectedIds(allOn ? [] : pageIds);
+                          },
+                          onToggle: (id) =>
+                              setSelectedIds((current) =>
+                                  current.includes(id)
+                                      ? current.filter((item) => item !== id)
+                                      : [...current, id],
+                              ),
+                      }
+                    : null,
                 onDetail: (row) =>
                     router.visit(
                         route("admin.surat-masuk.show", {
@@ -36,7 +72,7 @@ export default function SuratMasuk({ letters, filters }) {
                         }),
                     ),
             }),
-        [startIndex, canManageSurat],
+        [startIndex, canManageSurat, selectedIds, letters?.data],
     );
 
     return (
@@ -77,8 +113,38 @@ export default function SuratMasuk({ letters, filters }) {
                         searchInput={searchInput}
                         onSearchInputChange={setSearchInput}
                         loading={loading}
-                        searchPlaceholder="Cari nomor surat…"
+                        searchPlaceholder="Cari nomor agenda, nomor surat, perihal, atau pengirim…"
                         emptyMessage="Coba ubah kata kunci pencarian."
+                        toolbarActions={
+                            canManageSurat && selectedIds.length > 0 ? (
+                                <Button
+                                    className="rounded-xl"
+                                    onClick={() =>
+                                        router.patch(
+                                            route(
+                                                "admin.surat-masuk.archive-selected",
+                                            ),
+                                            { ids: selectedIds },
+                                            {
+                                                preserveScroll: true,
+                                                onSuccess: () =>
+                                                    setSelectedIds([]),
+                                            },
+                                        )
+                                    }
+                                >
+                                    Arsipkan terpilih ({selectedIds.length})
+                                </Button>
+                            ) : null
+                        }
+                        belowToolbar={
+                            <AgendaSearchFields
+                                filters={filters}
+                                visit={visit}
+                                partyKey="pengirim"
+                                partyLabel="Pengirim"
+                            />
+                        }
                     />
                 </motion.div>
             </div>

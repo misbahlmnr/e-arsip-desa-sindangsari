@@ -1,29 +1,23 @@
 ﻿import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/shared/lib/utils";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import { Save } from "lucide-react";
 
-export default function CreateSuratKeluar() {
+export default function CreateSuratKeluar({ nomorAgendaPreview }) {
     const { data, setData, post, processing, errors } = useForm({
         nomor_surat: "",
         tanggal_kirim: new Date().toISOString().slice(0, 10),
         tujuan: "",
         perihal: "",
         catatan: "",
-        status: "draft",
         file: null,
+        supporting_files: [],
     });
 
     const handleSubmit = (e) => {
@@ -45,6 +39,13 @@ export default function CreateSuratKeluar() {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5 flex flex-col justify-between">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <Input
+                                value={nomorAgendaPreview ?? ""}
+                                readOnly
+                                className="h-11 rounded-xl bg-muted"
+                            />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -82,9 +83,18 @@ export default function CreateSuratKeluar() {
                             <Input
                                 type="date"
                                 value={data.tanggal_kirim}
-                                onChange={(e) =>
-                                    setData("tanggal_kirim", e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setData("tanggal_kirim", e.target.value);
+                                    router.get(
+                                        route("admin.surat-keluar.create"),
+                                        { tanggal_kirim: e.target.value },
+                                        {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                            only: ["nomorAgendaPreview"],
+                                        },
+                                    );
+                                }}
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
@@ -102,26 +112,6 @@ export default function CreateSuratKeluar() {
                                 className="h-11 rounded-xl"
                                 maxLength={250}
                             />
-                        </FormField>
-                        <FormField
-                            label="Status"
-                            required
-                            error={errors.status}
-                        >
-                            <Select
-                                value={data.status}
-                                onValueChange={(v) => setData("status", v)}
-                            >
-                                <SelectTrigger className="h-11 rounded-xl">
-                                    <SelectValue placeholder="Pilih status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
-                                    <SelectItem value="terkirim">
-                                        Terkirim
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
                         </FormField>
                         <FormField
                             label="Catatan"
@@ -171,6 +161,13 @@ export default function CreateSuratKeluar() {
                             {errors.file}
                         </p>
                     ) : null}
+                    <SupportingDocumentsField
+                        files={data.supporting_files}
+                        onFilesChange={(files) =>
+                            setData("supporting_files", files)
+                        }
+                        error={errors.supporting_files}
+                    />
                 </div>
             </form>
         </AppLayout>

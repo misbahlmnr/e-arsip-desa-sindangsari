@@ -341,12 +341,8 @@ export default function AdminDashboard({
                                 title="Surat Keluar"
                                 items={[
                                     {
-                                        label: "Draft",
-                                        value: summary?.surat_keluar_draft,
-                                    },
-                                    {
-                                        label: "Terkirim",
-                                        value: summary?.surat_keluar_terkirim,
+                                        label: "Aktif",
+                                        value: summary?.surat_keluar,
                                     },
                                 ]}
                             />
@@ -380,6 +376,7 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Tambahkan surat pertama untuk memulai."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
@@ -402,6 +399,7 @@ export default function AdminDashboard({
                         emptyTitle="Belum ada surat keluar"
                         emptyHint="Buat surat keluar pertama dari modul terkait."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "tujuan", label: "Tujuan" },
                             { key: "tanggal_kirim", label: "Tanggal" },
@@ -427,6 +425,7 @@ export default function AdminDashboard({
                     emptyTitle="Tidak ada disposisi menunggu"
                     emptyHint="Semua disposisi ke Kepala Desa sudah ditangani."
                     columns={[
+                        { key: "nomor_agenda", label: "No. Agenda" },
                         { key: "no_surat", label: "No. Surat" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "kepada", label: "Kepada" },
@@ -434,6 +433,7 @@ export default function AdminDashboard({
                     ]}
                     rows={(pending_disposisi ?? []).map((row) => ({
                         id: row.id,
+                        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
                         no_surat: row.surat_masuk?.no_surat ?? "—",
                         pengirim: row.surat_masuk?.pengirim ?? "—",
                         kepada: row.kepada,
@@ -615,7 +615,10 @@ function RecentTable({
                                         {columns.map((col, index) => {
                                             const value = row[col.key];
 
-                                            if (col.key === "no_surat") {
+                                            if (
+                                                col.key === "no_surat" ||
+                                                col.key === "nomor_agenda"
+                                            ) {
                                                 return (
                                                     <td
                                                         key={col.key}

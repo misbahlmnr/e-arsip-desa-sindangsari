@@ -55,6 +55,7 @@ const defaultServerSort = { sort_by: "tanggal_terima", sort_dir: "desc" };
  * @param {{ sort_by?: string, sort_dir?: 'asc'|'desc' }} [props.serverSortClearDefaults]
  * @param {import('react').ReactNode} [props.toolbarFilters] — filter controls (e.g. role, status), shown between search and page size
  * @param {import('react').ReactNode} [props.toolbarActions] — primary actions (e.g. create button), shown after page size
+ * @param {import('react').ReactNode} [props.belowToolbar] — extra filters under the search row
  */
 
 export function DataTable({
@@ -70,6 +71,7 @@ export function DataTable({
     serverSortClearDefaults = defaultServerSort,
     toolbarFilters,
     toolbarActions,
+    belowToolbar,
 }) {
     const tableData = pagination?.data ?? [];
 
@@ -213,6 +215,11 @@ export function DataTable({
                     <div className="flex shrink-0">{toolbarActions}</div>
                 ) : null}
             </div>
+            {belowToolbar ? (
+                <div className="px-6 md:px-8 py-4 border-b border-border">
+                    {belowToolbar}
+                </div>
+            ) : null}
 
             {loading ? (
                 <div className="px-8 py-10 text-sm text-muted-foreground">

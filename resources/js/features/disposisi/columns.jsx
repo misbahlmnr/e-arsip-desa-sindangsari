@@ -41,6 +41,15 @@ export function getColumns({ startIndex = 0, onDetail } = {}) {
             ),
         },
         {
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
+            cell: ({ row }) => (
+                <span className="font-mono text-sm text-muted-foreground">
+                    {row.original.nomor_agenda ?? "—"}
+                </span>
+            ),
+        },
+        {
             accessorKey: "dari_jabatan",
             header: "Dari",
             cell: ({ row }) => (

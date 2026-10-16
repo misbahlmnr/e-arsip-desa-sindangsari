@@ -19,8 +19,8 @@ class LaporanService
 
     /** @var array<string, string> */
     private const TINGKAT_SURAT_LABELS = [
-        'biasa' => 'Diproses Sekretaris Desa',
-        'penting' => 'Perlu Verifikasi Kepala Desa',
+        'biasa' => 'Biasa',
+        'penting' => 'Penting',
     ];
 
     /**

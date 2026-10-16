@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Services\NomorAgendaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -72,6 +73,7 @@ class SuratMasuk extends Model
 
     protected $fillable = [
         'no_surat',
+        'nomor_agenda',
         'tanggal_terima',
         'tanggal_surat',
         'pengirim',
@@ -87,6 +89,21 @@ class SuratMasuk extends Model
         'verified_kades_at',
         'verified_kades_by',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (SuratMasuk $letter): void {
+            if (filled($letter->nomor_agenda) || $letter->tanggal_terima === null) {
+                return;
+            }
+
+            $letter->nomor_agenda = app(NomorAgendaService::class)->next(
+                NomorAgendaService::KODE_MASUK,
+                $letter->tanggal_terima,
+                self::class,
+            );
+        });
+    }
 
     /**
      * @return array<string, string>
@@ -150,6 +167,13 @@ class SuratMasuk extends Model
     public function disposisi(): HasMany
     {
         return $this->hasMany(Disposisi::class)->latest();
+    }
+
+    public function supportingDocuments(): HasMany
+    {
+        return $this->hasMany(SupportingDocument::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 
     public function suratKeluar(): HasMany

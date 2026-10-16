@@ -21,6 +21,7 @@ import {
 function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
+        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
         no_surat: row.surat_masuk?.no_surat ?? "—",
         pengirim: row.surat_masuk?.pengirim ?? "—",
         perihal: row.surat_masuk?.perihal ?? "—",
@@ -33,6 +34,7 @@ function mapDisposisiRows(items) {
 function mapPendingSuratRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
+        nomor_agenda: row.nomor_agenda ?? "—",
         no_surat: row.no_surat ?? "—",
         perihal: row.perihal ?? "—",
         tanggal: row.tanggal,
@@ -210,6 +212,7 @@ export default function KadesDashboard({
                         emptyTitle="Belum ada disposisi masuk"
                         emptyHint="Disposisi dari Sekretaris Desa akan tampil di sini."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal", label: "Tanggal" },
@@ -236,6 +239,7 @@ export default function KadesDashboard({
                         emptyTitle="Tidak ada surat menunggu"
                         emptyHint="Semua surat penting sudah Anda tangani."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "perihal", label: "Perihal" },
                             { key: "tanggal", label: "Tanggal" },

@@ -7,6 +7,7 @@ import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { FilePreview } from "@/components/FilePreview";
 import { cn } from "@/shared/lib/utils";
 
@@ -34,6 +35,8 @@ export default function EditSuratMasuk({ letter }) {
             catatan: letter.catatan ?? "",
             tujuan: letter.tujuan ?? "-",
             file: null,
+            supporting_files: [],
+            remove_supporting_ids: [],
         }),
         [letter],
     );
@@ -54,6 +57,8 @@ export default function EditSuratMasuk({ letter }) {
             catatan: data.catatan,
             status: data.status,
             tujuan: data.tujuan || "-",
+            supporting_files: data.supporting_files,
+            remove_supporting_ids: data.remove_supporting_ids,
         };
 
         const finish = {
@@ -62,10 +67,18 @@ export default function EditSuratMasuk({ letter }) {
             onFinish: () => setBusy(false),
         };
 
-        if (data.file instanceof File) {
+        const hasSupportingChange =
+            (data.supporting_files?.length ?? 0) > 0 ||
+            (data.remove_supporting_ids?.length ?? 0) > 0;
+
+        if (data.file instanceof File || hasSupportingChange) {
             router.post(
                 url,
-                { ...fields, _method: "put", file: data.file },
+                {
+                    ...fields,
+                    _method: "put",
+                    ...(data.file instanceof File ? { file: data.file } : {}),
+                },
                 { forceFormData: true, ...finish },
             );
             return;
@@ -99,6 +112,13 @@ export default function EditSuratMasuk({ letter }) {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <Input
+                                value={letter.nomor_agenda ?? "—"}
+                                readOnly
+                                className="h-11 rounded-xl bg-muted"
+                            />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -268,6 +288,21 @@ export default function EditSuratMasuk({ letter }) {
                             ) : null}
                         </div>
                     ) : null}
+                    <SupportingDocumentsField
+                        documents={letter.supporting_documents}
+                        files={data.supporting_files}
+                        onFilesChange={(files) =>
+                            setData("supporting_files", files)
+                        }
+                        removeIds={data.remove_supporting_ids}
+                        onRemoveIdsChange={(ids) =>
+                            setData("remove_supporting_ids", ids)
+                        }
+                        error={
+                            pageErrors.supporting_files ??
+                            pageErrors.remove_supporting_ids
+                        }
+                    />
                 </div>
             </form>
         </AppLayout>

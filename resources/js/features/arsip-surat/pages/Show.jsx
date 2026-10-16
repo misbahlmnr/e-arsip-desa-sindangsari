@@ -1,4 +1,5 @@
 ﻿import { FilePreview } from "@/components/FilePreview";
+import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -104,6 +105,11 @@ export default function ArsipSuratShow({ jenis, letter }) {
                                 <p className="font-mono text-xl font-bold mt-1">
                                     {letter.no_surat}
                                 </p>
+                                {letter.nomor_agenda ? (
+                                    <p className="text-sm text-muted-foreground mt-1 font-mono">
+                                        Agenda {letter.nomor_agenda}
+                                    </p>
+                                ) : null}
                             </div>
                             <div className="flex items-center gap-2 flex-wrap justify-end">
                                 <Badge
@@ -210,6 +216,9 @@ export default function ArsipSuratShow({ jenis, letter }) {
                             </p>
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">

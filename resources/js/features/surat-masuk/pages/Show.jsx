@@ -1,4 +1,5 @@
-﻿import { Button } from "@/components/ui/button";
+﻿import { SupportingDocumentsList } from "@/components/SupportingDocumentsField";
+import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/AppLayout";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import {
@@ -106,6 +107,11 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                                 <p className="font-mono text-xl font-bold mt-1">
                                     {letter.no_surat}
                                 </p>
+                                {letter.nomor_agenda ? (
+                                    <p className="text-sm text-muted-foreground mt-1 font-mono">
+                                        Agenda {letter.nomor_agenda}
+                                    </p>
+                                ) : null}
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
                                 <StatusBadge
@@ -326,6 +332,9 @@ export default function ShowSuratMasuk({ letter, jabatanOptions, dariJabatan }) 
                             )}
                         </div>
                     )}
+                    <SupportingDocumentsList
+                        documents={letter.supporting_documents}
+                    />
                 </div>
 
                 <aside className="surface-card p-6 md:p-8 self-start">

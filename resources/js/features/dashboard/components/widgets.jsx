@@ -279,6 +279,7 @@ export function DataTable({
 
                                             if (
                                                 col.key === "no_surat" ||
+                                                col.key === "nomor_agenda" ||
                                                 col.key === "link_label"
                                             ) {
                                                 const label =

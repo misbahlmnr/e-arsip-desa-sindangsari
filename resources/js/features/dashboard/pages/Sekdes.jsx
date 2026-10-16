@@ -21,6 +21,7 @@ import {
 function mapDisposisiRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
+        nomor_agenda: row.surat_masuk?.nomor_agenda ?? "—",
         no_surat: row.surat_masuk?.no_surat ?? "—",
         pengirim: row.surat_masuk?.pengirim ?? "—",
         perihal: row.surat_masuk?.perihal ?? "—",
@@ -33,6 +34,7 @@ function mapDisposisiRows(items) {
 function mapPendingSuratRows(items) {
     return (items ?? []).map((row) => ({
         id: row.id,
+        nomor_agenda: row.nomor_agenda ?? "—",
         no_surat: row.no_surat ?? "—",
         pengirim: row.pengirim ?? "—",
         perihal: row.perihal ?? "—",
@@ -233,6 +235,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada surat masuk"
                         emptyHint="Surat masuk baru akan tampil di sini."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "pengirim", label: "Pengirim" },
                             { key: "tanggal_terima", label: "Diterima" },
@@ -255,6 +258,7 @@ export default function SekdesDashboard({
                         emptyTitle="Belum ada disposisi"
                         emptyHint="Buat disposisi dari surat masuk."
                         columns={[
+                            { key: "nomor_agenda", label: "No. Agenda" },
                             { key: "no_surat", label: "No. Surat" },
                             { key: "kepada", label: "Kepada" },
                             { key: "tanggal", label: "Tanggal" },
@@ -280,6 +284,7 @@ export default function SekdesDashboard({
                     emptyTitle="Tidak ada surat menunggu"
                     emptyHint="Semua surat penting sudah diverifikasi Kepala Desa."
                     columns={[
+                        { key: "nomor_agenda", label: "No. Agenda" },
                         { key: "no_surat", label: "No. Surat" },
                         { key: "pengirim", label: "Pengirim" },
                         { key: "perihal", label: "Perihal" },

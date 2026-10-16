@@ -1,9 +1,4 @@
-﻿import { StatusBadge } from "@/components/StatusBadge";
-import { Button } from "@/components/ui/button";
-import {
-    badgeLabel,
-    SURAT_KELUAR_STATUS_LABELS,
-} from "@/shared/constants/badgeLabels";
+﻿import { Button } from "@/components/ui/button";
 import { formatTanggalKalenderWib } from "@/shared/lib/utils";
 import { router } from "@inertiajs/react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
@@ -21,8 +16,9 @@ export function getColumns({
     onDetail,
     onEdit,
     canManage = true,
+    selection = null,
 } = {}) {
-    return [
+    const columns = [
         {
             id: "row_number",
             accessorKey: "no",
@@ -45,6 +41,15 @@ export function getColumns({
                 >
                     {row.original.no_surat}
                 </button>
+            ),
+        },
+        {
+            accessorKey: "nomor_agenda",
+            header: "Nomor Agenda",
+            cell: ({ row }) => (
+                <span className="font-mono text-sm text-muted-foreground">
+                    {row.original.nomor_agenda ?? "—"}
+                </span>
             ),
         },
         {
@@ -78,21 +83,6 @@ export function getColumns({
                 >
                     {row.original.perihal}
                 </span>
-            ),
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => (
-                <StatusBadge
-                    value={row.original.status}
-                    label={
-                        badgeLabel(
-                            SURAT_KELUAR_STATUS_LABELS,
-                            row.original.status,
-                        )
-                    }
-                />
             ),
         },
         {
@@ -149,5 +139,33 @@ export function getColumns({
                 );
             },
         },
+    ];
+
+    if (!selection) {
+        return columns;
+    }
+
+    return [
+        {
+            id: "select",
+            enableSorting: false,
+            header: () => (
+                <input
+                    type="checkbox"
+                    aria-label="Pilih semua"
+                    checked={selection.allChecked}
+                    onChange={selection.onToggleAll}
+                />
+            ),
+            cell: ({ row }) => (
+                <input
+                    type="checkbox"
+                    aria-label="Pilih surat"
+                    checked={selection.ids.includes(row.original.id)}
+                    onChange={() => selection.onToggle(row.original.id)}
+                />
+            ),
+        },
+        ...columns,
     ];
 }

@@ -1,4 +1,5 @@
-﻿import AppLayout from "@/layouts/AppLayout";
+﻿import { AgendaSearchFields } from "@/components/AgendaSearchFields";
+import AppLayout from "@/layouts/AppLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,19 +61,38 @@ export default function ArsipSuratIndex({ letters, filters }) {
     const visit = useCallback((params = {}) => {
         setLoading(true);
         const f = filtersRef.current ?? {};
+        const pick = (key, fallback) => {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+                const value = params[key];
+                return value === "" ||
+                    value === null ||
+                    value === undefined ||
+                    value === "all"
+                    ? undefined
+                    : value;
+            }
+            const current = f[key];
+            if (current === "" || current == null || current === "all") {
+                return fallback;
+            }
+            return current;
+        };
         router.get(
             route("admin.arsip-surat.index"),
             {
                 page: params.page ?? 1,
-                search:
-                    params.search !== undefined
-                        ? params.search || undefined
-                        : f.search || undefined,
+                search: pick("search"),
                 sort_by: params.sort_by ?? f.sort_by,
                 sort_dir: params.sort_dir ?? f.sort_dir,
                 per_page: params.per_page ?? f.per_page,
-                jenis: params.jenis ?? f.jenis ?? "all",
-                range: params.range ?? f.range ?? "all",
+                jenis: pick("jenis") ?? "all",
+                range: pick("range") ?? "all",
+                tahun: pick("tahun"),
+                bulan: pick("bulan"),
+                tanggal: pick("tanggal"),
+                perihal: pick("perihal"),
+                pihak: pick("pihak"),
+                nomor_agenda: pick("nomor_agenda"),
             },
             {
                 preserveState: true,
@@ -153,7 +173,9 @@ export default function ArsipSuratIndex({ letters, filters }) {
     const hasFilters =
         (filters?.search && String(filters.search).trim() !== "") ||
         jenis !== "all" ||
-        range !== "all";
+        range !== "all" ||
+        Boolean(filters?.tahun) ||
+        Boolean(filters?.nomor_agenda);
 
     return (
         <AppLayout
@@ -169,7 +191,7 @@ export default function ArsipSuratIndex({ letters, filters }) {
                         <Input
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder="Cari nomor surat…"
+                            placeholder="Cari nomor surat atau nomor agenda…"
                             className="pl-10 h-11 rounded-xl"
                         />
                     </div>
@@ -246,6 +268,18 @@ export default function ArsipSuratIndex({ letters, filters }) {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="px-6 md:px-8 py-4 border-b border-border space-y-2">
+                    <AgendaSearchFields
+                        filters={filters}
+                        visit={visit}
+                        partyKey="pihak"
+                        partyLabel="Pengirim / tujuan"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                        Pencarian nomor agenda memakai tahun setelah jenis surat
+                        dipilih. Contoh nomor: SM/2026/08/005
+                    </p>
+                </div>
 
                 {loading ? (
                     <div className="px-8 py-10 text-sm text-muted-foreground">
@@ -278,6 +312,9 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                         >
                                             Nomor Surat{" "}
                                             <SortIcon k="no_surat" />
+                                        </th>
+                                        <th className="px-4 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                            Nomor Agenda
                                         </th>
                                         <th className="px-4 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                                             Jenis
@@ -336,6 +373,9 @@ export default function ArsipSuratIndex({ letters, filters }) {
                                                 >
                                                     {a.no_surat}
                                                 </Link>
+                                            </td>
+                                            <td className="px-4 py-4 font-mono text-sm text-muted-foreground">
+                                                {a.nomor_agenda ?? "—"}
                                             </td>
                                             <td className="px-4 py-4">
                                                 <JenisBadge jenis={a.jenis} />

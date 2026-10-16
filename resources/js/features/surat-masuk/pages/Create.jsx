@@ -1,13 +1,14 @@
 import { FileUpload } from "@/components/FileUpload";
+import { SupportingDocumentsField } from "@/components/SupportingDocumentsField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/AppLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import { Save } from "lucide-react";
 
-export default function CreateSuratMasuk() {
+export default function CreateSuratMasuk({ nomorAgendaPreview }) {
     const { data, setData, post, processing, errors } = useForm({
         nomor_surat: "",
         tanggal_surat: new Date().toISOString().slice(0, 10),
@@ -17,6 +18,7 @@ export default function CreateSuratMasuk() {
         tujuan: "-",
         catatan: "",
         file: null,
+        supporting_files: [],
     });
 
     const handleSubmit = (e) => {
@@ -38,6 +40,13 @@ export default function CreateSuratMasuk() {
             >
                 <div className="lg:col-span-2 surface-card p-6 md:p-8 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <FormField label="Nomor Agenda">
+                            <Input
+                                value={nomorAgendaPreview ?? ""}
+                                readOnly
+                                className="h-11 rounded-xl bg-muted"
+                            />
+                        </FormField>
                         <FormField
                             label="Nomor Surat"
                             required
@@ -75,9 +84,18 @@ export default function CreateSuratMasuk() {
                             <Input
                                 type="date"
                                 value={data.tanggal_diterima}
-                                onChange={(e) =>
-                                    setData("tanggal_diterima", e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setData("tanggal_diterima", e.target.value);
+                                    router.get(
+                                        route("admin.surat-masuk.create"),
+                                        { tanggal_terima: e.target.value },
+                                        {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                            only: ["nomorAgendaPreview"],
+                                        },
+                                    );
+                                }}
                                 className="h-11 rounded-xl"
                             />
                         </FormField>
@@ -171,6 +189,13 @@ export default function CreateSuratMasuk() {
                             {errors.file}
                         </p>
                     ) : null}
+                    <SupportingDocumentsField
+                        files={data.supporting_files}
+                        onFilesChange={(files) =>
+                            setData("supporting_files", files)
+                        }
+                        error={errors.supporting_files}
+                    />
                 </div>
             </form>
         </AppLayout>
