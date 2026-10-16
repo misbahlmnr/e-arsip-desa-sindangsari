@@ -24,8 +24,9 @@ class SuratNomorSearchService
         }
 
         $candidates = (clone $baseQuery)
-            ->orderBy('no_surat')
-            ->get(['id', 'no_surat']);
+            ->whereNotNull('nomor_agenda')
+            ->orderBy('nomor_agenda')
+            ->get(['id', 'nomor_agenda']);
 
         if ($candidates->isEmpty()) {
             return [];
@@ -35,7 +36,7 @@ class SuratNomorSearchService
         [$start, $end] = $this->binarySearch->findPrefixRange(
             $items,
             $term,
-            fn ($item) => (string) $item->no_surat,
+            fn ($item) => (string) $item->nomor_agenda,
         );
 
         $ids = [];
